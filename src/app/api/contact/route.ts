@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import { createHash } from "node:crypto";
 import { contactServices } from "@/data/contact-form";
 import { site } from "@/data/site";
+import { createContactEmail } from "@/lib/contact-email";
 
 export const runtime = "nodejs";
 const attempts = new Map<string, { count: number; until: number }>();
@@ -99,8 +100,12 @@ export async function POST(request: Request) {
       from: { name: "Mind Vortex", address: from },
       to: site.email,
       replyTo: { name: name.trim(), address: email.trim() },
-      subject: `Mind Vortex — nowy projekt / ${service}`,
-      text: `Imię: ${name.trim()}\nE-mail: ${email.trim()}\nZakres: ${service}\n\n${message.trim()}`,
+      ...createContactEmail({
+        name,
+        email,
+        service: service as (typeof contactServices)[number],
+        message,
+      }),
     });
     if (!result.accepted.length) return fail(502);
     return Response.json({ ok: true });
