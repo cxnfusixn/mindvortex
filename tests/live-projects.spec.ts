@@ -91,3 +91,33 @@ test("exported Kierunek blog and full-page preview work", async ({ page }) => {
   await page.goto("/previews/marcin-bak/");
   await expect(page.locator("h1")).toContainText("NIE TRENUJĘ EGO.");
 });
+
+test("updated Marcin preview loads local fonts and scroll-controlled video", async ({ page }) => {
+  test.setTimeout(60000);
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/previews/marcin-bak/");
+  const background = page.locator(".walk-background");
+  await expect(background).toHaveAttribute("data-section", "1");
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => document.fonts.check('16px "Bebas Neue"'))).toBe(true);
+  await expect(page.locator(".training-sequence article")).toHaveCount(10);
+  const video = page.locator('[data-walk-clip="1"] video');
+  await expect(video).toHaveAttribute("src", /^\/previews\/marcin-bak\/videos\//);
+  await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.readyState)).toBeGreaterThanOrEqual(2);
+  await page.evaluate(() => {
+    const next = document.getElementById("scena-filozofia")!;
+    window.scrollTo({ top: (next.getBoundingClientRect().top + scrollY) * 0.7, behavior: "instant" });
+  });
+  await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.currentTime)).toBeGreaterThan(2);
+  await expect(video).toBeVisible();
+  expect(await video.evaluate((el: HTMLVideoElement) => el.paused)).toBe(true);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/previews/marcin-bak/");
+  await expect(background).toHaveAttribute("data-section", "1");
+  await expect(page.locator(".walk-video[src]")).toHaveCount(0);
+  const poster = page.locator('[data-walk-clip="1"] img');
+  await expect.poll(() => poster.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(0);
+  expect(errors).toEqual([]);
+});

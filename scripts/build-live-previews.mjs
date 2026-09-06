@@ -5,6 +5,7 @@ import {
   writeFile,
   readdir,
   symlink,
+  rm,
 } from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
@@ -45,7 +46,8 @@ async function walk(directory) {
 
 for (const project of projects) {
   const source = path.resolve(root, "..", project.folder);
-  const target = path.join(root, ".preview-build", project.id);
+  // Always build from a clean snapshot, including files removed in the source app.
+  const target = path.join(root, ".preview-build", `${project.id}-${Date.now()}`);
   const base = `/previews/${project.id}`;
   await mkdir(target, { recursive: true });
   for (const directory of project.dirs) {
@@ -156,8 +158,8 @@ for (const project of projects) {
   }
 
   // Preserve original font CSS from the local app's compiled output, without Google fetches.
-  const chunks = path.join(source, ".next/static/chunks");
-  const cssFiles = (await walk(chunks)).filter((f) => f.endsWith(".css"));
+  const staticDirectory = path.join(source, ".next/static");
+  const cssFiles = (await walk(staticDirectory)).filter((f) => f.endsWith(".css"));
   let fontCss = "";
   for (const file of cssFiles) {
     const css = await readFile(file, "utf8");
@@ -214,9 +216,15 @@ for (const project of projects) {
         : reject(new Error(`Build failed: ${project.id} (${code})`)),
     );
   });
+  const previewRoot = path.resolve(root, "public", "previews");
+  const destination = path.resolve(previewRoot, project.id);
+  if (path.dirname(destination) !== previewRoot)
+    throw new Error("Preview destination must be a direct child of public/previews");
+  // Replace only this generated preview after a successful build.
+  await rm(destination, { recursive: true, force: true });
   await cp(
     path.join(target, "out"),
-    path.join(root, "public", "previews", project.id),
+    destination,
     { recursive: true },
   );
   console.log(`Exported ${base}/index.html`);

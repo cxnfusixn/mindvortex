@@ -1,0 +1,92 @@
+[
+  {
+    "fromScene": 1,
+    "toScene": 2,
+    "src": "/videos/gym-walk-720/1.mp4",
+    "poster": "/videos/gym-walk-720/1-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/1-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 3243940
+  },
+  {
+    "fromScene": 2,
+    "toScene": 3,
+    "src": "/videos/gym-walk-720/2.mp4",
+    "poster": "/videos/gym-walk-720/2-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/2-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 3002454
+  },
+  {
+    "fromScene": 3,
+    "toScene": 4,
+    "src": "/videos/gym-walk-720/3.mp4",
+    "poster": "/videos/gym-walk-720/3-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/3-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 2998049
+  },
+  {
+    "fromScene": 4,
+    "toScene": 5,
+    "src": "/videos/gym-walk-720/4.mp4",
+    "poster": "/videos/gym-walk-720/4-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/4-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 2802770
+  },
+  {
+    "fromScene": 5,
+    "toScene": 6,
+    "src": "/videos/gym-walk-720/5.mp4",
+    "poster": "/videos/gym-walk-720/5-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/5-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 2832199
+  },
+  {
+    "fromScene": 6,
+    "toScene": 7,
+    "src": "/videos/gym-walk-720/6.mp4",
+    "poster": "/videos/gym-walk-720/6-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/6-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 3119356
+  },
+  {
+    "fromScene": 7,
+    "toScene": 8,
+    "src": "/videos/gym-walk-720/7.mp4",
+    "poster": "/videos/gym-walk-720/7-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/7-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 3301743
+  },
+  {
+    "fromScene": 8,
+    "toScene": 9,
+    "src": "/videos/gym-walk-720/8.mp4",
+    "poster": "/videos/gym-walk-720/8-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/8-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 3506252
+  },
+  {
+    "fromScene": 9,
+    "toScene": 10,
+    "src": "/videos/gym-walk-720/9.mp4",
+    "poster": "/videos/gym-walk-720/9-poster.jpg",
+    "endPoster": "/videos/gym-walk-720/9-end.jpg",
+    "width": 1080,
+    "height": 720,
+    "bytes": 3074924
+  }
+]

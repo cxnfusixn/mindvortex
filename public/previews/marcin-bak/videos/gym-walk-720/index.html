@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spacer po sali — podgląd 720p</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101313; color: #eee; }
+  body { max-width: 1200px; margin: auto; padding: 32px 20px; }
+  h1 { font-size: 28px; } p { color: #bcc2c0; }
+  main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+  h2 { font-size: 16px; font-weight: 500; }
+  video { display: block; width: 100%; aspect-ratio: 3/2; background: black; }
+</style>
+<h1>Spacer po sali — 720p</h1>
+<p>Dziewięć przejść z przyciętym kadrem. Wybierz film, żeby sprawdzić ruch i kompozycję.</p>
+<main id="clips"></main>
+<script>
+  const container = document.getElementById('clips');
+  for (let i = 1; i <= 9; i++) {
+    const section = document.createElement('section');
+    const heading = document.createElement('h2');
+    heading.textContent = `Scena ${i} → ${i + 1}`;
+    const video = document.createElement('video');
+    video.controls = true;
+    video.playsInline = true;
+    video.muted = true;
+    video.preload = 'none';
+    video.poster = `${i}-poster.jpg`;
+    video.src = `${i}.mp4`;
+    video.setAttribute('aria-label', heading.textContent);
+    video.addEventListener('play', () => {
+      document.querySelectorAll('video').forEach(other => {
+        if (other !== video) other.pause();
+      });
+    });
+    section.append(heading, video);
+    container.append(section);
+  }
+</script>
+</html>
