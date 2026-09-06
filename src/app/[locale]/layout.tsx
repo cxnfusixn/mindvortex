@@ -102,6 +102,22 @@ export default async function RootLayout({ children, params }: Props) {
         url: site.url,
         founder: { "@id": `${site.url}/#person` },
         logo: `${site.url}/brand/mv-logo.svg`,
+        sameAs: [site.linkedin].filter(Boolean),
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: locale === "pl" ? "Usługi Mind Vortex" : "Mind Vortex services",
+          itemListElement: content[locale].capabilities.map((capability) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: capability.name,
+              description: capability.copy,
+              serviceType: capability.tags,
+              url: `${site.url}/${locale}#capabilities`,
+              provider: { "@id": `${site.url}/#organization` },
+            },
+          })),
+        },
       },
       {
         "@type": "Person",
