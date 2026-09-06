@@ -1,0 +1,348 @@
+// Generated from brand/vortex-symbol.svg by scripts/sync-vector-brand.mjs.
+export const vortexGeometry = [
+  {
+    tag: "path",
+    attributes: {
+      id: "blade-upper",
+      fill: "#35F46A",
+      d: "M586 316 A128.692985 128.692985 0 0 0 587 573 A83.969431 83.969431 0 0 1 638 413 V392 H671 V374 H648 V361 A181.573440 181.573440 0 0 0 537 400 A106.919892 106.919892 0 0 1 586 344 V326 H640 V310 H586 Z",
+      shapeRendering: "geometricPrecision",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "blade-lower",
+      fill: "#35F46A",
+      d: "M420 489 A109.675777 109.675777 0 0 0 639 500 A116.063129 116.063129 0 1 1 420 489 Z",
+      shapeRendering: "geometricPrecision",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "blade-right",
+      fill: "#35F46A",
+      d: "M570 487 A100.207439 100.207439 0 0 1 739 547 H747 V584 H725 V614 H744 V638 H720 V654 H700 V669 H687 V680 H666 V699 H639 V681 A103.105355 103.105355 0 0 0 570 487 Z",
+      shapeRendering: "geometricPrecision",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "blade-tip-left",
+      fill: "#129447",
+      d: "M466 389 A125.682714 125.682714 0 0 0 432 446 H451 A109.726874 109.726874 0 0 1 466 389 Z",
+      shapeRendering: "geometricPrecision",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "blade-tip-lower",
+      fill: "#129447",
+      d: "M639 681 A145.836087 145.836087 0 0 1 558 729 A218.981654 218.981654 0 0 0 639 712 Z",
+      shapeRendering: "geometricPrecision",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "640",
+      y: "285",
+      width: "25",
+      height: "25",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "665",
+      y: "250",
+      width: "35",
+      height: "35",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "563",
+      y: "273",
+      width: "13",
+      height: "13",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "775",
+      y: "309",
+      width: "13",
+      height: "13",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "640",
+      y: "336",
+      width: "11",
+      height: "11",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "663",
+      y: "336",
+      width: "25",
+      height: "25",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "688",
+      y: "361",
+      width: "10",
+      height: "10",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "709",
+      y: "336",
+      width: "40",
+      height: "40",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "812",
+      y: "373",
+      width: "30",
+      height: "30",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "687",
+      y: "392",
+      width: "23",
+      height: "23",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "734",
+      y: "396",
+      width: "11",
+      height: "11",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "pixels-upper-right",
+      fill: "#35F46A",
+      d: "M735 414 H757 V425 H792 V459 H757 V435 H735 Z",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "639",
+      y: "414",
+      width: "48",
+      height: "20",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "pixels-center",
+      fill: "#35F46A",
+      d: "M687 434 H722 V459 H735 V484 H720 V471 H710 V459 H687 Z",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "841",
+      y: "459",
+      width: "13",
+      height: "13",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "pixels-middle-right",
+      fill: "#35F46A",
+      d: "M757 485 H784 V512 H765 V532 H750 V512 H757 Z",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "869",
+      y: "485",
+      width: "24",
+      height: "24",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "789",
+      y: "512",
+      width: "35",
+      height: "35",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "path",
+    attributes: {
+      id: "pixels-lower-right",
+      fill: "#35F46A",
+      d: "M770 547 H789 V571 H796 V581 H787 V571 H770 Z",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "749",
+      y: "595",
+      width: "19",
+      height: "19",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "832",
+      y: "595",
+      width: "18",
+      height: "18",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "405",
+      y: "600",
+      width: "19",
+      height: "19",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "441",
+      y: "632",
+      width: "24",
+      height: "24",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "766",
+      y: "642",
+      width: "13",
+      height: "13",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "722",
+      y: "666",
+      width: "12",
+      height: "12",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "795",
+      y: "685",
+      width: "12",
+      height: "12",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "482",
+      y: "699",
+      width: "13",
+      height: "13",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+  {
+    tag: "rect",
+    attributes: {
+      x: "682",
+      y: "711",
+      width: "24",
+      height: "24",
+      fill: "#35F46A",
+      shapeRendering: "crispEdges",
+    },
+  },
+] as const;

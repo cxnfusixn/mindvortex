@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="350 220 620 560" fill="none">
+  <title>Mind Vortex circular construction</title>
+  <rect x="350" y="220" width="620" height="560" fill="#050706" />
+  <circle cx="593.52734375" cy="444.47265625" r="128.69298468782722" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="613.2473948975925" cy="493.23823212360765" r="83.9694310667737" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="649.4427083333334" cy="542.5677083333334" r="181.573440009142" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="636.9366197183099" cy="438.00704225352115" r="106.91989160854507" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="529.6443148688047" cy="491.6268221574344" r="109.6757766222623" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="527.5896723452066" cy="532.5328869454313" r="116.06312868931559" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="639.5328022492971" cy="559.1576069978132" r="100.20743902670459" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="599.2150269967043" cy="585.8797068929248" r="103.10535503866357" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="553.1082474226804" cy="479.5996563573883" r="125.68271361300152" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="560.7151898734177" cy="444.3987341772152" r="109.72687428882365" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="528.1326530612245" cy="586.2551020408164" r="145.8360871202287" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <circle cx="554.3312883435583" cy="510.0490797546012" r="218.9816543035628" stroke="#129447" stroke-width=".65" stroke-dasharray="3 4" />
+  <path d="M586 316 A128.692985 128.692985 0 0 0 587 573 A83.969431 83.969431 0 0 1 638 413 V392 H671 V374 H648 V361 A181.573440 181.573440 0 0 0 537 400 A106.919892 106.919892 0 0 1 586 344 V326 H640 V310 H586 Z" stroke="#35F46A" stroke-width="1.25" />
+  <path d="M420 489 A109.675777 109.675777 0 0 0 639 500 A116.063129 116.063129 0 1 1 420 489 Z" stroke="#35F46A" stroke-width="1.25" />
+  <path d="M570 487 A100.207439 100.207439 0 0 1 739 547 H747 V584 H725 V614 H744 V638 H720 V654 H700 V669 H687 V680 H666 V699 H639 V681 A103.105355 103.105355 0 0 0 570 487 Z" stroke="#35F46A" stroke-width="1.25" />
+  <path d="M466 389 A125.682714 125.682714 0 0 0 432 446 H451 A109.726874 109.726874 0 0 1 466 389 Z" stroke="#35F46A" stroke-width="1.25" />
+  <path d="M639 681 A145.836087 145.836087 0 0 1 558 729 A218.981654 218.981654 0 0 0 639 712 Z" stroke="#35F46A" stroke-width="1.25" />
+</svg>
