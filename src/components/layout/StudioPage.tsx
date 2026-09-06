@@ -5,6 +5,7 @@ import { CinematicIntro } from "@/components/motion/CinematicIntro";
 import { MotionSystem } from "@/components/motion/MotionSystem";
 import { CustomCursor } from "@/components/motion/CustomCursor";
 import { NoiseOverlay } from "@/components/layout/NoiseOverlay";
+import { CodeDriftBackground } from "@/components/motion/CodeDriftBackground";
 import { HeroScene } from "@/components/sections/HeroScene";
 import { ManifestoScene } from "@/components/sections/ManifestoScene";
 import { CapabilitiesScene } from "@/components/sections/CapabilitiesScene";
@@ -17,6 +18,7 @@ export default function Home() {
   const { copy } = useCopy();
   return (
     <>
+      <CodeDriftBackground />
       <a href="#main" className="skip-link">
         {copy.skip}
       </a>
