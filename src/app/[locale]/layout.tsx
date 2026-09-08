@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { site } from "@/data/site";
+import { seo } from "@/data/seo";
 import { notFound } from "next/navigation";
 import { content, isLocale, locales } from "@/i18n/content";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
@@ -54,11 +55,12 @@ type Props = { children: React.ReactNode; params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const copy = content[locale];
+  const copy = seo[locale];
   return {
     metadataBase: new URL(site.url),
-    title: copy.metaTitle,
-    description: copy.metaDescription,
+    title: copy.title,
+    description: copy.description,
+    authors: [{ name: site.owner, url: site.linkedin }],
     verification: {
       google: "HMcGxtD8ZUF5W9bSg9cGWaehahBrJSFez416znOZynM",
     },
@@ -71,8 +73,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: locale === "pl" ? "pl_PL" : "en_US",
       alternateLocale: locale === "pl" ? "en_US" : "pl_PL",
       siteName: site.name,
-      title: copy.metaTitle,
-      description: copy.metaDescription,
+      title: copy.title,
+      description: copy.description,
       url: `/${locale}`,
       images: [
         {
@@ -85,8 +87,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: copy.metaTitle,
-      description: copy.metaDescription,
+      title: copy.title,
+      description: copy.description,
       images: ["/brand/mv-logo.png"],
     },
     robots: { index: !site.url.includes(".example"), follow: true },
@@ -105,7 +107,7 @@ export default async function RootLayout({ children, params }: Props) {
         url: site.url,
         founder: { "@id": `${site.url}/#person` },
         logo: `${site.url}/brand/mv-logo.svg`,
-        sameAs: [site.linkedin].filter(Boolean),
+        // The LinkedIn profile identifies the founder, not the organization.
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: locale === "pl" ? "Usługi Mind Vortex" : "Mind Vortex services",

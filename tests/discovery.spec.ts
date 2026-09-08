@@ -41,6 +41,15 @@ test("both languages describe all visible services in structured data", async ({
     const organization = graph.find(
       (entry) => entry["@type"] === "Organization",
     );
+    expect(organization.sameAs).toBeUndefined();
+    const founder = graph.find((entry) => entry["@type"] === "Person");
+    expect(founder.sameAs).toContain(
+      "https://www.linkedin.com/in/patryk-p-2793a8379/",
+    );
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      "content",
+      /API/,
+    );
     const offers = organization.hasOfferCatalog.itemListElement;
     const visibleServices = await page
       .locator("#capabilities article .capability-copy p")

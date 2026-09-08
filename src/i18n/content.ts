@@ -7,9 +7,9 @@ export const isLocale = (value: string): value is Locale =>
   locales.includes(value as Locale);
 
 const en = {
-  metaTitle: "Mind Vortex — Development, Backend & Design",
+  metaTitle: "Websites & Custom Web Applications | Mind Vortex",
   metaDescription:
-    "Mind Vortex is the digital studio of Patryk Pyrka, combining software engineering, web development, backend systems and visual identity.",
+    "Websites, custom web applications and Java backend development by Patryk Pyrka. Mind Vortex combines software engineering with visual identity. View the work.",
   nav: ["Work", "About", "Stack", "Contact"],
   navLabel: "Main navigation",
   homeLabel: "Mind Vortex home",
@@ -22,11 +22,11 @@ const en = {
   hero: {
     studio: "INDEPENDENT DIGITAL STUDIO",
     disciplines: "ENGINEERING × VISUAL IDENTITY",
-    kicker: "CREATIVE MIND. ENGINEERED OUTPUT.",
+    kicker: "WEBSITES · BACKEND · VISUAL IDENTITY",
     lines: ["CODE", "MEETS", "DESIGN"],
     symbol: "FIG. 001 — ORDER INTO POSSIBILITY",
     scroll: "SCROLL TO ENTER",
-    copy: "Engineering digital products with the precision of code and the character of design.",
+    copy: "Websites, backend systems and visual identity. From design to deployment.",
     explore: "explore_work",
     contact: "contact_",
     location: "BASED IN POLAND · WORKING EVERYWHERE",
@@ -40,7 +40,7 @@ const en = {
     aside: "NOT TWO DISCIPLINES. ONE PRACTICE.",
     lines: ["I don’t separate", "technology", "from", "design."],
     fields: ["CODE", "SYSTEMS", "IDENTITY"],
-    copy: "A digital product should work flawlessly, communicate clearly and have a visual identity worth remembering.",
+    copy: "Code, systems and design — in one studio.",
     ending: "I build all three.",
   },
   capabilitiesLabel: "[03] / WHAT I BUILD_",
@@ -96,7 +96,7 @@ const en = {
     label: "[08] / NEXT CHAPTER",
     aside: "YOUR IDEA STARTS HERE.",
     title: ["LET’S BUILD", "SOMETHING", "WORTH", "REMEMBERING."],
-    copy: ["Need a digital product, backend system", "or visual identity?"],
+    copy: ["Need a website, custom web application", "or visual identity?"],
     talk: "Let’s talk.",
     start: "start_a_project_",
     pending: "Contact details coming soon.",
@@ -106,9 +106,9 @@ const en = {
 };
 export type Copy = typeof en;
 const pl: Copy = {
-  metaTitle: "Mind Vortex — Strony internetowe, backend i design",
+  metaTitle: "Tworzenie stron i aplikacji webowych | Mind Vortex",
   metaDescription:
-    "Mind Vortex to studio cyfrowe Patryka Pyrki. Łączę inżynierię oprogramowania, tworzenie stron internetowych, systemy backendowe i identyfikację wizualną.",
+    "Tworzenie stron internetowych i aplikacji webowych dla firm. Patryk Pyrka — Mind Vortex: backend Java, API i identyfikacja wizualna. Zobacz projekty i opisz swój pomysł.",
   nav: ["Projekty", "O mnie", "Technologie", "Kontakt"],
   navLabel: "Nawigacja główna",
   homeLabel: "Mind Vortex — strona główna",
@@ -121,11 +121,11 @@ const pl: Copy = {
   hero: {
     studio: "NIEZALEŻNE STUDIO CYFROWE",
     disciplines: "INŻYNIERIA × IDENTYFIKACJA WIZUALNA",
-    kicker: "KREATYWNY UMYSŁ. PRECYZYJNE WYKONANIE.",
+    kicker: "STRONY INTERNETOWE · BACKEND · IDENTYFIKACJA WIZUALNA",
     lines: ["KOD", "SPOTYKA", "DESIGN"],
     symbol: "RYS. 001 — OD PORZĄDKU DO MOŻLIWOŚCI",
     scroll: "PRZEWIŃ, BY WEJŚĆ",
-    copy: "Tworzę produkty cyfrowe, łącząc precyzję kodu z charakterem dobrego designu.",
+    copy: "Strony internetowe, backend i identyfikacja wizualna. Od projektu do wdrożenia.",
     explore: "zobacz_projekty",
     contact: "kontakt_",
     location: "Z POLSKI · BEZ GRANIC",
@@ -139,25 +139,25 @@ const pl: Copy = {
     aside: "DWIE DZIEDZINY. JEDNA PRAKTYKA.",
     lines: ["Nie oddzielam", "technologii", "od", "designu."],
     fields: ["KOD", "SYSTEMY", "IDENTYFIKACJA"],
-    copy: "Produkt cyfrowy powinien działać bez zarzutu, jasno komunikować swoją wartość i mieć identyfikację wizualną, która zostaje w pamięci.",
+    copy: "Kod, systemy i design — w jednym studiu.",
     ending: "Dbam o wszystkie trzy.",
   },
   capabilitiesLabel: "[03] / CO TWORZĘ_",
   capabilitiesAside: "OD KONCEPCJI DO PRODUKCJI",
   capabilities: [
     {
-      name: "Web",
-      copy: "Szybkie, dopracowane strony i aplikacje. Przejrzyste, wydajne i zaprojektowane z myślą o interakcji.",
+      name: "Strony i aplikacje webowe",
+      copy: "Projektowanie i tworzenie stron internetowych dla firm oraz dedykowanych aplikacji webowych. Łączę indywidualny projekt graficzny z programowaniem w Next.js i React.",
       tags: ["Next.js", "React", "TypeScript", "Inżynieria interfejsów"],
     },
     {
-      name: "Backend",
-      copy: "Niezawodne systemy, API i usługi gotowe na produkcję, skalowanie i wieloletni rozwój.",
+      name: "Backend i integracje API",
+      copy: "Tworzenie i rozwój backendu w Java i Spring. Projektuję REST API, integracje systemów oraz logikę biznesową dopasowaną do potrzeb aplikacji.",
       tags: ["Java", "Spring", "REST", "Bazy danych", "Systemy rozproszone"],
     },
     {
-      name: "Marka",
-      copy: "Systemy wizualne, które nadają produktom cyfrowym wyrazisty, spójny i rozpoznawalny charakter.",
+      name: "Logo i identyfikacja wizualna",
+      copy: "Projektowanie logo i identyfikacji wizualnej dla firm. Tworzę spójną typografię, kolorystykę i materiały graficzne do wykorzystania na stronie oraz w komunikacji marki.",
       tags: [
         "Identyfikacja wizualna",
         "Kierunek artystyczny",
@@ -166,8 +166,8 @@ const pl: Copy = {
       ],
     },
     {
-      name: "Kreacja",
-      copy: "Grafika i doświadczenia cyfrowe, w których technologia staje się częścią języka wizualnego.",
+      name: "Grafika i animacja",
+      copy: "Projektowanie graficzne, animacje i interaktywne elementy stron. Łączę grafikę z programowaniem, tworząc materiały dopasowane do charakteru marki.",
       tags: [
         "Projektowanie graficzne",
         "Animacja",
@@ -255,7 +255,7 @@ const pl: Copy = {
     aside: "TU ZACZYNA SIĘ TWÓJ POMYSŁ.",
     title: ["STWÓRZMY", "COŚ, CO", "ZOSTAJE", "W PAMIĘCI."],
     copy: [
-      "Potrzebujesz produktu cyfrowego, backendu",
+      "Potrzebujesz strony internetowej, aplikacji webowej",
       "lub identyfikacji wizualnej?",
     ],
     talk: "Porozmawiajmy.",

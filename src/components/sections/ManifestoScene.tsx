@@ -21,6 +21,11 @@ export function ManifestoScene() {
         </span>
         <span className="manifesto-line green">{copy.manifesto.lines[3]}</span>
       </h2>
+      <p className="manifesto-description">
+        {copy.manifesto.copy}
+        <br />
+        <strong>{copy.manifesto.ending}</strong>
+      </p>
       <div className="manifesto-bottom" data-reveal>
         <div className="terminal-label">
           {copy.manifesto.fields[0]}
@@ -29,11 +34,6 @@ export function ManifestoScene() {
           <br />
           <span className="green">{copy.manifesto.fields[2]}</span>
         </div>
-        <p>
-          {copy.manifesto.copy}
-          <br />
-          <strong>{copy.manifesto.ending}</strong>
-        </p>
         <span className="asterisk" aria-hidden="true">
           ✳
         </span>

@@ -345,24 +345,30 @@ main {
   margin-top: auto;
   padding: 40px 0;
 }
-.hero-bottom > p {
+.hero-description {
+  margin-top: 24px;
   font-size: 15px;
   color: #b0b8b2;
   max-width: 315px;
   line-height: 1.6;
 }
 .scroll-indicator {
+  grid-column: 1;
+  grid-row: 1;
   font-size: 9px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 15px;
   color: var(--gray);
 }
 .scroll-indicator span {
+  order: -1;
   color: var(--green);
   font-size: 25px;
 }
 .hero-actions {
+  grid-column: 3;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -413,12 +419,13 @@ main {
   font-weight: 400;
   letter-spacing: -0.065em;
   line-height: 1.13;
-  margin: 95px 0 70px;
+  margin: 95px 0 24px;
 }
 .manifesto-line {
   display: block;
 }
 .manifesto-bottom {
+  margin-top: 40px;
   display: grid;
   grid-template-columns: 1fr 1.8fr 0.7fr;
   gap: 50px;
@@ -428,20 +435,20 @@ main {
   line-height: 2;
   color: var(--gray);
 }
-.manifesto-bottom > p {
-  font-size: clamp(18px, 2vw, 26px);
-  line-height: 1.55;
-  letter-spacing: -0.02em;
+.manifesto-description {
+  font-size: 15px;
+  line-height: 1.6;
   max-width: 620px;
   color: var(--gray);
 }
-.manifesto-bottom strong {
+.manifesto-description strong {
   display: inline-block;
   font-weight: 400;
   color: var(--white);
   margin-top: 25px;
 }
 .asterisk {
+  grid-column: 3;
   font-size: 120px;
   color: var(--green);
   justify-self: end;
@@ -472,7 +479,8 @@ main {
 .capability h3 {
   font-family: var(--font-mono), var(--font-mono-ext);
   font-weight: 400;
-  font-size: clamp(35px, 4.5vw, 72px);
+  font-size: clamp(30px, 3.2vw, 52px);
+  min-width: 0;
   letter-spacing: -0.075em;
   text-transform: uppercase;
 }
@@ -1097,7 +1105,8 @@ main {
     gap: 25px;
     grid-template-columns: 0.7fr 1.2fr 1fr;
   }
-  .hero-bottom > p {
+  .hero-description,
+  .manifesto-description {
     font-size: 13px;
   }
   .hero-foot > span:nth-child(2) {
@@ -1284,7 +1293,7 @@ main {
     padding: 0 0 30px;
     margin-top: 290px;
   }
-  .hero-bottom > p {
+  .hero-description {
     font-size: 14px;
     max-width: 280px;
     width: 100%;
@@ -1343,7 +1352,7 @@ main {
     font-size: 10.4vw;
     line-height: 1.18;
     letter-spacing: -0.06em;
-    margin: 60px 0 45px;
+    margin: 60px 0 24px;
   }
   .manifesto-bottom {
     display: flex;
@@ -1354,8 +1363,8 @@ main {
   .manifesto-bottom > .terminal-label {
     display: none;
   }
-  .manifesto-bottom > p {
-    font-size: 18px;
+  .manifesto-description {
+    font-size: 14px;
   }
   .capability {
     display: block;
@@ -1370,7 +1379,7 @@ main {
     font-size: 10px;
   }
   .capability h3 {
-    font-size: 44px;
+    font-size: clamp(28px, 8vw, 36px);
     display: flex;
     justify-content: space-between;
     width: 100%;

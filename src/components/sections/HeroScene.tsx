@@ -27,6 +27,7 @@ export function HeroScene() {
             <span className="green">.</span>
           </span>
         </h1>
+        <p className="hero-description">{copy.hero.copy}</p>
       </div>
       <div className="hero-symbol">
         <span className="cross cross-one" aria-hidden="true">
@@ -44,7 +45,6 @@ export function HeroScene() {
         <a href="#about" className="scroll-indicator terminal-label">
           {copy.hero.scroll} <span>↓</span>
         </a>
-        <p>{copy.hero.copy}</p>
         <div className="hero-actions">
           <MagneticButton href="#work">
             &gt; {copy.hero.explore} <span>↗</span>

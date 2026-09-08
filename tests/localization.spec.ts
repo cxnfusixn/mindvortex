@@ -83,7 +83,7 @@ test("language links preserve the current section in both directions", async ({
 test("localized SEO and true vector assets", async ({ page, request }) => {
   await page.goto("/pl");
   await expect(page).toHaveTitle(
-    "Mind Vortex — Strony internetowe, backend i design",
+    "Strony internetowe, backend Java i branding | Mind Vortex",
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
