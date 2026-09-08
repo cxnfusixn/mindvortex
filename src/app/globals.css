@@ -1780,7 +1780,15 @@ html[lang="pl"] .hero-line.middle {
 @media (max-width: 700px) {
   .hero-symbol {
     opacity: 1;
+    position: relative;
+    top: auto;
+    right: auto;
+    align-self: flex-end;
+    flex-shrink: 0;
+    margin: 22px -5vw 30px 0;
   }
+  .hero-bottom { margin-top: 20px; }
+  .hero-bottom .scroll-indicator { position: static; width: 100%; }
 }
 
 /* Hero galaxy: rotate vector geometry, let detached pixels dissolve outside its bounds. */

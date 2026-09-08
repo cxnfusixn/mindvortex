@@ -22,6 +22,11 @@ for (const locale of ["en", "pl"]) {
           () => document.documentElement.scrollWidth <= window.innerWidth,
         ),
       ).toBeTruthy();
+      if (width <= 700) {
+        const description = await page.locator(".hero-description").boundingBox();
+        const symbol = await page.locator(".hero-symbol").boundingBox();
+        expect(description!.y + description!.height).toBeLessThan(symbol!.y);
+      }
       await expect(page.locator(".vortex-logo svg").first()).toHaveAttribute(
         "viewBox",
         "385 235 530 530",
