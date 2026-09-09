@@ -5,7 +5,7 @@ const config: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/previews/:project(kierunek|marcin-bak)",
+        source: "/previews/:project(kierunek|marcin-bak|flc)",
         destination: "/previews/:project/index.html",
       },
       {

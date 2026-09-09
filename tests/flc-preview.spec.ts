@@ -1,0 +1,79 @@
+import { expect, test } from "@playwright/test";
+
+test("FLC is an interactive third preview with independent desktop and mobile viewports", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/pl");
+  const project = page.locator("#project-flc");
+  await project.scrollIntoViewIfNeeded();
+  const flc = page.frameLocator('iframe[title^="FLC"]');
+  await expect(flc.locator("h1")).toContainText("extraordinary");
+  await expect(flc.locator(".brand-intro")).toHaveCount(0, { timeout: 15000 });
+  expect(
+    await flc
+      .locator("html")
+      .evaluate(() => ({ width: innerWidth, height: innerHeight })),
+  ).toEqual({ width: 1920, height: 1080 });
+  await expect
+    .poll(() =>
+      flc
+        .locator(".logo img")
+        .evaluate((el: HTMLImageElement) => el.naturalWidth),
+    )
+    .toBeGreaterThan(0);
+  await page.screenshot({ path: "test-results/flc-desktop.png" });
+  await flc
+    .getByRole("link", { name: "Explore the collection", exact: true })
+    .click();
+  await flc
+    .getByRole("combobox", { name: "Vehicle make", exact: true })
+    .selectOption("Porsche");
+  await expect(flc.locator(".cars > .car")).toHaveCount(1);
+  await flc
+    .getByRole("button", { name: "View 2024 Porsche 911", exact: true })
+    .click();
+  await expect(flc.locator("dialog[open]")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(flc.locator("dialog[open]")).toHaveCount(0);
+  await project.getByRole("button", { name: "Mobile", exact: true }).click();
+  await expect
+    .poll(() => flc.locator("html").evaluate(() => innerWidth))
+    .toBe(390);
+  await flc.getByRole("button", { name: "Open menu", exact: true }).click();
+  await expect(
+    flc.getByRole("navigation", { name: "Mobile navigation" }),
+  ).toBeVisible();
+  await page.screenshot({ path: "test-results/flc-mobile.png" });
+  expect(errors).toEqual([]);
+});
+
+test("FLC full page uses prefixed local video, frame and font assets", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/previews/flc/");
+  await expect(page.locator(".brand-intro")).toHaveCount(0, { timeout: 15000 });
+  const video = page.locator(".hero-motion video");
+  await expect(video).toHaveAttribute(
+    "src",
+    "/previews/flc/images/hero-2-test.mp4",
+  );
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.readyState), {
+      timeout: 15000,
+    })
+    .toBeGreaterThanOrEqual(2);
+  const frame = await request.get(
+    "/previews/flc/images/porsche-frames/frame-000.jpg",
+  );
+  expect(frame.status()).toBe(200);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex/,
+  );
+});

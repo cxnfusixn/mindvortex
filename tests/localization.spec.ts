@@ -46,7 +46,7 @@ for (const locale of ["en", "pl"]) {
         "COLLABORATIONS",
       );
       await expect(page.locator("#experience")).not.toContainText("Brightstar");
-      await expect(page.locator(".live-project")).toHaveCount(2);
+      await expect(page.locator(".live-project")).toHaveCount(3);
       await expect(page.locator("#project-kierunek h4")).toHaveText("Kierunek");
       await page.locator("#stack").scrollIntoViewIfNeeded();
       await page.screenshot({

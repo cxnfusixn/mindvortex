@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 for (const width of [390, 1440]) {
-  test(`two live websites are usable on the homepage at ${width}px`, async ({
+  test(`live websites are usable on the homepage at ${width}px`, async ({
     page,
   }) => {
     test.setTimeout(60000);
@@ -10,7 +10,7 @@ for (const width of [390, 1440]) {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/pl");
-    await expect(page.locator(".live-project")).toHaveCount(2);
+    await expect(page.locator(".live-project")).toHaveCount(3);
     const kierunek = page.locator("#project-kierunek");
     await kierunek.scrollIntoViewIfNeeded();
     const centre = page.frameLocator('iframe[title^="Kierunek"]');
@@ -56,6 +56,7 @@ for (const width of [390, 1440]) {
     }
     await expect(centre.locator("img").first()).toBeVisible();
     await page.screenshot({ path: `test-results/live-kierunek-${width}.png` });
+    const centreScroll = await centre.locator("html").evaluate(() => scrollY);
     const marcin = page.locator("#project-marcin-bak");
     await marcin.scrollIntoViewIfNeeded();
     const coach = page.frameLocator('iframe[title^="Marcin"]');
@@ -67,7 +68,7 @@ for (const width of [390, 1440]) {
       .getByRole("link", { name: "Rozpocznij trening", exact: true })
       .click();
     await expect(coach.locator("#scena-cennik")).toBeInViewport();
-    await expect(centre.locator("#start")).toBeInViewport();
+    expect(await centre.locator("html").evaluate(() => scrollY)).toBe(centreScroll);
     await coach.locator("#scena-faq").scrollIntoViewIfNeeded();
     const faq = coach.locator("#scena-faq button").last();
     await faq.click();

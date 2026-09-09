@@ -63,11 +63,17 @@ Fonts are self-hosted through `next/font/local`, with Latin Extended subsets for
 
 ## Live project row
 
-`ProjectsScene` renders an extensible horizontal row of `LiveProject` panels. Both Kierunek and Marcin Bak are visible separately on desktop; smaller screens scroll the row horizontally. Each panel embeds the actual exported React website with its own vertical scrollbar, responsive width switch and full-page link. Iframes mount near the viewport to avoid loading both applications in the hero.
+`ProjectsScene` renders an extensible horizontal row of `LiveProject` panels: Kierunek, Marcin Bak and FLC (Fort Lauderdale Collection). Desktop shows two panels at a time; scroll the row horizontally to reach further projects. Each panel embeds the actual exported React website with its own vertical scrollbar, responsive width switch and full-page link. Iframes mount near the viewport to avoid loading all applications in the hero.
 
 Edit projects in `src/data/subprojects.ts`. Deployable HTML, JavaScript, CSS and assets live under `public/previews/`. No sibling server is needed to run or deploy the portfolio. Next rewrites serve preview landing pages and Kierunek blog routes.
 
-To refresh from the local sibling repositories, run `node scripts/build-live-previews.mjs` (or append `kierunek` / `marcin-bak`). It copies source into ignored `.preview-build/`, exports each app using its own installed dependencies, then copies the output into `public/previews/`. Original repositories are untouched. Font files are reused from their local compiled `.next/static` output. Kierunek captures its published CMS homepage and downloads its images at export time (falling back to repository data when no public CMS configuration exists); its form validates but does not send submissions. Preview pages have noindex metadata.
+To refresh the previews, run `node scripts/build-live-previews.mjs` (or append `kierunek`, `marcin-bak` or `flc`). Kierunek and Marcin Bak default to sibling repositories; FLC defaults to `Documents/ChatGPT/flc` under the current user's home. An optional third argument overrides the selected project's source, for example:
+
+```powershell
+node scripts/build-live-previews.mjs flc "C:\Users\48502\Documents\ChatGPT\flc"
+```
+
+The script copies source into ignored `.preview-build/`, exports each app using its own installed dependencies, then copies the output into `public/previews/`. Original repositories are untouched. Kierunek and Marcin Bak reuse font files from their local compiled `.next/static` output. FLC downloads its Google Fonts during export and serves them locally alongside its logo, hero video and Porsche animation frames. Its vehicle inventory retains the source site's external image URLs, illustrative pricing and preview-only enquiry form. Kierunek captures its published CMS homepage and downloads its images at export time (falling back to repository data when no public CMS configuration exists); its form validates but does not send submissions. Preview pages have noindex metadata.
 
 ## Contact email
 

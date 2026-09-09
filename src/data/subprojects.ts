@@ -25,4 +25,14 @@ export const subprojects = [
     },
     stack: ["Next.js", "TypeScript", "GSAP", "Framer Motion"],
   },
+  {
+    id: "flc",
+    title: "FLC",
+    subtitle: { pl: "Fort Lauderdale Collection — samochody luksusowe", en: "Fort Lauderdale Collection — luxury automobiles" },
+    description: {
+      pl: "Filmowa prezentacja kolekcji samochodów luksusowych. Animowane intro, interaktywny katalog i sekwencja Porsche sterowana przewijaniem tworzą doświadczenie cyfrowego salonu.",
+      en: "A cinematic showcase of luxury automobiles. An animated intro, interactive inventory and a scroll-controlled Porsche sequence create a digital showroom experience.",
+    },
+    stack: ["Next.js", "TypeScript", "React", "Motion design"],
+  },
 ] as const;

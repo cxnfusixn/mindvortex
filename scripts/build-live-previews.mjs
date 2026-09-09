@@ -8,6 +8,7 @@ import {
   rm,
 } from "node:fs/promises";
 import path from "node:path";
+import { homedir } from "node:os";
 import { spawn } from "node:child_process";
 
 const root = process.cwd();
@@ -32,6 +33,13 @@ const projects = [
       "package.json",
     ],
   },
+  {
+    id: "flc",
+    folder: path.join(homedir(), "Documents", "ChatGPT", "flc"),
+    app: "app",
+    dirs: ["app", "public"],
+    configs: ["tsconfig.json", "package.json"],
+  },
 ].filter((p) => !selected || p.id === selected);
 
 async function walk(directory) {
@@ -45,9 +53,16 @@ async function walk(directory) {
 }
 
 for (const project of projects) {
-  const source = path.resolve(root, "..", project.folder);
+  const source =
+    selected && process.argv[3]
+      ? path.resolve(process.argv[3])
+      : path.resolve(root, "..", project.folder);
   // Always build from a clean snapshot, including files removed in the source app.
-  const target = path.join(root, ".preview-build", `${project.id}-${Date.now()}`);
+  const target = path.join(
+    root,
+    ".preview-build",
+    `${project.id}-${Date.now()}`,
+  );
   const base = `/previews/${project.id}`;
   await mkdir(target, { recursive: true });
   for (const directory of project.dirs) {
@@ -79,6 +94,12 @@ for (const project of projects) {
       if (!/\.(tsx?|css)$/.test(file)) continue;
       let text = await readFile(file, "utf8");
       text = text.replace(/(["'`(])\/(images|videos)\//g, `$1${base}/$2/`);
+      if (project.id === "flc") {
+        text = text.replace(
+          /(["'])\/(flc-[^"']+\.svg|logo\.svg)/g,
+          `$1${base}/$2`,
+        );
+      }
       await writeFile(file, text);
     }
   }
@@ -157,48 +178,88 @@ for (const project of projects) {
     await writeFile(form, formText);
   }
 
-  // Preserve original font CSS from the local app's compiled output, without Google fetches.
-  const staticDirectory = path.join(source, ".next/static");
-  const cssFiles = (await walk(staticDirectory)).filter((f) => f.endsWith(".css"));
-  let fontCss = "";
-  for (const file of cssFiles) {
-    const css = await readFile(file, "utf8");
-    for (const match of css.matchAll(/@font-face\s*\{[^}]+\}/g))
-      fontCss += match[0] + "\n";
+  if (project.id === "flc") {
+    const globals = path.join(target, "app/globals.css");
+    let css = await readFile(globals, "utf8");
+    const imports = [
+      ...css.matchAll(
+        /@import url\(['"](https:\/\/fonts\.googleapis\.com\/[^'"]+)['"]\);/g,
+      ),
+    ];
+    await mkdir(path.join(target, "public/fonts"), { recursive: true });
+    let fontIndex = 0;
+    for (const match of imports) {
+      const response = await fetch(match[1], {
+        headers: { "User-Agent": "Mozilla/5.0 Chrome/125.0.0.0 Safari/537.36" },
+      });
+      if (!response.ok) throw new Error("Cannot capture FLC font styles");
+      let fonts = await response.text();
+      for (const url of new Set(
+        [
+          ...fonts.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g),
+        ].map((m) => m[1]),
+      )) {
+        const font = await fetch(url);
+        if (!font.ok) throw new Error("Cannot capture FLC font file");
+        const filename = `font-${fontIndex++}${path.extname(new URL(url).pathname)}`;
+        await writeFile(
+          path.join(target, "public/fonts", filename),
+          Buffer.from(await font.arrayBuffer()),
+        );
+        fonts = fonts.replaceAll(url, `${base}/fonts/${filename}`);
+      }
+      css = css.replace(match[0], fonts);
+    }
+    await writeFile(globals, css);
+  } else {
+    // Preserve original font CSS from the local app's compiled output, without Google fetches.
+    const staticDirectory = path.join(source, ".next/static");
+    const cssFiles = (await walk(staticDirectory)).filter((f) =>
+      f.endsWith(".css"),
+    );
+    let fontCss = "";
+    for (const file of cssFiles) {
+      const css = await readFile(file, "utf8");
+      for (const match of css.matchAll(/@font-face\s*\{[^}]+\}/g))
+        fontCss += match[0] + "\n";
+    }
+    fontCss = fontCss.replace(
+      /(?:\.\.\/media\/|\/_next\/static\/media\/)/g,
+      `${base}/fonts/`,
+    );
+    await mkdir(path.join(target, "public/fonts"), { recursive: true });
+    const media = path.join(source, ".next/static/media");
+    for (const file of await readdir(media))
+      if (/\.woff2?$/.test(file))
+        await cp(
+          path.join(media, file),
+          path.join(target, "public/fonts", file),
+        );
+    const layout = path.join(target, project.app, "layout.tsx");
+    let layoutText = await readFile(layout, "utf8");
+    layoutText = layoutText.replace(
+      /import \{[^}]+\} from "next\/font\/google";\s*/g,
+      "",
+    );
+    layoutText = layoutText.replace(
+      /const (display|body|bebas|inter) = [\s\S]*?\}\);/g,
+      'const $1 = { variable: "" };',
+    );
+    layoutText = layoutText.replace(
+      /export const metadata: Metadata = \{/,
+      "export const metadata: Metadata = { robots: { index: false, follow: false },",
+    );
+    await writeFile(layout, layoutText);
+    const globals = path.join(target, project.app, "globals.css");
+    const variables =
+      project.id === "kierunek"
+        ? ':root { --font-display: "Cormorant Garamond"; --font-body: "Manrope"; }'
+        : ':root { --font-bebas: "Bebas Neue"; --font-inter: "Inter"; }';
+    await writeFile(
+      globals,
+      (await readFile(globals, "utf8")) + "\n" + fontCss + variables,
+    );
   }
-  fontCss = fontCss.replace(
-    /(?:\.\.\/media\/|\/_next\/static\/media\/)/g,
-    `${base}/fonts/`,
-  );
-  await mkdir(path.join(target, "public/fonts"), { recursive: true });
-  const media = path.join(source, ".next/static/media");
-  for (const file of await readdir(media))
-    if (/\.woff2?$/.test(file))
-      await cp(path.join(media, file), path.join(target, "public/fonts", file));
-  const layout = path.join(target, project.app, "layout.tsx");
-  let layoutText = await readFile(layout, "utf8");
-  layoutText = layoutText.replace(
-    /import \{[^}]+\} from "next\/font\/google";\s*/g,
-    "",
-  );
-  layoutText = layoutText.replace(
-    /const (display|body|bebas|inter) = [\s\S]*?\}\);/g,
-    'const $1 = { variable: "" };',
-  );
-  layoutText = layoutText.replace(
-    /export const metadata: Metadata = \{/,
-    "export const metadata: Metadata = { robots: { index: false, follow: false },",
-  );
-  await writeFile(layout, layoutText);
-  const globals = path.join(target, project.app, "globals.css");
-  const variables =
-    project.id === "kierunek"
-      ? ':root { --font-display: "Cormorant Garamond"; --font-body: "Manrope"; }'
-      : ':root { --font-bebas: "Bebas Neue"; --font-inter: "Inter"; }';
-  await writeFile(
-    globals,
-    (await readFile(globals, "utf8")) + "\n" + fontCss + variables,
-  );
   console.log(`Building live preview: ${project.id}`);
   await new Promise((resolve, reject) => {
     const child = spawn(
@@ -206,7 +267,7 @@ for (const project of projects) {
       [
         path.join(source, "node_modules/next/dist/bin/next"),
         "build",
-        ...(project.id === "kierunek" ? ["--webpack"] : []),
+        ...(project.id !== "marcin-bak" ? ["--webpack"] : []),
       ],
       { cwd: target, stdio: "inherit" },
     );
@@ -219,13 +280,11 @@ for (const project of projects) {
   const previewRoot = path.resolve(root, "public", "previews");
   const destination = path.resolve(previewRoot, project.id);
   if (path.dirname(destination) !== previewRoot)
-    throw new Error("Preview destination must be a direct child of public/previews");
+    throw new Error(
+      "Preview destination must be a direct child of public/previews",
+    );
   // Replace only this generated preview after a successful build.
   await rm(destination, { recursive: true, force: true });
-  await cp(
-    path.join(target, "out"),
-    destination,
-    { recursive: true },
-  );
+  await cp(path.join(target, "out"), destination, { recursive: true });
   console.log(`Exported ${base}/index.html`);
 }

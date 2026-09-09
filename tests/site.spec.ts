@@ -46,7 +46,7 @@ test("all scenes and all project titles remain available without JavaScript", as
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:3100");
   await expect(page.locator("main section[data-scene]")).toHaveCount(8);
-  await expect(page.locator(".live-project")).toHaveCount(2);
+  await expect(page.locator(".live-project")).toHaveCount(3);
   await expect(
     page.getByRole("heading", { name: "Kierunek", exact: true }),
   ).toBeVisible();

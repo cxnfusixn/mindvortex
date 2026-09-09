@@ -58,7 +58,7 @@ const en = {
     title: ["Systems with", "character."],
     copy: [
       "A meeting point for logic and instinct.",
-      "Two websites. Two distinct identities.",
+      "Different websites. Distinct identities.",
     ],
     concept: "CONCEPT STUDY",
     project: "PROJECT",
@@ -188,7 +188,7 @@ const pl: Copy = {
     title: ["Systemy", "z charakterem."],
     copy: [
       "Miejsce, w którym logika spotyka intuicję.",
-      "Dwie strony. Dwa różne charaktery.",
+      "Różne strony. Wyraziste charaktery.",
     ],
     concept: "KONCEPCJA",
     project: "PROJEKT",
