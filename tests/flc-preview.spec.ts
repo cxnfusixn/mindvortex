@@ -42,10 +42,15 @@ test("FLC is an interactive third preview with independent desktop and mobile vi
     .getByRole("combobox", { name: "Vehicle make", exact: true })
     .selectOption("Porsche");
   await expect(flc.locator(".cars > .car")).toHaveCount(1);
+  const pricing = flc.locator(".car-info .pricing-enquiry");
+  await expect(pricing).toHaveText("Contact dealer for pricing");
+  expect(await pricing.evaluate(el => el.getBoundingClientRect().top >= el.previousElementSibling!.getBoundingClientRect().bottom)).toBe(true);
+  await expect(flc.locator("body")).not.toContainText(/\$[\d,]+/);
   await flc
     .getByRole("button", { name: "View 2024 Porsche 911", exact: true })
     .click();
   await expect(flc.locator("dialog[open]")).toBeVisible();
+  await expect(flc.locator("dialog[open] .pricing-enquiry")).toHaveText("Contact dealer for pricing");
   await page.keyboard.press("Escape");
   await expect(flc.locator("dialog[open]")).toHaveCount(0);
   await project.getByRole("button", { name: "Mobile", exact: true }).click();

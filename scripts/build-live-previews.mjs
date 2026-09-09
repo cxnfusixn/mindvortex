@@ -69,6 +69,8 @@ for (const project of projects) {
     await cp(path.join(source, directory), path.join(target, directory), {
       recursive: true,
       filter: (file) =>
+        // The portfolio embeds the homepage, not the separate in-progress demo app.
+        !(project.id === "flc" && path.relative(source, file).replaceAll("\\", "/").match(/^app\/demo(?:\/|$)/)) &&
         !/[\\/](api|studio)[\\/]?/.test(file) &&
         !/[\\/](sitemap|robots)\.ts$/.test(file),
     });
