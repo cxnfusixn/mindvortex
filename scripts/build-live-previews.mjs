@@ -89,12 +89,13 @@ for (const project of projects) {
     `export default { output: "export", basePath: "${base}", trailingSlash: true, images: { unoptimized: true }, ${project.id === "marcin-bak" ? "eslint: { ignoreDuringBuilds: true }," : ""} };`,
   );
 
-  for (const directory of project.dirs.filter((d) => d !== "public")) {
+  for (const directory of project.dirs.filter((d) => d !== "public" || project.id === "flc")) {
     for (const file of await walk(path.join(target, directory))) {
       if (!/\.(tsx?|css)$/.test(file)) continue;
       let text = await readFile(file, "utf8");
       text = text.replace(/(["'`(])\/(images|videos)\//g, `$1${base}/$2/`);
       if (project.id === "flc") {
+        text = text.replace(/(["'`(])\/themes\//g, `$1${base}/themes/`);
         text = text.replace(
           /(["'])\/(flc-[^"']+\.svg|logo\.svg)/g,
           `$1${base}/$2`,

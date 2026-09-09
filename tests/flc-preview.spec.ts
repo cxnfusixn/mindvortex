@@ -27,6 +27,14 @@ test("FLC is an interactive third preview with independent desktop and mobile vi
     )
     .toBeGreaterThan(0);
   await page.screenshot({ path: "test-results/flc-desktop.png" });
+  const palette = flc.getByRole("button", { name: "Espresso color palette" });
+  const accent = () => flc.locator("html").evaluate(el => getComputedStyle(el).getPropertyValue("--accent").trim());
+  await expect.poll(accent).toBe("#d6c19a");
+  await palette.click();
+  await expect.poll(accent).toBe("#c57936");
+  await expect(flc.locator('link[href="/previews/flc/themes/original.css"]')).toHaveAttribute("media", "all");
+  await palette.click();
+  await expect.poll(accent).toBe("#d6c19a");
   await flc
     .getByRole("link", { name: "Explore the collection", exact: true })
     .click();
