@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("FLC is an interactive third preview with independent desktop and mobile viewports", async ({
+test("FLC is the first preview with working vehicle pages and mobile navigation", async ({
   page,
 }) => {
   test.setTimeout(60000);
@@ -9,6 +9,7 @@ test("FLC is an interactive third preview with independent desktop and mobile vi
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/pl");
+  await expect(page.locator(".live-project").first()).toHaveAttribute("id", "project-flc");
   const project = page.locator("#project-flc");
   await project.scrollIntoViewIfNeeded();
   const flc = page.frameLocator('iframe[title^="FLC"]');
@@ -19,13 +20,7 @@ test("FLC is an interactive third preview with independent desktop and mobile vi
       .locator("html")
       .evaluate(() => ({ width: innerWidth, height: innerHeight })),
   ).toEqual({ width: 1920, height: 1080 });
-  await expect
-    .poll(() =>
-      flc
-        .locator(".logo img")
-        .evaluate((el: HTMLImageElement) => el.naturalWidth),
-    )
-    .toBeGreaterThan(0);
+  await expect(flc.locator(".logo svg")).toBeVisible();
   await page.screenshot({ path: "test-results/flc-desktop.png" });
   const palette = flc.getByRole("button", { name: "Espresso color palette" });
   const accent = () => flc.locator("html").evaluate(el => getComputedStyle(el).getPropertyValue("--accent").trim());
@@ -49,20 +44,27 @@ test("FLC is an interactive third preview with independent desktop and mobile vi
   await flc
     .getByRole("button", { name: "View 2024 Porsche 911", exact: true })
     .click();
-  await expect(flc.locator("dialog[open]")).toBeVisible();
-  await expect(flc.locator("dialog[open] .pricing-enquiry")).toHaveText("Contact dealer for pricing");
-  await page.keyboard.press("Escape");
-  await expect(flc.locator("dialog[open]")).toHaveCount(0);
+  await expect(flc.locator("h1")).toContainText("Porsche");
+  await expect.poll(() => flc.locator("html").evaluate(() => location.pathname)).toMatch(/\/previews\/flc\/inventory\/porsche-911\/?$/);
   await project.getByRole("button", { name: "Mobile", exact: true }).click();
   await expect
     .poll(() => flc.locator("html").evaluate(() => innerWidth))
     .toBe(390);
-  await flc.getByRole("button", { name: "Open menu", exact: true }).click();
+  await flc.getByRole("button", { name: "Open full menu", exact: true }).click();
   await expect(
-    flc.getByRole("navigation", { name: "Mobile navigation" }),
+    flc.getByRole("navigation", { name: "All pages" }),
   ).toBeVisible();
   await page.screenshot({ path: "test-results/flc-mobile.png" });
   expect(errors).toEqual([]);
+});
+
+test("FLC exported subpages support direct navigation and refresh", async ({ page }) => {
+  for (const route of ["inventory", "inventory/porsche-911", "services/appointment", "account", "brands/porsche"]) {
+    const response = await page.goto(`/previews/flc/${route}/`);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("h1").first()).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  }
 });
 
 test("FLC full page uses prefixed local video, frame and font assets", async ({

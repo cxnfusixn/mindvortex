@@ -63,7 +63,7 @@ Fonts are self-hosted through `next/font/local`, with Latin Extended subsets for
 
 ## Live project row
 
-`ProjectsScene` renders an extensible horizontal row of `LiveProject` panels: Kierunek, Marcin Bak and FLC (Fort Lauderdale Collection). Desktop shows two panels at a time; scroll the row horizontally to reach further projects. Each panel embeds the actual exported React website with its own vertical scrollbar, responsive width switch and full-page link. Iframes mount near the viewport to avoid loading all applications in the hero.
+`ProjectsScene` renders an extensible horizontal row of `LiveProject` panels: FLC (Fort Lauderdale Collection), Kierunek and Marcin Bak. Desktop shows two panels at a time; scroll the row horizontally to reach further projects. Each panel embeds the actual exported React website with its own vertical scrollbar, responsive width switch and full-page link. Iframes mount near the viewport to avoid loading all applications in the hero.
 
 Edit projects in `src/data/subprojects.ts`. Deployable HTML, JavaScript, CSS and assets live under `public/previews/`. No sibling server is needed to run or deploy the portfolio. Next rewrites serve preview landing pages and Kierunek blog routes.
 
@@ -80,3 +80,5 @@ The script copies source into ignored `.preview-build/`, exports each app using 
 The bilingual form posts to `/api/contact` and sends mail only to `patryk.pyrka@mindvortex.pro`, with the visitor as Reply-To. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` and `SMTP_FROM` in `.env.local` or deployment secrets (see `.env.example`). Ports 465 and 587 use TLS; SMTP_FROM must be authorized by the provider. Without credentials the endpoint returns 503 and the UI offers direct email, never a false delivery confirmation. The API validates content, caps body size, rejects foreign browser origins and limits attempts per process. Multi-instance deployments should add shared rate limiting at the trusted reverse proxy. Do not expose SMTP variables through NEXT_PUBLIC prefixes.
 
 Preview Desktop uses a 1920 x 1080 iframe scaled by ResizeObserver. Mobile uses 390 x 844. Each embedded page retains its own vertical scrollbar; the extensible project row scrolls horizontally.
+
+FLC includes its exported dealership subpages (inventory, vehicles, marques, services and account demo). Nested preview routes are served from their generated index.html files. Native search forms use the preview prefix; Next.js links and router navigation use basePath. Demo requests stay in the browser and do not send messages.

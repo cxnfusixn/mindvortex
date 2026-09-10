@@ -1,5 +1,15 @@
 export const subprojects = [
   {
+    id: "flc",
+    title: "FLC",
+    subtitle: { pl: "Fort Lauderdale Collection — samochody luksusowe", en: "Fort Lauderdale Collection — luxury automobiles" },
+    description: {
+      pl: "Filmowa prezentacja kolekcji samochodów luksusowych. Animowane intro, interaktywny katalog i sekwencja Porsche sterowana przewijaniem tworzą doświadczenie cyfrowego salonu.",
+      en: "A cinematic showcase of luxury automobiles. An animated intro, interactive inventory and a scroll-controlled Porsche sequence create a digital showroom experience.",
+    },
+    stack: ["Next.js", "TypeScript", "React", "Motion design"],
+  },
+  {
     id: "kierunek",
     title: "Kierunek",
     subtitle: {
@@ -24,15 +34,5 @@ export const subprojects = [
       en: "A cinematic website for a boxing and MMA coach. Scrolling moves through a sequence of scenes: training philosophy, disciplines and services. Typography, imagery and motion tell one connected story.",
     },
     stack: ["Next.js", "TypeScript", "GSAP", "Framer Motion"],
-  },
-  {
-    id: "flc",
-    title: "FLC",
-    subtitle: { pl: "Fort Lauderdale Collection — samochody luksusowe", en: "Fort Lauderdale Collection — luxury automobiles" },
-    description: {
-      pl: "Filmowa prezentacja kolekcji samochodów luksusowych. Animowane intro, interaktywny katalog i sekwencja Porsche sterowana przewijaniem tworzą doświadczenie cyfrowego salonu.",
-      en: "A cinematic showcase of luxury automobiles. An animated intro, interactive inventory and a scroll-controlled Porsche sequence create a digital showroom experience.",
-    },
-    stack: ["Next.js", "TypeScript", "React", "Motion design"],
   },
 ] as const;

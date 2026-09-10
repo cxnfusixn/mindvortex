@@ -9,6 +9,10 @@ const config: NextConfig = {
         destination: "/previews/:project/index.html",
       },
       {
+        source: "/previews/flc/:path+",
+        destination: "/previews/flc/:path+/index.html",
+      },
+      {
         source: "/previews/kierunek/blog",
         destination: "/previews/kierunek/blog/index.html",
       },
