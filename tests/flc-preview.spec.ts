@@ -69,6 +69,31 @@ test("FLC exported subpages support direct navigation and refresh", async ({ pag
   }
 });
 
+for (const width of [390, 1440]) {
+  test(`FLC native links, menu search and filters retain preview base at ${width}px`, async ({ page }) => {
+    test.setTimeout(60000);
+    await page.setViewportSize({width, height:1000});
+    await page.goto('/previews/flc/');
+    await expect(page.locator('.brand-intro')).toHaveCount(0, {timeout:15000});
+    await page.getByRole('link', {name:'Explore the full collection',exact:true}).click();
+    await expect(page).toHaveURL(/\/previews\/flc\/inventory\/?$/);
+    if (width === 390) await page.getByRole('button', {name:'Show filters',exact:true}).click();
+    await page.getByPlaceholder('Make, model, stock').fill('Porsche');
+    await expect(page).toHaveURL(/\/previews\/flc\/inventory\/?\?q=Porsche$/);
+    await page.getByRole('button',{name:'Open full menu',exact:true}).click();
+    await page.locator('#global-search').fill('Ferrari');
+    await page.getByRole('button',{name:'Search collection',exact:true}).click();
+    await expect(page).toHaveURL(/\/previews\/flc\/inventory\/?\?q=Ferrari$/);
+    await expect(page.locator('h1')).toContainText('collection');
+    await page.screenshot({path:`test-results/flc-inventory-fixed-${width}.png`});
+    await page.goto('/previews/flc/');
+    await expect(page.locator('.brand-intro')).toHaveCount(0, {timeout:15000});
+    await page.getByRole('link',{name:'Get to know us',exact:true}).click();
+    await expect(page).toHaveURL(/\/previews\/flc\/about\/?$/);
+    await expect(page.locator('h1')).toBeVisible();
+  });
+}
+
 test("FLC full page uses prefixed local video, frame and font assets", async ({
   page,
   request,

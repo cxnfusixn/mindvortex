@@ -95,6 +95,8 @@ for (const project of projects) {
       let text = await readFile(file, "utf8");
       text = text.replace(/(["'`(])\/(images|videos)\//g, `$1${base}/$2/`);
       if (project.id === "flc") {
+        // Next Link/router add basePath themselves; native anchors do not.
+        text = text.replace(/(<a\b[^>]*?\bhref=["'])\/(?!\/|previews\/flc(?:\/|["']))/g, `$1${base}/`);
         text = text.replace(/action="\/inventory"/g, `action="${base}/inventory"`);
         text = text.replace(/(["'`(])\/themes\//g, `$1${base}/themes/`);
         text = text.replace(
