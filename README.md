@@ -63,7 +63,7 @@ Fonts are self-hosted through `next/font/local`, with Latin Extended subsets for
 
 ## Live project row
 
-`ProjectsScene` renders an extensible horizontal row of `LiveProject` panels: FLC (Fort Lauderdale Collection), Kierunek and Marcin Bak. Desktop shows two panels at a time; scroll the row horizontally to reach further projects. Each panel embeds the actual exported React website with its own vertical scrollbar, responsive width switch and full-page link. Iframes mount near the viewport to avoid loading all applications in the hero.
+`ProjectsScene` renders an extensible horizontal row of `LiveProject` panels: FLC (Fort Lauderdale Collection), Marcin Bak and Kierunek. Desktop shows two panels at a time; scroll the row horizontally to reach further projects. Each panel embeds the actual exported React website with its own vertical scrollbar, responsive width switch and full-page link. Iframes mount near the viewport to avoid loading all applications in the hero.
 
 Edit projects in `src/data/subprojects.ts`. Deployable HTML, JavaScript, CSS and assets live under `public/previews/`. No sibling server is needed to run or deploy the portfolio. Next rewrites serve preview landing pages and Kierunek blog routes.
 

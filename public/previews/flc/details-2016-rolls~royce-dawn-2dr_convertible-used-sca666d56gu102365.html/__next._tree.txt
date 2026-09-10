@@ -1,2 +1,2 @@
-:HL["/previews/flc/_next/static/css/87c3367fecfa4a19.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"path","param":{"type":"c","key":"details-2016-rolls~royce-dawn-2dr_convertible-used-sca666d56gu102365.html","siblings":["_not-found","_global-error","icon.svg"]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"ls8rrwRbJGM0Z97WbNep-"}
+:HL["/previews/flc/_next/static/css/b6a9a7d1a5dc72d0.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"path","param":{"type":"c","key":"details-2016-rolls~royce-dawn-2dr_convertible-used-sca666d56gu102365.html","siblings":["_not-found","_global-error","icon.svg"]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"xFp-Y_pUHHpLPYHtpZBQf"}

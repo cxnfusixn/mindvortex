@@ -10,6 +10,8 @@ test("FLC is the first preview with working vehicle pages and mobile navigation"
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/pl");
   await expect(page.locator(".live-project").first()).toHaveAttribute("id", "project-flc");
+  await expect(page.locator(".live-project").nth(1)).toHaveAttribute("id", "project-marcin-bak");
+  await expect(page.locator(".live-project").nth(2)).toHaveAttribute("id", "project-kierunek");
   const project = page.locator("#project-flc");
   await project.scrollIntoViewIfNeeded();
   const flc = page.frameLocator('iframe[title^="FLC"]');

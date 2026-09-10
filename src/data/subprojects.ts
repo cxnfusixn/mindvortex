@@ -10,19 +10,6 @@ export const subprojects = [
     stack: ["Next.js", "TypeScript", "React", "Motion design"],
   },
   {
-    id: "kierunek",
-    title: "Kierunek",
-    subtitle: {
-      pl: "Strona internetowa centrum psychologicznego",
-      en: "Psychology centre website",
-    },
-    description: {
-      pl: "Spokojna, czytelna strona centrum psychologicznego. Oferta, cennik, blog i formularz kontaktowy połączone z panelem zarządzania treścią Sanity.",
-      en: "A calm, clear website for a psychology centre. Services, pricing, a blog and a contact form connected to a Sanity content management system.",
-    },
-    stack: ["Next.js", "TypeScript", "Tailwind CSS", "Sanity"],
-  },
-  {
     id: "marcin-bak",
     title: "Marcin Bąk",
     subtitle: {
@@ -34,5 +21,18 @@ export const subprojects = [
       en: "A cinematic website for a boxing and MMA coach. Scrolling moves through a sequence of scenes: training philosophy, disciplines and services. Typography, imagery and motion tell one connected story.",
     },
     stack: ["Next.js", "TypeScript", "GSAP", "Framer Motion"],
+  },
+  {
+    id: "kierunek",
+    title: "Kierunek",
+    subtitle: {
+      pl: "Strona internetowa centrum psychologicznego",
+      en: "Psychology centre website",
+    },
+    description: {
+      pl: "Spokojna, czytelna strona centrum psychologicznego. Oferta, cennik, blog i formularz kontaktowy połączone z panelem zarządzania treścią Sanity.",
+      en: "A calm, clear website for a psychology centre. Services, pricing, a blog and a contact form connected to a Sanity content management system.",
+    },
+    stack: ["Next.js", "TypeScript", "Tailwind CSS", "Sanity"],
   },
 ] as const;
