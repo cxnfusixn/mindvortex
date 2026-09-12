@@ -147,17 +147,17 @@ const pl: Copy = {
   capabilities: [
     {
       name: "Strony i aplikacje webowe",
-      copy: "Projektowanie i tworzenie stron internetowych dla firm oraz dedykowanych aplikacji webowych. Łączę indywidualny projekt graficzny z programowaniem w Next.js i React.",
+      copy: "Tworzenie stron internetowych dla firm i aplikacji webowych na zamówienie. Strony firmowe, landing page i interfejsy w Next.js i React, dopasowane do telefonów i komputerów.",
       tags: ["Next.js", "React", "TypeScript", "Inżynieria interfejsów"],
     },
     {
       name: "Backend i integracje API",
-      copy: "Tworzenie i rozwój backendu w Java i Spring. Projektuję REST API, integracje systemów oraz logikę biznesową dopasowaną do potrzeb aplikacji.",
+      copy: "Programowanie backendu w Java i Spring: REST API, integracje systemów i bazy danych. Rozwój istniejących aplikacji oraz logika biznesowa dla nowych produktów.",
       tags: ["Java", "Spring", "REST", "Bazy danych", "Systemy rozproszone"],
     },
     {
       name: "Logo i identyfikacja wizualna",
-      copy: "Projektowanie logo i identyfikacji wizualnej dla firm. Tworzę spójną typografię, kolorystykę i materiały graficzne do wykorzystania na stronie oraz w komunikacji marki.",
+      copy: "Projektowanie logo i identyfikacji wizualnej dla firm. Znak, typografia, kolorystyka i materiały graficzne tworzą spójną markę na stronie internetowej i w komunikacji firmy.",
       tags: [
         "Identyfikacja wizualna",
         "Kierunek artystyczny",

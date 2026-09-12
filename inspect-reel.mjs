@@ -1,0 +1,2 @@
+import {chromium} from '@playwright/test';
+const b=await chromium.launch();const p=await b.newPage({viewport:{width:1440,height:1000}});await p.goto('https://mindvortex.pro/previews/flc/',{waitUntil:'networkidle'});console.log(await p.locator('h1,h2,h3,a,button').allTextContents());await p.screenshot({path:'social/reels/flc/hero.png'});console.log(await p.locator('section').evaluateAll(xs=>xs.map(x=>({id:x.id,top:x.offsetTop,height:x.offsetHeight,text:x.innerText.slice(0,160)}))));await b.close();

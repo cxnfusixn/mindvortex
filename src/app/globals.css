@@ -2230,9 +2230,9 @@ html[lang="pl"] .hero-line.middle {
 .contact-details .social-links {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 18px;
+  gap: 8px 18px;
   margin-top: 20px;
   width: auto;
 }

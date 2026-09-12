@@ -7,4 +7,5 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://mindvortex.example",
   email: "patryk.pyrka@mindvortex.pro",
   linkedin: "https://www.linkedin.com/in/patryk-p-2793a8379/",
+  instagram: "https://www.instagram.com/mindvortex.pro/",
 };

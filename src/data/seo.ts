@@ -5,11 +5,11 @@ export const seo: Record<Locale, { title: string; description: string }> = {
   pl: {
     title: "Strony internetowe, backend Java i branding | Mind Vortex",
     description:
-      "Patryk Pyrka — strony i aplikacje webowe, backend Java/Spring, integracje API, logo i identyfikacja wizualna. Poznaj portfolio Mind Vortex i omów swój projekt.",
+      "Mind Vortex: tworzenie stron internetowych dla firm, aplikacje na zamówienie, backend Java/Spring i projektowanie logo. Zobacz projekty i opisz swoje potrzeby.",
   },
   en: {
     title: "Web Development, Java Backend & Branding | Mind Vortex",
     description:
-      "Patryk Pyrka builds websites, web applications and Java/Spring backends, with API integrations, logo design and visual identity. Explore Mind Vortex’s portfolio.",
+      "Mind Vortex: business websites, custom web applications, Java/Spring backend development and logo design. Explore the portfolio and discuss your project.",
   },
 };

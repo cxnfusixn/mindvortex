@@ -1,0 +1,2 @@
+import {pool} from './lib/db.mjs';
+try{console.log(JSON.stringify({reels:(await pool.query("SELECT day::text,status,content->>'topic' AS topic FROM social_reels ORDER BY day")).rows,tiktok:(await pool.query("SELECT day::text,kind,status,content->>'topic' AS topic FROM social_tiktok_jobs ORDER BY day")).rows,events:(await pool.query('SELECT created_at,message FROM social_events ORDER BY id DESC LIMIT 4')).rows},null,2));}finally{await pool.end();}

@@ -1,0 +1,29 @@
+[Unit]
+Description=Mind Vortex Social publishing worker
+After=network-online.target postgresql.service mindvortex-social.service
+[Service]
+User=mv-social
+Group=mv-social
+WorkingDirectory=/opt/mindvortex-social/current
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/mindvortex-social.env
+ExecStart=/opt/node-mindvortex/bin/node worker.mjs
+Restart=on-failure
+RestartSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mindvortex-social
+UMask=0077
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+PrivateDevices=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryMax=1G
+TasksMax=128
+ProtectHome=true
+[Install]
+WantedBy=multi-user.target

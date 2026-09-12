@@ -1,0 +1,6 @@
+import fs from 'node:fs/promises';import {spawn} from 'node:child_process';import {once} from 'node:events';const dir='social/reels/flc/v4',duration=10,ff='social/reels/runtime/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe';
+// Original low-key sound design: soft synth pulse, pad and subtle transition ticks.
+const sr=48000,n=sr*duration,pcm=Buffer.alloc(n*2);let seed=17;
+for(let i=0;i<n;i++){const t=i/sr,fade=Math.min(1,t/.3,(duration-t)/.7),beat=t%0.6;seed=(seed*1664525+1013904223)>>>0;let v=.022*(Math.sin(2*Math.PI*110*t)+.5*Math.sin(2*Math.PI*164.81*t)+.35*Math.sin(2*Math.PI*220*t));v+=.1*Math.exp(-beat*19)*Math.sin(2*Math.PI*(55*t+1.4*(1-Math.exp(-beat*14))));for(const cut of [1,3.4,5.8,7.4])if(t>cut&&t<cut+.16)v+=(seed/4294967296-.5)*.09*Math.exp(-(t-cut)*35);pcm.writeInt16LE(Math.round(Math.max(-1,Math.min(1,v*fade))*32767),i*2);}
+await fs.writeFile(dir+'/sound-design.pcm',pcm);
+const mux=spawn(ff,['-y','-i',dir+'/flc-reel-silent.mp4','-f','s16le','-ar',String(sr),'-ac','1','-i',dir+'/sound-design.pcm','-c:v','copy','-c:a','aac','-b:a','192k','-shortest','-movflags','+faststart',dir+'/flc-reel.mp4'],{windowsHide:true,stdio:'ignore'});const [result]=await once(mux,'close');if(result)throw Error('Audio mux failed');console.log('Completed',dir+'/flc-reel.mp4');

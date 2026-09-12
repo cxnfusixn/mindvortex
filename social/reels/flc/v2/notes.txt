@@ -1,0 +1,11 @@
+FLC reel v2 — 1080x1920, 30fps, 20 seconds
+0.0–1.2: Mind Vortex loading intro
+1.2–3.2: Hero through search and brand strip
+3.2–7.0: Inventory and vehicle cards
+7.0–10.0: Lotus and supporting services
+10.0–12.8: Interactive vehicle presentation
+12.8–15.2: Showroom / studio presentation
+15.2–17.2: Contact and final website sections
+17.2–20.0: Mind Vortex call to action
+
+Larger website viewport; faster eased scrolling; original studio fonts and colors.

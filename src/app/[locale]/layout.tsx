@@ -139,7 +139,7 @@ export default async function RootLayout({ children, params }: Props) {
           "Visual identity",
           "Graphic design",
         ],
-        sameAs: [site.linkedin].filter(Boolean),
+        sameAs: [site.linkedin, site.instagram].filter(Boolean),
       },
     ],
   };

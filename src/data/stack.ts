@@ -2,7 +2,7 @@ export const stack = [
   {
     name: { en: "Backend", pl: "Backend" },
     items: [
-      "Java 8–21",
+      "Java",
       "Kotlin",
       "Spring / Spring Boot",
       "Micronaut",

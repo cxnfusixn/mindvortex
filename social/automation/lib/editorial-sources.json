@@ -1,0 +1,77 @@
+[
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/skeleton-screens/",
+    "angle": "Why a loading screen can change how long a wait feels"
+  },
+  {
+    "category": "AI",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "angle": "Why the best AI automation is not always an autonomous agent"
+  },
+  {
+    "category": "FRONTEND",
+    "url": "https://web.dev/articles/bfcache",
+    "angle": "Why the Back button can feel instant"
+  },
+  {
+    "category": "TECH",
+    "url": "https://letsencrypt.org/how-it-works/",
+    "angle": "What happens behind the padlock when you open a website"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/animation-purpose-ux/",
+    "angle": "When motion helps people understand a screen"
+  },
+  {
+    "category": "AI",
+    "url": "https://www.anthropic.com/engineering/contextual-retrieval",
+    "angle": "Why giving AI the right context matters more than a longer prompt"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/recognition-and-recall/",
+    "angle": "Why choosing from visible options feels easier than remembering"
+  },
+  {
+    "category": "AI",
+    "url": "https://www.anthropic.com/engineering/claude-think-tool",
+    "angle": "Why an AI system sometimes benefits from a pause before acting"
+  },
+  {
+    "category": "BACKEND",
+    "url": "https://aws.amazon.com/what-is/load-balancing/",
+    "angle": "How a busy website spreads the work behind the scenes"
+  },
+  {
+    "category": "TECH",
+    "url": "https://aws.amazon.com/what-is/latency/",
+    "angle": "Why distance still matters on the internet"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/aesthetic-usability-effect/",
+    "angle": "Why attractive products can feel easier to use"
+  },
+  {
+    "category": "AI",
+    "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+    "angle": "When several AI helpers are useful and when they add complexity"
+  },
+  {
+    "category": "FRONTEND",
+    "url": "https://web.dev/articles/cls",
+    "angle": "Why a button jumps just before you tap it"
+  },
+  {
+    "category": "BACKEND",
+    "url": "https://aws.amazon.com/what-is/cdn/",
+    "angle": "How a website can be closer to you than its own server"
+  },
+  {
+    "category": "TECH",
+    "url": "https://aws.amazon.com/what-is/bot/",
+    "angle": "Not every bot on a website is a bad visitor"
+  }
+]

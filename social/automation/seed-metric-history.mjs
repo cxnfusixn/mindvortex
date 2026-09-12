@@ -1,0 +1,2 @@
+import {init,pool} from './lib/db.mjs';
+try{await init();const r=await pool.query(`INSERT INTO social_metric_samples(media_id,bucket,metrics) SELECT media_id,date_trunc('hour',(metrics->>'collectedAt')::timestamptz),metrics FROM social_metrics WHERE metrics->>'collectedAt' IS NOT NULL ON CONFLICT(media_id,bucket) DO NOTHING`);console.log('Seeded real metric samples:',r.rowCount);}finally{await pool.end();}

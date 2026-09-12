@@ -1,0 +1,7 @@
+import {createRequire} from 'node:module';
+import fs from 'node:fs/promises';
+const require=createRequire(new URL('../../package.json',import.meta.url));const {chromium}=require('@playwright/test');
+const browser=await chromium.launch();const page=await browser.newPage();await fs.mkdir('qa',{recursive:true});
+for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.goto('https://mindvortex.pro/studio-social/login');await page.getByRole('button',{name:'Wyślij kod'}).waitFor();await page.screenshot({path:`qa/login-${width}.png`,fullPage:true});if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Login overflow');}
+await page.emulateMedia({reducedMotion:'reduce'});for(const locale of ['en','pl']){await page.goto('https://mindvortex.pro/'+locale);await page.locator('.intro[aria-hidden]').waitFor({state:'hidden'});await page.getByRole('link',{name:'Instagram',exact:false}).scrollIntoViewIfNeeded();if(await page.getByRole('link',{name:'Instagram',exact:false}).getAttribute('href')!=='https://www.instagram.com/mindvortex.pro/')throw Error('Wrong Instagram link');if((await page.locator('body').innerText()).includes('Java 8'))throw Error('Versioned Java remains');await page.screenshot({path:`qa/site-contact-${locale}.png`});}
+await browser.close();console.log('Public login responsive; PL/EN Instagram links and Java verified.');

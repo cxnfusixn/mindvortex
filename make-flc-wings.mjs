@@ -1,0 +1,21 @@
+import fs from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+import {once} from 'node:events';
+import {createRequire} from 'node:module';
+import {chromium} from '@playwright/test';
+import {runFFmpeg} from './social/automation/lib/reel-audio.mjs';
+import {renderReel} from './social/automation/lib/reel-render.mjs';
+const require=createRequire(new URL('./social/automation/package.json',import.meta.url)),sharp=require('sharp');
+const dir='social/reels/flc/v6',ff='social/reels/runtime/imageio_ffmpeg/binaries/ffmpeg-win-x86_64-v7.1.exe';await fs.mkdir(dir,{recursive:true});
+const browser=await chromium.launch();let page=await browser.newPage({viewport:{width:960,height:1200}});
+await page.goto('https://mindvortex.pro/previews/flc/',{waitUntil:'networkidle'});
+const svg=await page.locator('svg.flc-logo').first().evaluate(el=>el.outerHTML);
+await page.close();page=await browser.newPage({viewport:{width:960,height:1200}});
+const css=await fs.readFile('public/previews/flc/_next/static/css/b82dfb78972bb8da.css','utf8');
+await page.setContent(`<style>${css}html,body{margin:0;width:960px;height:1200px;overflow:hidden;background:#0e121b}.stage{width:960px;height:1200px;display:grid;place-items:center}.stage svg{width:820px;color:#f3ede3}.flc-wing{animation:flc-wing-flutter 1.4s ease-in-out infinite!important}</style><div class="stage">${svg}</div>`);
+const p=spawn(ff,['-y','-f','image2pipe','-vcodec','mjpeg','-framerate','30','-i','pipe:0','-an','-c:v','libx264','-crf','18','-pix_fmt','yuv420p',dir+'/wings.mp4'],{windowsHide:true,stdio:['pipe','ignore','ignore']});const done=once(p,'close');
+const base=await fs.readFile('social/reels/flc/v4/frame-165.jpg');
+for(let i=0;i<48;i++){await page.evaluate(t=>document.getAnimations().forEach(a=>{a.pause();a.currentTime=t;}),i/30*1000);const shot=await page.screenshot({type:'jpeg',quality:95});const frame=await sharp(base).composite([{input:shot,left:60,top:375}]).jpeg({quality:95}).toBuffer();if([0,8,17].includes(i))await fs.writeFile(dir+`/wings-${i}.jpg`,frame);if(!p.stdin.write(frame))await once(p.stdin,'drain');}
+p.stdin.end();await browser.close();if((await done)[0])throw Error('Wing capture failed');
+await runFFmpeg(ff,['-y','-i','social/reels/flc/v4/website.mp4','-i',dir+'/wings.mp4','-filter_complex','[0:v]trim=duration=4.8,setpts=PTS-STARTPTS[a];[a][1:v]concat=n=2:v=1:a=0[v]','-map','[v]','-an','-c:v','libx264','-crf','18','-pix_fmt','yuv420p',dir+'/website.mp4']);
+console.log(await renderReel({outputDir:dir,heroImage:'social/reels/flc/v4/frame-0.jpg',websiteVideo:dir+'/website.mp4',sceneKeys:['flc:hero','flc:porsche-interactive','flc:wing-logo'],ffmpeg:ff}));

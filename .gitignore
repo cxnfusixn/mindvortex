@@ -9,3 +9,14 @@ playwright-report/
 .idea/
 .preview-build/
 /img.png
+/.social-db-setup.sql
+/.social-deploy.tar.gz
+
+# Generated media intermediates and local QA data
+/qa/
+/.social-files.txt
+/.social-reel-template.tar.gz
+/social/reels/runtime/
+**/site-release.tar.gz
+/social/automation/qa-posts.json
+/social/reels/marcin-bak/v1/

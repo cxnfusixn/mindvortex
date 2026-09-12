@@ -43,6 +43,7 @@ export function ContactScene() {
                   href: site.email ? `mailto:${site.email}` : "",
                 },
                 { label: "LinkedIn", href: site.linkedin },
+                { label: "Instagram", href: site.instagram },
               ].map((link) =>
                 link.href ? (
                   <a

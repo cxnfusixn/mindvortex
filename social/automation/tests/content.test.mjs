@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {validate,dayKey,addDays,kindFor,caption} from '../lib/brand.mjs';
+import {sameCaption} from '../lib/instagram.mjs';
+const good=()=>({topic:'Clear contact forms',headline:'MAKE CONTACT SIMPLE',points:['Ask for what you need','Explain the next step'],caption:'We design contact paths around your customers.',hashtags:['#WebDesign','#UserExperience','#WebDevelopment','#ContactForms','#MindVortex'],alt:'Text on a black card',project:'none'});
+test('rejects missing captions and invented portfolio projects',()=>{assert.throws(()=>validate({...good(),caption:''}));assert.throws(()=>validate({...good(),project:'fictional-client'}));});
+test('requires studio voice and unique relevant tag slots',()=>{assert.throws(()=>validate({...good(),caption:'Send me a message'}));assert.throws(()=>validate({...good(),hashtags:Array(5).fill('#MindVortex')}));});
+test('portfolio captions disclose demonstration status',()=>{assert.throws(()=>validate({...good(),project:'flc'}));assert.doesNotThrow(()=>validate({...good(),project:'flc',caption:'Our FLC portfolio demo.'}));});
+test('uses Warsaw date across UTC boundary and DST',()=>{assert.equal(dayKey(new Date('2026-09-11T22:30:00Z')),'2026-09-12');assert.equal(dayKey(new Date('2026-01-11T23:30:00Z')),'2026-01-12');assert.equal(addDays('2026-03-28',1),'2026-03-29');});
+test('portfolio is not adjacent in editorial cycle',()=>{for(let i=0;i<14;i++){const d=addDays('2026-09-14',i);if(kindFor(d)==='portfolio')assert.notEqual(kindFor(addDays(d,1)),'portfolio');}});
+test('published caption verification detects lost hashtags and blank text',()=>{const expected=caption(good());assert.equal(sameCaption(expected.replaceAll('\n','\r\n'),expected),true);assert.equal(sameCaption('',expected),false);assert.equal(sameCaption(good().caption,expected),false);});
