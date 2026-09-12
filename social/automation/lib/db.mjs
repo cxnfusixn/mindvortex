@@ -18,6 +18,7 @@ export async function init() {
  ALTER TABLE social_tiktok_jobs ADD COLUMN IF NOT EXISTS manual_requested_at timestamptz;
  CREATE TABLE IF NOT EXISTS social_metric_samples(media_id text NOT NULL,bucket timestamptz NOT NULL,metrics jsonb NOT NULL,PRIMARY KEY(media_id,bucket));
  CREATE TABLE IF NOT EXISTS social_metrics(media_id text PRIMARY KEY,metrics jsonb NOT NULL);
+ CREATE TABLE IF NOT EXISTS social_removed_content(platform text NOT NULL,permalink text NOT NULL,reported_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(platform,permalink));
  CREATE TABLE IF NOT EXISTS social_events(id bigserial PRIMARY KEY, created_at timestamptz DEFAULT now(), message text NOT NULL);
  CREATE TABLE IF NOT EXISTS social_tokens(id int PRIMARY KEY CHECK(id=1), token text NOT NULL, refreshed_at timestamptz DEFAULT now());
  CREATE TABLE IF NOT EXISTS social_visual_reviews(asset_key text NOT NULL,history_revision text NOT NULL,repeated boolean NOT NULL,PRIMARY KEY(asset_key,history_revision));

@@ -73,5 +73,55 @@
     "category": "TECH",
     "url": "https://aws.amazon.com/what-is/bot/",
     "angle": "Not every bot on a website is a bad visitor"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/progressive-disclosure/",
+    "angle": "Why showing less at first can make a product easier to use"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/peak-end-rule/",
+    "angle": "Why the last moment of an experience can matter so much"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/response-times-3-important-limits/",
+    "angle": "Why a short pause can break your train of thought"
+  },
+  {
+    "category": "UX",
+    "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+    "angle": "Why people need to see what an app is doing"
+  },
+  {
+    "category": "FRONTEND",
+    "url": "https://web.dev/articles/content-visibility",
+    "angle": "Why the browser can skip drawing what you cannot see"
+  },
+  {
+    "category": "FRONTEND",
+    "url": "https://web.dev/articles/prefers-reduced-motion",
+    "angle": "Why less animation can be the better experience"
+  },
+  {
+    "category": "FRONTEND",
+    "url": "https://web.dev/articles/browser-level-image-lazy-loading",
+    "angle": "Why a website does not need to download every picture immediately"
+  },
+  {
+    "category": "BACKEND",
+    "url": "https://aws.amazon.com/what-is/database/",
+    "angle": "Why an app needs a memory beyond the screen"
+  },
+  {
+    "category": "AI",
+    "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+    "angle": "Why more information is not always better for an AI assistant"
+  },
+  {
+    "category": "AI",
+    "url": "https://www.anthropic.com/engineering/code-execution-with-mcp",
+    "angle": "Why AI tools need to pass less information around"
   }
 ]

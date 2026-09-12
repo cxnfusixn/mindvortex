@@ -6,3 +6,5 @@
 - Educational Reels rotate UX, AI, frontend, backend and technology curiosities. Use an everyday observation, a short explanation and relevance for people/businesses. No API reference summaries or coding tutorials.
 - Source registry: lib/editorial-sources.json. Historical MDN URLs remain registered only to verify old content; new generation selects the diverse editorial registry. Source checks do not imply news freshness; do not describe evergreen articles as new developments.
 - Marcin Bak v4 uses the opening, the visible combat-sports heading in the octagon section, and the ring. No philosophy section or gallery. Ten seconds, approved typography, green 35-degree swipes, original ambient.
+
+Published removal currently uses a platform link and explicit owner confirmation. Marking removal in Studio only hides the record locally; it does not call a network deletion API. History and metrics remain retained.
