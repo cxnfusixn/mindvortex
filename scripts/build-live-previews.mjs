@@ -53,6 +53,11 @@ async function walk(directory) {
 }
 
 for (const project of projects) {
+  if (project.id === "marcin-bak") {
+    const { buildMarcinPreview } = await import("./build-marcin-preview.mjs");
+    await buildMarcinPreview(process.argv[3]);
+    continue;
+  }
   const source =
     selected && process.argv[3]
       ? path.resolve(process.argv[3])

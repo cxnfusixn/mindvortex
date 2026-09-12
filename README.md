@@ -84,3 +84,9 @@ Preview Desktop uses a 1920 x 1080 iframe scaled by ResizeObserver. Mobile uses 
 FLC includes its exported dealership subpages (inventory, vehicles, marques, services and account demo). Nested preview routes are served from their generated index.html files. Native search forms use the preview prefix; Next.js links and router navigation use basePath. Demo requests stay in the browser and do not send messages.
 
 Run `node scripts/audit-flc-links.mjs https://mindvortex.pro` to audit every exported FLC page, internal anchor and GET form destination. The read-only audit checks preview prefixes, HTTP responses and same-page fragments; external destinations are inventoried separately. Results are written to `test-results/flc-link-audit.json`. Browser tests in `tests/flc-preview.spec.ts` cover actual navigation, search and filters at desktop/mobile widths. The export prefixes native HTML anchors without modifying Next.js Link/router destinations.
+
+### Marcin Bąk mockup
+
+Run the source app locally, then `node scripts/build-live-previews.mjs marcin-bak`. The exporter reads only published public collections and the rendered homepage from `http://127.0.0.1:3000` (override with `MARCIN_PREVIEW_SOURCE_URL`). It copies public media, never the database, environment, admin or contact API. The source repository remains unchanged. Blog search/filtering, pagination, galleries and contact validation run in the browser; submitting the form displays a demo confirmation without sending or storing data. Videos retain the source's click-to-play YouTube embeds.
+
+The complete static preview includes blog articles, training offers, informational pages and the English homepage. Legacy article links are mapped to their current destinations. To verify links, run `node scripts/audit-flc-links.mjs https://mindvortex.pro marcin-bak`; interaction coverage lives in `tests/marcin-preview.spec.ts`.
