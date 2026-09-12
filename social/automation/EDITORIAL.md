@@ -5,4 +5,4 @@
 - Remove and generate replacement keeps the slot, records the previous content in revisions and clears publication intent. Replacement generation happens in the worker. Failures remain visible and can be retried; rejected material is not published.
 - Educational Reels rotate UX, AI, frontend, backend and technology curiosities. Use an everyday observation, a short explanation and relevance for people/businesses. No API reference summaries or coding tutorials.
 - Source registry: lib/editorial-sources.json. Historical MDN URLs remain registered only to verify old content; new generation selects the diverse editorial registry. Source checks do not imply news freshness; do not describe evergreen articles as new developments.
-- Marcin Bak v3 uses opening/background transitions only, with no gallery. Ten seconds, approved typography, green 35-degree swipes, original ambient.
+- Marcin Bak v4 uses the opening, the visible combat-sports heading in the octagon section, and the ring. No philosophy section or gallery. Ten seconds, approved typography, green 35-degree swipes, original ambient.
