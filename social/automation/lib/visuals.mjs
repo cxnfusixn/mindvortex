@@ -21,8 +21,8 @@ async function seenOnInstagram(asset){
  const cached=(await pool.query('SELECT repeated FROM social_visual_reviews WHERE asset_key=$1 AND history_revision=$2',[asset.key,revision])).rows[0];
  if(cached)return cached.repeated;
  const candidate=await sharp(path.resolve('assets',asset.file)).resize({width:800,withoutEnlargement:true}).jpeg({quality:80}).toBuffer();
- let repeated=false;
- const unknown=history.filter(p=>!p.source||p.source===asset.sourceKey);
+ const checked=visualHistoryFor(asset,history);let repeated=checked.repeated;
+ const unknown=repeated?[]:checked.images;
  for(let i=0;i<unknown.length;i+=5){
   const batch=unknown.slice(i,i+5);if(batch.some(p=>!p.media_url))throw Error('Visual history incomplete; refresh Instagram history');
   const input=[{type:'input_text',text:'Candidate website section:'},{type:'input_image',image_url:'data:image/jpeg;base64,'+candidate.toString('base64')},...batch.flatMap(p=>[{type:'input_text',text:'Existing Instagram post '+p.media_id+' '+p.editorial_note},{type:'input_image',image_url:p.media_url}])];
