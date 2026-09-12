@@ -90,6 +90,7 @@ for (const width of [390, 1440]) {
     await expect(page.locator('.brand-intro')).toHaveCount(0, {timeout:15000});
     await page.getByRole('link',{name:'Get to know us',exact:true}).click();
     await expect(page).toHaveURL(/\/previews\/flc\/about\/?$/);
+    await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('h1')).toBeVisible();
   });
 }
@@ -118,4 +119,28 @@ test("FLC full page uses prefixed local video, frame and font assets", async ({
     "content",
     /noindex/,
   );
+});
+
+test("FLC updated mobile filters focus results and demo requests stay local", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/previews/flc/inventory/');
+  await page.getByRole('button', { name: 'Show filters', exact: true }).click();
+  await page.getByPlaceholder('Make, model, stock').fill('Porsche');
+  await page.getByRole('button', { name: /Show \d+ vehicles? ↓/ }).click();
+  await expect(page.locator('#catalog-results')).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Show filters', exact: true })).toHaveAttribute('aria-expanded', 'false');
+  const writes: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST') writes.push(request.url()); });
+  await page.goto('/previews/flc/contact/');
+  await page.getByRole('button', { name: /Start a conversation/ }).click();
+  const dialog = page.locator('dialog[open]');
+  await dialog.locator('[name=firstName]').fill('Preview');
+  await dialog.locator('[name=lastName]').fill('Test');
+  await dialog.locator('[name=email]').fill('preview@example.test');
+  await dialog.getByRole('button', { name: /Continue to your request/ }).click();
+  await dialog.locator('[name=consent]').check();
+  await dialog.getByRole('button', { name: 'Save demo request', exact: true }).click();
+  await expect(dialog.getByRole('heading', { name: 'Demo request saved.' })).toBeVisible();
+  await expect(dialog).toContainText('No message was sent');
+  expect(writes).toEqual([]);
 });
