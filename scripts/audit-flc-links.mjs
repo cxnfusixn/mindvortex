@@ -70,7 +70,11 @@ await Promise.all(
         if (link.missingFragment) missingFragments.push({ route, ...link });
         const url = new URL(link.href, origin + route);
         if (!["http:", "https:"].includes(url.protocol)) continue;
-        if (url.origin !== new URL(origin).origin) {
+        // The source site's author credit deliberately opens the parent portfolio.
+        const authorCredit = project === "marcin-bak" &&
+          link.href === "https://mindvortex.pro" &&
+          link.text === "DESIGN BY MIND VORTEX PYRKA PATRYK";
+        if (url.origin !== new URL(origin).origin || authorCredit) {
           external.add(url.href);
           continue;
         }
