@@ -20,9 +20,9 @@ export async function publishTikTok(){return locked('tiktok-publish',async()=>{
  const reels=(await pool.query("SELECT * FROM social_reels WHERE day=$1 AND status='verified'",[dayKey()])).rows;
  for(const r of reels)await pool.query("INSERT INTO social_tiktok_jobs(id,reel_id,day,kind,content,assets) VALUES($1,$2,$3,'reel',$4,$5) ON CONFLICT(reel_id) DO NOTHING",[randomUUID(),r.id,r.day,r.content,JSON.stringify([r.video])]);
  let job=(await pool.query("SELECT * FROM social_tiktok_jobs WHERE (manual_requested_at IS NOT NULL OR (day=$1 AND $2)) AND status='ready' ORDER BY manual_requested_at NULLS LAST,kind LIMIT 1",[dayKey(),warsawHour()>=cfg.hour])).rows[0];if(!job)return;
- if(job.kind==='reel'&&!job.reel_id){
+ if(job.kind==='reel'&&(!job.reel_id||job.content.independentTikTok)){
   let reason='';try{const d=await checkDuplicates(job.content,job.id);if(d.duplicate)throw Error(d.reason);await verifyFacts(job.content);}catch(e){reason=e.message;}
-  if(reason){const fresh=await prepareReel(dayKey(),job.id),content={...fresh.content,mediaSha:fresh.sha};await pool.query('INSERT INTO social_revisions(post_id,content,image,reason) VALUES($1,$2,$3,$4)',[job.id,job.content,job.assets[0],'TikTok replacement: '+reason]);await pool.query('UPDATE social_tiktok_jobs SET content=$2,assets=$3 WHERE id=$1',[job.id,content,JSON.stringify([fresh.video])]);job={...job,content,assets:[fresh.video]};}
+  if(reason){const fresh=await prepareReel(dayKey(),job.id),content={...fresh.content,mediaSha:fresh.sha,...(job.content.independentTikTok?{independentTikTok:true}:{})};await pool.query('INSERT INTO social_revisions(post_id,content,image,reason) VALUES($1,$2,$3,$4)',[job.id,job.content,job.assets[0],'TikTok replacement: '+reason]);await pool.query('UPDATE social_tiktok_jobs SET content=$2,assets=$3 WHERE id=$1',[job.id,content,JSON.stringify([fresh.video])]);job={...job,content,assets:[fresh.video]};}
  }
  await verifyBufferChannel();const input=tiktokInput(job);
  if(job.content.mediaSha){const bytes=await fs.readFile(path.join(process.env.SOCIAL_MEDIA_DIR,job.assets[0]));if(createHash('sha256').update(bytes).digest('hex')!==job.content.mediaSha)throw Error('TikTok video checksum mismatch');}

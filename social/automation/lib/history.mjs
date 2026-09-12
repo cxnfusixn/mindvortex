@@ -19,7 +19,7 @@ export async function syncHistory(){return locked('social-history',async()=>{
 export async function contentHistory(excludeId){
  const rows=(await pool.query(`SELECT id::text AS ref,day::text,content,permalink FROM social_posts WHERE ($1::uuid IS NULL OR id<>$1)
  UNION ALL SELECT id::text,day::text,content,permalink FROM social_reels WHERE ($1::uuid IS NULL OR id<>$1)
- UNION ALL SELECT id::text,day::text,content,permalink FROM social_tiktok_jobs WHERE kind='reel' AND reel_id IS NULL AND ($1::uuid IS NULL OR id<>$1)
+ UNION ALL SELECT id::text,day::text,content,permalink FROM social_tiktok_jobs WHERE kind='reel' AND (reel_id IS NULL OR content->>'independentTikTok'='true') AND ($1::uuid IS NULL OR id<>$1)
  UNION ALL SELECT 'ig:'||h.media_id,to_char(h.published_at AT TIME ZONE 'Europe/Warsaw','YYYY-MM-DD'),
  jsonb_build_object('caption',h.caption,'topic',h.editorial_note,'headline','','project','none'),h.permalink
  FROM social_history h WHERE NOT EXISTS(SELECT 1 FROM social_posts p WHERE p.media_id=h.media_id) AND NOT EXISTS(SELECT 1 FROM social_reels r WHERE r.media_id=h.media_id)
