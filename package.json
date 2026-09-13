@@ -9,7 +9,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prospecting:setup": "node prospecting/setup.mjs",
+    "prospecting:dev": "node prospecting/dev.mjs",
+    "prospecting:worker": "node --env-file-if-exists=.env.prospecting.local prospecting/worker.mjs",
+    "prospecting:test": "node --test prospecting/tests/*.test.mjs"
   },
   "repository": {
     "type": "git",
@@ -29,6 +33,7 @@
     "lenis": "^1.3.26",
     "next": "^16.3.4",
     "nodemailer": "^10.0.0",
+    "playwright": "^1.63.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

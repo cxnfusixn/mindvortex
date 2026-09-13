@@ -20,3 +20,7 @@ playwright-report/
 **/site-release.tar.gz
 /social/automation/qa-posts.json
 /social/reels/marcin-bak/v1/
+
+# Private prospecting database, evidence and generated login credentials
+/.prospecting-data/
+/.prospecting-credentials.txt
