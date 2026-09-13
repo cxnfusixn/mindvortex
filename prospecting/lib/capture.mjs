@@ -1,9 +1,11 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
-import { browserProxy, publicUrl } from "./network.mjs";
+import { browserProxy, publicUrl, isProfileUrl } from "./network.mjs";
 
 export async function capture(lead, directory) {
+  if (isProfileUrl(lead.website))
+    throw Error("Profil platformy zewnętrznej nie jest własną stroną firmy.");
   const proxy = await browserProxy();
   let browser;
   const screens = [];
@@ -65,6 +67,8 @@ export async function capture(lead, directory) {
             throw Error("Strona niedostępna.");
           await page.waitForTimeout(1200);
           await page.evaluate(() => document.fonts.ready);
+          if (isProfileUrl(page.url()))
+            throw Error("Przekierowanie do platformy zewnętrznej — pominięto audyt profilu.");
           if (index === 0 && viewport.width === 1440) {
             const links = await page.locator("a[href]").evaluateAll((nodes) =>
               nodes.map((n) => ({
@@ -129,6 +133,7 @@ export async function capture(lead, directory) {
       await context.close();
     }
     if (
+      screens.some((s) => isProfileUrl(s.url)) ||
       !screens.some((s) => s.width === 390) ||
       !screens.some((s) => s.width === 1440)
     )

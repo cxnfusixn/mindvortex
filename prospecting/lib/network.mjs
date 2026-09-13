@@ -4,8 +4,8 @@ import { createServer, request as httpRequest } from "node:http";
 
 export function isProfileUrl(value) {
   if (!value) return false;
-  return /(^|\.)(facebook\.com|fb\.com|instagram\.com|booksy\.com|maps\.google\.com|tiktok\.com)$/.test(
-    new URL(value).hostname,
+  return /(^|\.)(facebook\.com|fb\.com|instagram\.com|booksy\.(com|pl)|maps\.google\.com|tiktok\.com)$/.test(
+    new URL(value).hostname.toLowerCase().replace(/\.$/, ""),
   );
 }
 

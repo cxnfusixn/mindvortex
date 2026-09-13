@@ -5,6 +5,18 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { isPublicIP, publicUrl } from "../lib/network.mjs";
 import { isProfileUrl } from "../lib/network.mjs";
+test("Booksy domains are excluded even with contact and a trailing DNS dot", () => {
+  const s = openStore(mkdtempSync(join(tmpdir(), "mv-booksy-")));
+  try {
+    for (const website of ["https://booksy.com/pl-pl/123_salon", "https://www.booksy.com/pl-pl/123_salon", "https://booksy.com./pl-pl/123_salon", "https://booksy.pl/salon"]) {
+      assert.equal(isProfileUrl(website), true);
+      const lead = s.addLead({ name: "Salon", website, email: "salon@example.com", category: "beauty", area: "Białołęka" });
+      assert.equal(lead.canAudit, false);
+      assert.throws(() => s.enqueue("audit", lead.id));
+    }
+    assert.equal(isProfileUrl("https://salon-booksy.example.com"), false);
+  } finally { s.close(); }
+});
 
 test("social profiles remain separate companies and are not audited as websites", () => {
   const s = openStore(mkdtempSync(join(tmpdir(), "mv-profiles-")));
