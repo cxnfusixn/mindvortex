@@ -16,6 +16,7 @@ export function canSend(lead) {
     new Date(lead.share_expires) > new Date(),
   );
 }
+/** @param {{email: string, draft: string} | null} manual */
 export async function deliver(store, id, manual = null) {
   if (
     !manual && (process.env.PROSPECTING_SEND_ENABLED !== "true" ||
