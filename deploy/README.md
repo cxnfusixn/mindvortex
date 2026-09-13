@@ -22,6 +22,18 @@ For a preview-only refresh, export and test the selected preview locally. Create
 
 ## Prospecting
 
+`GOOGLE_PLACES_API_KEY` in the private prospecting environment selects Google
+Places (New) instead of Overpass. The server requests only website URLs and
+business status, at most 20 Google results per run. API listing data stays in
+memory; stored names, email and source come from independently fetched business
+websites. Websites without an email, platform profiles, removed domains and
+duplicates are skipped. Google ranking is not an exhaustive district inventory.
+`websiteUri` uses the Text Search Enterprise billing tier; account quotas and
+Google's current terms apply. The key must never be placed in a NEXT_PUBLIC variable.
+Website reads pin a validated public DNS address, recheck redirects, cap HTML at
+1 MiB and give each business 8 seconds (4 concurrent checks). Contact links must
+be on the same origin. Google requests time out after 20 seconds.
+
 Manual company discovery starts in the web process using Next `after`, immediately
 after the POST response (202). `prospecting/lib/discovery-run.mjs` atomically marks
 the job running before responding, replaces old queued discovery and reuses any

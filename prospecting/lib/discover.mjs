@@ -1,5 +1,6 @@
 import { areas, categories, validEmail } from "./store.mjs";
 import { publicUrl, isProfileUrl } from "./network.mjs";
+import {googleDiscover} from './google-discover.mjs';
 const filters = {
   beauty: '["shop"~"^(hairdresser|beauty|massage)$"]',
   health: '["healthcare"~"^(dentist|physiotherapist|clinic|doctor)$"]',
@@ -16,6 +17,7 @@ export function discoveryQuery(area, category) {
   return `[out:json][timeout:40];${region}(${query});out center tags;`;
 }
 export async function discover(store, { area, category }, progress = () => {}) {
+  if(process.env.GOOGLE_PLACES_API_KEY)return googleDiscover(store,{area,category},progress);
   progress({stage:'fetching',message:'Pobieranie firm z OpenStreetMap. Oczekiwanie na odpowiedź źródła…'});
   const response = await fetch("https://overpass-api.de/api/interpreter", {
     method: "POST",

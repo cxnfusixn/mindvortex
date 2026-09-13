@@ -362,7 +362,7 @@ export function ProspectingPanel() {
               <div>
                 <h2>Rozszerz swoją bazę</h2>
                 <p>
-                  Publiczne dane OpenStreetMap. Każda firma ma zapisane źródło.
+                  {data.integrations.googlePlaces ? 'Google Maps · do 20 wyników na wyszukiwanie. Dane kontaktowe potwierdzamy na stronach firm.' : 'Publiczne dane OpenStreetMap. Każda firma ma zapisane źródło.'}
                 </p>
               </div>
               <label>
@@ -389,7 +389,7 @@ export function ProspectingPanel() {
               <div>
                 <h3>{data.discovery.payload.area} · {data.categories[data.discovery.payload.category]}</h3>
                 <p>{data.discovery.status==='failed' ? data.discovery.error : data.discovery.status==='running' && data.discovery.started_at && now-Date.parse(data.discovery.started_at)>=120000 ? 'Brak zakończenia procesu. Możesz uruchomić wyszukiwanie ponownie.' : data.discovery.payload.progress?.message || (data.discovery.status==='queued' ? 'Stare zlecenie oczekuje w kolejce. Kliknij „Wyszukaj teraz”, aby rozpocząć od razu.' : data.discovery.status==='done' ? 'Wyszukiwanie zakończone.' : 'Pobieranie firm ze źródła…')}</p>
-                {data.discovery.status==='running' && data.discovery.started_at && <p>Czas od uruchomienia: {Math.max(0,Math.floor((now-Date.parse(data.discovery.started_at))/1000))} s. Odpowiedź źródła może potrwać do 55 sekund.</p>}
+                {data.discovery.status==='running' && data.discovery.started_at && <p>Czas od uruchomienia: {Math.max(0,Math.floor((now-Date.parse(data.discovery.started_at))/1000))} s. {data.integrations.googlePlaces ? 'Wyszukiwanie i sprawdzanie stron może potrwać około minuty.' : 'Odpowiedź źródła może potrwać do 55 sekund.'}</p>}
               </div>
             </section>}
             {data.settings.paused && (

@@ -57,7 +57,7 @@ export type Snapshot = {
   usage: { calls: number; inputTokens: number; outputTokens: number };
   heartbeat: string | null;
   workerOnline: boolean;
-  integrations: { vision: boolean; delivery: boolean };
+  integrations: { vision: boolean; delivery: boolean; googlePlaces: boolean };
 };
 export type Act = (data: Record<string, unknown>) => Promise<boolean>;
 export const statuses: Record<string, string> = {

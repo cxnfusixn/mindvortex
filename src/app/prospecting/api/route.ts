@@ -72,6 +72,7 @@ export async function GET(request: Request) {
             90_000,
         ),
         integrations: {
+          googlePlaces: Boolean(process.env.GOOGLE_PLACES_API_KEY),
           vision: Boolean(process.env.PROSPECTING_OPENAI_API_KEY),
           delivery:
             process.env.PROSPECTING_SEND_ENABLED === "true" &&
