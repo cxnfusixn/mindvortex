@@ -22,6 +22,15 @@ For a preview-only refresh, export and test the selected preview locally. Create
 
 ## Prospecting
 
+Manual company discovery starts in the web process using Next `after`, immediately
+after the POST response (202). `prospecting/lib/discovery-run.mjs` atomically marks
+the job running before responding, replaces old queued discovery and reuses any
+active run. The background worker therefore cannot claim the same job. The panel
+polls every 2 seconds during a run and shows area, source retrieval/filtering,
+elapsed time, completion count or failure. Progress is stored in the job payload.
+Interrupted discovery can be retried after 2 minutes; the source request times out
+after 55 seconds. Discovery remains available while the scheduled automation is paused.
+
 Panel: https://mindvortex.pro/prospecting. Web and worker load /etc/mindvortex-prospecting.env; a web service drop-in adds this file and StateDirectory=mindvortex-prospecting. Data lives in /var/lib/mindvortex-prospecting, outside releases. Install Chromium system dependencies once with the release's Playwright CLI (install-deps chromium). Releases install the pinned browser into /opt/mindvortex/browsers. The worker runs from the full release (current/../..), using its locked dependencies; release.sh stops an active worker before switching and restarts it after activation or rollback. Keep PROSPECTING_SEND_ENABLED=false and settings paused until intentionally activated.
 
 Actual LLM instructions: prospecting/lib/audit.mjs (initial audit and independent verification), with prospecting/ux-audit.md supplied to the initial audit. Email prose is assembled by draftMessage in that same module; HTML by prospecting/lib/email.mjs. prospecting/COMMUNICATION_RULES.md and email-template.md document the approved rules, but are not themselves sent to the LLM.
