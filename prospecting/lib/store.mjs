@@ -63,6 +63,7 @@ export function openStore(directory = dataDirectory()) {
     CREATE TABLE IF NOT EXISTS usage (id TEXT PRIMARY KEY,day TEXT NOT NULL,input_tokens INTEGER NOT NULL DEFAULT 0,output_tokens INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS sessions (hash TEXT PRIMARY KEY,expires TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS login_attempts (at TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS audit_history (id TEXT PRIMARY KEY,run_id TEXT NOT NULL,lead_id TEXT NOT NULL,phase TEXT NOT NULL,created_at TEXT NOT NULL,lead_json TEXT NOT NULL,audit_json TEXT NOT NULL,screens_json TEXT NOT NULL,UNIQUE(run_id,phase));
   `);
   if (!db.prepare("PRAGMA table_info(leads)").all().some((column) => column.name === "phone"))
     db.exec("ALTER TABLE leads ADD COLUMN phone TEXT NOT NULL DEFAULT ''");
@@ -96,6 +97,16 @@ export function openStore(directory = dataDirectory()) {
     event,
     lead,
     transaction,
+    recordAudit(runId, row, phase, audit, screens) {
+      if (!["initial", "verified", "reviewed"].includes(phase)) throw Error("Nieznany etap audytu.");
+      db.prepare("INSERT INTO audit_history VALUES(?,?,?,?,?,?,?,?)").run(
+        randomUUID(),runId,row.id,phase,now(),JSON.stringify({id:row.id,name:row.name,website:row.website}),JSON.stringify(audit),JSON.stringify(screens));
+    },
+    auditHistory: () => db.prepare("SELECT id,run_id,lead_id,phase,created_at FROM audit_history ORDER BY created_at DESC").all(),
+    auditRecord(id) {
+      const row=db.prepare("SELECT * FROM audit_history WHERE id=?").get(id);
+      return row ? {...row,phase:String(row.phase),lead:JSON.parse(row.lead_json),audit:JSON.parse(row.audit_json),screens:JSON.parse(row.screens_json)} : undefined;
+    },
     leads: () =>
       db
         .prepare("SELECT * FROM leads ORDER BY created_at DESC")

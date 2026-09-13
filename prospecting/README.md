@@ -60,6 +60,12 @@ Testy logiki korzystają z tymczasowych baz, bez wiadomości i płatnych wywoła
 Źródła implementacji: lokalna dokumentacja Next.js w `node_modules/next/dist/docs`, https://developers.openai.com/api/docs/guides/images-vision, https://developers.openai.com/api/docs/guides/structured-outputs, https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide, https://nodejs.org/api/sqlite.html.
 # Kwalifikacja do audytu
 
+## Historia i zakres oceny
+
+Każde nowe wykonanie analizy zapisuje w SQLite dwa osobne, niezmieniane rekordy `audit_history`: `initial` przed weryfikacją oraz `verified` po niej. Zapisy zawierają identyfikator wykonania, datę, model (w JSON audytu), wyniki i oryginalne screenshoty osadzone w JSON. Dzięki temu kolejne wykonanie nie nadpisuje dowodów wcześniejszego audytu. Dodatkowy przegląd może dopisać etap reviewed bez zmieniania wcześniejszych wyników. Historia dostępna jest w karcie firmy tylko po zalogowaniu. Nie ma automatycznego usuwania historii; należy uwzględnić rosnącą bazę w kopiach zapasowych. Wersje sprzed wdrożenia historii nie są rekonstruowane.
+
+Raport obejmuje do 12 udokumentowanych ustaleń wizualnych i UX, mocne strony oraz osobne odczyty techniczne DOM (tytuł, opis, H1, alt, viewport, HTTPS, poziomy overflow). Liczba ustaleń nie jest celem. Odczyty nie zastępują Lighthouse, Core Web Vitals ani pełnego audytu dostępności. E-mail pokazuje do 4 najważniejszych obserwacji; pełne wyniki są w raporcie.
+
 Profile platform zewnętrznych (w tym Booksy) są odrzucane przy imporcie i ręcznym dodawaniu. Istniejące wpisy bez własnej strony lub poprawnego e-maila zostały usunięte z lokalnej bazy.
 
 Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez własnej strony lub poprawnego e-maila nie są zapisywane. Telefon nie zastępuje e-maila. Sam publiczny adres nie oznacza zgody prawnej na ofertę handlową (art. 398 PKE); moduł nie weryfikuje podstawy prawnej kontaktu.

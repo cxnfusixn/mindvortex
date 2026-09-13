@@ -66,9 +66,17 @@ export async function capture(lead, directory) {
           )
             throw Error("Strona niedostępna.");
           await page.waitForTimeout(1200);
+          await page.waitForLoadState("load", {timeout:10000}).catch(() => {});
+          const declineCookies = page.getByRole("button", {name:/^(Odmowa|Odrzuć wszystkie|Odrzuć|Reject all|Decline)$/i}).first();
+          if (await declineCookies.isVisible()) {
+            await declineCookies.click();
+            await page.waitForTimeout(600);
+          }
           await page.evaluate(() => document.fonts.ready);
           if (isProfileUrl(page.url()))
             throw Error("Przekierowanie do platformy zewnętrznej — pominięto audyt profilu.");
+          if (screens.some((screen) => screen.width === viewport.width && screen.url === page.url()))
+            continue;
           if (index === 0 && viewport.width === 1440) {
             const links = await page.locator("a[href]").evaluateAll((nodes) =>
               nodes.map((n) => ({
@@ -116,6 +124,16 @@ export async function capture(lead, directory) {
             animations: "disabled",
           });
           screens.push({
+            technical: await page.evaluate(() => ({
+              title: document.title,
+              description: document.querySelector('meta[name="description"]')?.getAttribute("content") || "",
+              h1Count: document.querySelectorAll("h1").length,
+              imagesWithoutAlt: document.querySelectorAll("img:not([alt])").length,
+              imageCount: document.images.length,
+              horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
+              viewport: document.querySelector('meta[name="viewport"]')?.getAttribute("content") || "",
+              https: location.protocol === "https:",
+            })),
             file,
             label: target.label,
             url: page.url(),

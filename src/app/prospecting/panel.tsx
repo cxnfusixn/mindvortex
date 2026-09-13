@@ -509,6 +509,7 @@ export function ProspectingPanel() {
                 <LeadDetail
                   key={active.id}
                   lead={active}
+                  history={(data.auditHistory || []).filter((item) => item.lead_id === active.id)}
                   act={act}
                   busy={busy}
                   close={() => setSelected("")}

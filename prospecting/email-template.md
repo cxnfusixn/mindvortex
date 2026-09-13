@@ -31,4 +31,4 @@ Jeśli nie chcą Państwo kolejnych wiadomości, wystarczy odpowiedź „nie”.
 
 ---
 
-To opis szablonu używanego przez `draftMessage` w `lib/audit.mjs`. Akapit oferty zmienia się zależnie od audytu: strona, social media lub CRM. Obserwacje pochodzą wyłącznie z zatwierdzonych ustaleń audytu; maksymalnie dwie, bez nazw heurystyk i punktacji. Profile można zmienić lub wyłączyć, pozostawiając puste pola w ustawieniach.
+To opis szablonu używanego przez `draftMessage` w `lib/audit.mjs`. Akapit oferty zmienia się zależnie od audytu: strona, social media lub CRM. Obserwacje pochodzą wyłącznie z zatwierdzonych ustaleń audytu; maksymalnie cztery, bez nazw heurystyk i punktacji. Profile można zmienić lub wyłączyć, pozostawiając puste pola w ustawieniach.

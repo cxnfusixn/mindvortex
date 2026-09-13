@@ -4,6 +4,8 @@ import {
   categories,
 } from "../../../../prospecting/lib/store.mjs";
 import { emailHtml } from "../../../../prospecting/lib/email.mjs";
+import { reportHtml } from "../../../../prospecting/lib/report.mjs";
+import { validateAudit } from "../../../../prospecting/lib/audit.mjs";
 import {
   authorized,
   readBody,
@@ -28,6 +30,17 @@ export async function GET(request: Request) {
         { status: 401, headers },
       );
     const emailId = new URL(request.url).searchParams.get("email");
+    const auditId = new URL(request.url).searchParams.get("audit");
+    if (auditId) {
+      const record = store.auditRecord(auditId);
+      if (!record) return new Response("Brak audytu.", {status:404,headers});
+      try { validateAudit(record.audit, record.screens); }
+      catch { return Response.json({note:"Wynik wstępny nie przeszedł kontroli jakości. Zachowano go do wglądu.",audit:record.audit}, {headers}); }
+      return new Response(reportHtml({...record.lead,audit:{...record.audit,summary:(record.phase === "initial" ? "WERSJA WSTĘPNA — przed weryfikacją dowodów. " : "WERSJA ZWERYFIKOWANA. ") + record.audit.summary},screens:record.screens},
+        (screen: {file:string}) => record.screens.find((item: {file:string}) => item.file === screen.file)?.image || "",store.settings().portfolioUrl), {
+        headers:{...headers,"Content-Type":"text/html; charset=utf-8","Content-Security-Policy":"default-src 'none'; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"},
+      });
+    }
     if (emailId) {
       const lead = store.lead(emailId);
       if (!lead?.draft) return new Response("Brak szkicu wiadomości.", { status: 404, headers });
@@ -39,6 +52,7 @@ export async function GET(request: Request) {
     return Response.json(
       {
         leads: store.leads(),
+        auditHistory: store.auditHistory(),
         jobs: store.jobs(),
         events: store.events(),
         settings: store.settings(),
