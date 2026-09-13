@@ -120,7 +120,7 @@ export async function POST(request: Request) {
       case "audit":
         if (typeof data.id !== "string") throw Error("Brak firmy.");
         if (!process.env.PROSPECTING_OPENAI_API_KEY) throw Error("Audyt wymaga skonfigurowanego klucza modelu.");
-        if (store.usage().calls >= store.settings().dailyLimit) throw Error("Wykorzystano dzisiejszy limit audytów. Spróbuj jutro lub zmień limit w Automatyzacji.");
+        if (Number(store.usage()?.calls ?? 0) >= store.settings().dailyLimit) throw Error("Wykorzystano dzisiejszy limit audytów. Spróbuj jutro lub zmień limit w Automatyzacji.");
         store.enqueue("audit", data.id, { manual: true });
         break;
       case "settings": {
