@@ -5,6 +5,25 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { isPublicIP, publicUrl } from "../lib/network.mjs";
 import { isProfileUrl } from "../lib/network.mjs";
+import { discover } from "../lib/discover.mjs";
+test("existing platform profiles disappear from the list and discovery skips new profiles", async () => {
+  const s = openStore(mkdtempSync(join(tmpdir(), "mv-profile-list-")));
+  const originalFetch = globalThis.fetch;
+  try {
+    const old = s.addLead({ name: "Old Booksy", website: "https://booksy.com/pl-pl/old", email: "old@example.com", category: "beauty", area: "Białołęka" });
+    globalThis.fetch = async () => ({ ok: true, json: async () => ({ elements: [
+      { type: "node", id: 1, tags: { name: "New Booksy", website: "https://booksy.com/pl-pl/new" } },
+      { type: "node", id: 2, tags: { name: "Own website", website: "https://salon.example.com", email: "office@example.com" } },
+    ] }) });
+    await discover(s, { area: "Białołęka", category: "beauty" });
+    assert.deepEqual(s.leads().map((lead) => lead.name), ["Own website"]);
+    assert.equal(s.db.prepare("SELECT count(*) AS n FROM leads").get().n, 2);
+    assert.equal(s.lead(old.id).name, "Old Booksy");
+  } finally {
+    globalThis.fetch = originalFetch;
+    s.close();
+  }
+});
 test("Booksy domains are excluded even with contact and a trailing DNS dot", () => {
   const s = openStore(mkdtempSync(join(tmpdir(), "mv-booksy-")));
   try {

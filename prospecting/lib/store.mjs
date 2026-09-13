@@ -98,8 +98,10 @@ export function openStore(directory = dataDirectory()) {
     transaction,
     leads: () =>
       db
-        .prepare("SELECT * FROM leads ORDER BY created_at DESC LIMIT 1000")
+        .prepare("SELECT * FROM leads ORDER BY created_at DESC")
         .all()
+        .filter((row) => !isProfileUrl(row.website))
+        .slice(0, 1000)
         .map(decode),
     jobs: () =>
       db.prepare("SELECT * FROM jobs ORDER BY created_at DESC LIMIT 30").all(),

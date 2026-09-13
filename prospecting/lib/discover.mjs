@@ -1,5 +1,5 @@
 import { areas, categories } from "./store.mjs";
-import { publicUrl } from "./network.mjs";
+import { publicUrl, isProfileUrl } from "./network.mjs";
 const filters = {
   beauty: '["shop"~"^(hairdresser|beauty|massage)$"]',
   health: '["healthcare"~"^(dentist|physiotherapist|clinic|doctor)$"]',
@@ -40,7 +40,7 @@ export async function discover(store, { area, category }) {
     } catch {
       website = "";
     }
-    if (!t.name) continue;
+    if (!t.name || isProfileUrl(website)) continue;
     store.addLead({
       name: t.name,
       website,
