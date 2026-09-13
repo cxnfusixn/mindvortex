@@ -1,5 +1,7 @@
 # Wiadomość MindVortex
 
+Zatwierdzony wzorzec dla kolejnych klientów. Stosuj razem z [zasadami komunikacji](COMMUNICATION_RULES.md).
+
 
 Temat: {{firma}} — propozycje usprawnień od MindVortex
 
