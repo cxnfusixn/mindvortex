@@ -1,0 +1,12 @@
+# Enable Chromium's own sandbox on Ubuntu 24.04 for the pinned Playwright binaries.
+# https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+abi <abi/4.0>,
+include <tunables/global>
+
+profile mindvortex-headless /opt/mindvortex/browsers/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell flags=(unconfined) {
+  userns,
+}
+
+profile mindvortex-chrome /opt/mindvortex/browsers/chromium-*/chrome-linux64/chrome flags=(unconfined) {
+  userns,
+}
