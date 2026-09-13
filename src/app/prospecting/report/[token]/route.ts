@@ -1,5 +1,6 @@
 import { openStore } from "../../../../../prospecting/lib/store.mjs";
 import { reportHtml } from "../../../../../prospecting/lib/report.mjs";
+import { authorized } from "../../../../../prospecting/lib/auth.mjs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(
@@ -11,6 +12,7 @@ export async function GET(
     return new Response("Raport niedostępny.", { status: 404 });
   const store = openStore();
   try {
+    if (!authorized(store, _request)) return new Response("Zaloguj się do panelu.", {status:401});
     const lead = store.share(token);
     if (!lead?.audit)
       return new Response("Raport wygasł lub jest niedostępny.", {

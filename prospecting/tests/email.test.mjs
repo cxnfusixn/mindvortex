@@ -6,7 +6,6 @@ test("branded email preserves the draft, escapes text and links only safe URLs",
   assert.match(html, /#35f46a/);
   assert.match(html, /&lt;script&gt;/);
   assert.doesNotMatch(html, /<script|<img|href="javascript:/);
-  assert.match(html, /href="https:\/\/example.com\/report\?a=1&amp;b=2"/);
-  assert.match(html, /Zobacz uwagi do strony/);
+  assert.doesNotMatch(html, /Zobacz uwagi do strony/);
   assert.match(html, /Instagram/);
 });

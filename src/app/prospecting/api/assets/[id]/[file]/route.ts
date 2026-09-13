@@ -15,13 +15,11 @@ export async function GET(
     return new Response(null, { status: 404 });
   const store = openStore();
   try {
-    const token = new URL(request.url).searchParams.get("token") || "";
     const lead = store.lead(id),
       owner = authorized(store, request);
     if (
       !lead ||
-      (!owner &&
-        (!/^[a-f0-9]{48}$/.test(token) || store.share(token)?.id !== id))
+      !owner
     )
       return new Response(null, { status: 404 });
     if (

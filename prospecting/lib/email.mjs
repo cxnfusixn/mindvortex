@@ -12,8 +12,6 @@ const safeLink = (value) => {
 export function emailHtml(lead) {
   const blocks = String(lead.draft || "").split(/\n\s*\n/).filter(Boolean);
   const content = blocks.map((block) => {
-    const report = block.match(/^Tutaj zebrałem uwagi ze zrzutami ekranu: (\S+)$/);
-    if (report && safeLink(report[1])) return `<tr><td class="pad" style="padding:8px 36px 28px"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td bgcolor="#35f46a" style="background:#35f46a"><a href="${safeLink(report[1])}" style="display:inline-block;padding:16px 22px;border:1px solid #35f46a;color:#050706;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;text-decoration:none">Zobacz uwagi do strony &rarr;</a></td></tr></table></td></tr>`;
     const text = block.split("\n").map((line) => {
       const link = line.match(/^(Moje realizacje|Instagram|TikTok): (\S+)$/);
       return link && safeLink(link[2]) ? `<a href="${safeLink(link[2])}" style="color:#35f46a;text-decoration:underline;display:inline-block;padding:6px 0">${e(link[1])} &rarr;</a>` : e(line);
