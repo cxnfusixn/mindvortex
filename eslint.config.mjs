@@ -4,5 +4,6 @@ import nextTs from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores([".next/**", "next-env.d.ts", ".preview-build/**", "public/previews/**"]),
+  // Social Studio is a separate Next app with its own package and deployment.
+  globalIgnores([".next/**", "next-env.d.ts", ".preview-build/**", "public/previews/**", "social/automation/**"]),
 ]);
