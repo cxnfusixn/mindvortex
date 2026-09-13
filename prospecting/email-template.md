@@ -1,5 +1,7 @@
 # Wiadomość MindVortex
 
+Wysyłka zawiera wersję HTML w stylistyce strony MindVortex i alternatywną wersję tekstową. Renderer `lib/email.mjs` używa kolorów z `src/app/globals.css`, układu tabelowego i stylów inline. Podgląd dostępny w karcie firmy przy gotowym szkicu. Bez zewnętrznych fontów i obrazków; wygląd sprawdzony w przeglądarce, nie w klientach poczty. Przycisk raportu pojawia się, gdy szkic zawiera link do gotowego audytu.
+
 Temat: {{firma}} — propozycje usprawnień od MindVortex
 
 Dzień dobry,

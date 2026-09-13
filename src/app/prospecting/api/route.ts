@@ -3,6 +3,7 @@ import {
   areas,
   categories,
 } from "../../../../prospecting/lib/store.mjs";
+import { emailHtml } from "../../../../prospecting/lib/email.mjs";
 import {
   authorized,
   readBody,
@@ -26,6 +27,15 @@ export async function GET(request: Request) {
         },
         { status: 401, headers },
       );
+    const emailId = new URL(request.url).searchParams.get("email");
+    if (emailId) {
+      const lead = store.lead(emailId);
+      if (!lead?.draft) return new Response("Brak szkicu wiadomości.", { status: 404, headers });
+      return new Response(emailHtml(lead), { headers: { ...headers,
+        "Content-Type": "text/html; charset=utf-8",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      } });
+    }
     return Response.json(
       {
         leads: store.leads(),

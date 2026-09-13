@@ -14,7 +14,10 @@ test("email without consent qualifies, but ambiguous SMTP is never repeated", as
   process.env.SMTP_FROM = "test@example.com";
   let calls = 0;
   nodemailer.createTransport = () => ({
-    sendMail: async () => {
+    sendMail: async (message) => {
+      assert.equal(message.text, "draft");
+      assert.match(message.html, /#35f46a/);
+      assert.match(message.html, /draft/);
       calls++;
       throw Error("simulated timeout");
     },

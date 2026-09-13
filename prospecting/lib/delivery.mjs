@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { emailHtml } from "./email.mjs";
 export function canSend(lead) {
   return Boolean(
     lead &&
@@ -48,6 +49,7 @@ export async function deliver(store, id) {
         to: lead.email,
         subject: `${lead.name} — propozycje usprawnień od MindVortex`,
         text: lead.draft,
+        html: emailHtml(lead),
         messageId: `<prospecting-${id}@mindvortex.pro>`,
         headers: { "Auto-Submitted": "auto-generated" },
       });

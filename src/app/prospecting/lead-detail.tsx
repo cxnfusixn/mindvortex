@@ -148,6 +148,7 @@ export function LeadDetail({
             >
               Kopiuj wiadomość
             </button>
+            {lead.draft && <p><a className="p-site-link" href={`/prospecting/api?email=${encodeURIComponent(lead.id)}`} target="_blank" rel="noreferrer">Podgląd maila HTML ↗</a></p>}
             <p role="status">{copied}</p>
           </section>
         </>
