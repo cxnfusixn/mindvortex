@@ -67,7 +67,7 @@ export function LeadDetail({
       </button>
       {lead.website && !lead.canAudit && (
         <p className="p-muted">
-          Audyt wymaga własnej strony firmy oraz poprawnego e-maila lub telefonu.
+          Audyt wymaga własnej strony firmy oraz poprawnego e-maila.
         </p>
       )}
       {lead.audit ? (

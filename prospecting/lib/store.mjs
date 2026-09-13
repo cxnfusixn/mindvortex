@@ -28,10 +28,8 @@ export const dataDirectory = () =>
       ".prospecting-data",
   );
 const now = () => new Date().toISOString();
-const hasContact = (row) =>
-  /^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(row.email || "") ||
-  /^\+?[\d\s().-]+$/.test(row.phone || "") &&
-    /^\d{7,15}$/.test((row.phone || "").replace(/\D/g, ""));
+export const validEmail = (email) => typeof email === "string" && email.length <= 254 &&
+  /^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(email);
 export const warsawDay = (date = new Date()) =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Warsaw",
@@ -43,7 +41,7 @@ const decode = (row) =>
   row
     ? {
         ...row,
-        canAudit: Boolean(row.website && !isProfileUrl(row.website) && hasContact(row)),
+        canAudit: Boolean(row.website && !isProfileUrl(row.website) && validEmail(row.email)),
         screens: JSON.parse(row.screens),
         audit: row.audit ? JSON.parse(row.audit) : null,
       }
@@ -100,7 +98,7 @@ export function openStore(directory = dataDirectory()) {
       db
         .prepare("SELECT * FROM leads ORDER BY created_at DESC")
         .all()
-        .filter((row) => !isProfileUrl(row.website))
+        .filter((row) => row.website && !isProfileUrl(row.website) && validEmail(row.email))
         .slice(0, 1000)
         .map(decode),
     jobs: () =>
@@ -149,6 +147,9 @@ export function openStore(directory = dataDirectory()) {
       )
         throw Error("Podaj nazwę, obszar i branżę firmy.");
       const website = input.website ? publicUrl(input.website).href : "";
+      const email = String(input.email || "").trim();
+      if (!website || isProfileUrl(website) || !validEmail(email))
+        throw Error("Firma musi mieć własną stronę internetową i poprawny e-mail.");
       const dedupe = website
         ? new URL(website).hostname.replace(/^www\./, "") +
           (isProfileUrl(website)
@@ -198,7 +199,7 @@ export function openStore(directory = dataDirectory()) {
           throw Error("Ta firma jest wyłączona z automatyzacji.");
         if (kind === "audit" && !row.canAudit)
           throw Error(
-            "Audyt wymaga własnej strony firmy oraz poprawnego e-maila lub telefonu.",
+            "Audyt wymaga własnej strony firmy oraz poprawnego e-maila.",
           );
       }
       const jobId = randomUUID();

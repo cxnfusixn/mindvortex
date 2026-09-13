@@ -50,6 +50,7 @@ test("daily budget, atomic recovery and share revocation", () => {
     assert.throws(() => store.reserveUsage("two"), /limit/);
     const lead = store.addLead({
       name: "Example",
+      email: "test@example.com",
       website: "https://example.com",
       area: "Białołęka",
       category: "beauty",
@@ -67,7 +68,7 @@ test("daily budget, atomic recovery and share revocation", () => {
     );
     const saved = store.lead(lead.id);
     assert.equal(store.share(saved.share_token).id, lead.id);
-    assert.equal(canSend(saved), false);
+    assert.equal(canSend(saved), true);
     store.saveContact(
       lead.id,
       "test@example.com",

@@ -24,6 +24,7 @@ test("email without consent qualifies, but ambiguous SMTP is never repeated", as
     s.saveSettings({ paused: false, autoSend: true });
     const lead = s.addLead({
       name: "Test",
+      email: "test@example.com",
       website: "https://example.com",
       area: "Białołęka",
       category: "beauty",
@@ -39,6 +40,7 @@ test("email without consent qualifies, but ambiguous SMTP is never repeated", as
       },
       "draft",
     );
+    s.db.prepare("UPDATE leads SET email='' WHERE id=?").run(lead.id);
     await assert.rejects(deliver(s, lead.id));
     assert.equal(calls, 0);
     s.saveContact(lead.id, "test@example.com");

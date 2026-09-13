@@ -10,14 +10,20 @@ test("existing platform profiles disappear from the list and discovery skips new
   const s = openStore(mkdtempSync(join(tmpdir(), "mv-profile-list-")));
   const originalFetch = globalThis.fetch;
   try {
-    const old = s.addLead({ name: "Old Booksy", website: "https://booksy.com/pl-pl/old", email: "old@example.com", category: "beauty", area: "Białołęka" });
+    const old = s.addLead({ name: "Old Booksy", website: "https://old.example.com", email: "old@example.com", category: "beauty", area: "Białołęka" });
+    s.db.prepare("UPDATE leads SET website=? WHERE id=?").run("https://booksy.com/pl-pl/old",old.id);
+    const missing = s.addLead({ name: "Old without website", website: "https://missing.example.com", email: "a@example.com", category: "beauty", area: "Białołęka" });
+    s.db.prepare("UPDATE leads SET website='' WHERE id=?").run(missing.id);
     globalThis.fetch = async () => ({ ok: true, json: async () => ({ elements: [
       { type: "node", id: 1, tags: { name: "New Booksy", website: "https://booksy.com/pl-pl/new" } },
       { type: "node", id: 2, tags: { name: "Own website", website: "https://salon.example.com", email: "office@example.com" } },
+      { type: "node", id: 3, tags: { name: "Without website", email: "office@example.com" } },
+      { type: "node", id: 5, tags: { name: "Phone only", website: "https://phone.example.com", phone: "+48 500 600 700" } },
+      { type: "node", id: 4, tags: { name: "Invalid website", website: "http://localhost" } },
     ] }) });
     await discover(s, { area: "Białołęka", category: "beauty" });
     assert.deepEqual(s.leads().map((lead) => lead.name), ["Own website"]);
-    assert.equal(s.db.prepare("SELECT count(*) AS n FROM leads").get().n, 2);
+    assert.equal(s.db.prepare("SELECT count(*) AS n FROM leads").get().n, 3);
     assert.equal(s.lead(old.id).name, "Old Booksy");
   } finally {
     globalThis.fetch = originalFetch;
@@ -29,37 +35,12 @@ test("Booksy domains are excluded even with contact and a trailing DNS dot", () 
   try {
     for (const website of ["https://booksy.com/pl-pl/123_salon", "https://www.booksy.com/pl-pl/123_salon", "https://booksy.com./pl-pl/123_salon", "https://booksy.pl/salon"]) {
       assert.equal(isProfileUrl(website), true);
-      const lead = s.addLead({ name: "Salon", website, email: "salon@example.com", category: "beauty", area: "Białołęka" });
-      assert.equal(lead.canAudit, false);
-      assert.throws(() => s.enqueue("audit", lead.id));
+      assert.throws(() => s.addLead({ name: "Salon", website, email: "salon@example.com", category: "beauty", area: "Białołęka" }));
     }
     assert.equal(isProfileUrl("https://salon-booksy.example.com"), false);
   } finally { s.close(); }
 });
 
-test("social profiles remain separate companies and are not audited as websites", () => {
-  const s = openStore(mkdtempSync(join(tmpdir(), "mv-profiles-")));
-  try {
-    const first = s.addLead({
-      name: "A",
-      website: "https://facebook.com/firm-a",
-      category: "beauty",
-      area: "Białołęka",
-    });
-    const second = s.addLead({
-      name: "B",
-      website: "https://facebook.com/firm-b",
-      category: "beauty",
-      area: "Białołęka",
-    });
-    assert.notEqual(first.id, second.id);
-    assert.equal(first.canAudit, false);
-    assert.throws(() => s.enqueue("audit", first.id));
-    assert.equal(isProfileUrl("https://example.com"), false);
-  } finally {
-    s.close();
-  }
-});
 import { openStore } from "../lib/store.mjs";
 import { tick } from "../worker.mjs";
 test("worker rejects legacy queued audits without contact before capture or paid analysis", async () => {
@@ -80,20 +61,19 @@ test("worker rejects legacy queued audits without contact before capture or paid
     s.close();
   }
 });
-test("audits require an own website and valid email or phone", () => {
+test("audits require an own website and valid email", () => {
   const s = openStore(mkdtempSync(join(tmpdir(), "mv-contact-")));
   try {
     for (const [i, contact, expected] of [
       [0, {}, false],
       [1, { email: "invalid" }, false],
       [2, { email: "office@example.com" }, true],
-      [3, { phone: "+48 500 600 700" }, true],
+      [3, { phone: "+48 500 600 700" }, false],
       [4, { phone: "123" }, false],
     ]) {
-      const lead = s.addLead({ name: "Firma", website: `https://firm${i}.example.com`, category: "beauty", area: "Białołęka", ...contact });
-      assert.equal(lead.canAudit, expected);
-      if (expected) assert.doesNotThrow(() => s.enqueue("audit", lead.id));
-      else assert.throws(() => s.enqueue("audit", lead.id));
+      const input = { name: "Firma", website: `https://firm${i}.example.com`, category: "beauty", area: "Białołęka", ...contact };
+      if (expected) assert.equal(s.addLead(input).canAudit, true);
+      else assert.throws(() => s.addLead(input));
     }
   } finally { s.close(); }
 });
@@ -162,6 +142,7 @@ test("deduplicates domains, claims jobs once and persists suppression", () => {
   });
   const two = s.addLead({
     name: "Oddział",
+    email: "office@example.com",
     website: "https://example.com/oferta",
     category: "beauty",
     area: "Białołęka",

@@ -1,4 +1,4 @@
-import { areas, categories } from "./store.mjs";
+import { areas, categories, validEmail } from "./store.mjs";
 import { publicUrl, isProfileUrl } from "./network.mjs";
 const filters = {
   beauty: '["shop"~"^(hairdresser|beauty|massage)$"]',
@@ -40,7 +40,8 @@ export async function discover(store, { area, category }) {
     } catch {
       website = "";
     }
-    if (!t.name || isProfileUrl(website)) continue;
+    const email = String(t.email || t["contact:email"] || "").trim();
+    if (!t.name || !website || isProfileUrl(website) || !validEmail(email)) continue;
     store.addLead({
       name: t.name,
       website,
@@ -50,7 +51,7 @@ export async function discover(store, { area, category }) {
       address: [t["addr:street"], t["addr:housenumber"], t["addr:city"]]
         .filter(Boolean)
         .join(" "),
-      email: t.email || t["contact:email"] || "",
+      email,
       phone: t.phone || t["contact:phone"] || t.mobile || t["contact:mobile"] || "",
     });
   }

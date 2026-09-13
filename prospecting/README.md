@@ -60,6 +60,6 @@ Testy logiki korzystają z tymczasowych baz, bez wiadomości i płatnych wywoła
 Źródła implementacji: lokalna dokumentacja Next.js w `node_modules/next/dist/docs`, https://developers.openai.com/api/docs/guides/images-vision, https://developers.openai.com/api/docs/guides/structured-outputs, https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide, https://nodejs.org/api/sqlite.html.
 # Kwalifikacja do audytu
 
-Profile platform zewnętrznych (w tym Booksy) są pomijane podczas importu i nie pojawiają się na liście firm, również jeśli zostały zapisane przed wprowadzeniem filtra.
+Profile platform zewnętrznych (w tym Booksy) są odrzucane przy imporcie i ręcznym dodawaniu. Istniejące wpisy bez własnej strony lub poprawnego e-maila zostały usunięte z lokalnej bazy.
 
-Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila lub numeru telefonu w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez kompletu danych pozostają w bazie, ale nie są audytowane. Sam publiczny adres nie oznacza zgody prawnej na ofertę handlową (art. 398 PKE); moduł nie weryfikuje podstawy prawnej kontaktu.
+Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez własnej strony lub poprawnego e-maila nie są zapisywane. Telefon nie zastępuje e-maila. Sam publiczny adres nie oznacza zgody prawnej na ofertę handlową (art. 398 PKE); moduł nie weryfikuje podstawy prawnej kontaktu.

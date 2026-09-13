@@ -312,11 +312,12 @@ export function ProspectingPanel() {
                     Adres strony
                     <input
                       name="website"
+                      required
                       type="url"
                       placeholder="https://firma.pl"
                     />
                   </label>
-                  <label>E-mail kontaktowy<input name="email" type="email" maxLength={254} /></label>
+                  <label>E-mail kontaktowy<input name="email" type="email" required maxLength={254} /></label>
                   <label>Telefon kontaktowy<input name="phone" type="tel" maxLength={80} /></label>
                   <label>
                     Obszar
