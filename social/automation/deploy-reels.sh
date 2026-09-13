@@ -14,6 +14,7 @@ sudo -u mv-social env PATH="/opt/node-mindvortex/bin:$PATH" npm ci --no-audit --
 sudo -u mv-social env PATH="/opt/node-mindvortex/bin:$PATH" npm test
 sudo -u mv-social env PATH="/opt/node-mindvortex/bin:$PATH" npm run build
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env --input-type=module -e 'const {init,pool}=await import("./lib/db.mjs");await init();await pool.end();'
+sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env tests/growth.integration.mjs
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env seed-metric-history.mjs
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env seed-tiktok.mjs
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env set-reel-cadence.mjs

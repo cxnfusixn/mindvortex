@@ -1,8 +1,8 @@
 'use client';
 import {useState} from 'react';
 import MetricCharts from './MetricCharts';
-const fields=[['views','Wyświetlenia'],['likes','Polubienia'],['comments','Komentarze'],['reach','Zasięg'],['saved','Zapisania'],['shares','Udostępnienia']];
-const number=n=>typeof n==='number'?n.toLocaleString('pl-PL'):'—';
+const fields=[['views','Wyświetlenia'],['likes','Polubienia'],['comments','Komentarze'],['reach','Zasięg'],['saved','Zapisania'],['shares','Udostępnienia'],['averageWatchSeconds','Śr. oglądanie (s)'],['totalWatchSeconds','Łączny czas (s)'],['profileVisits','Wizyty profilu']];
+const number=n=>typeof n==='number'?n.toLocaleString('pl-PL',{maximumFractionDigits:1}):'—';
 export default function MetricsPanel({data,platform}){
  const [format,setFormat]=useState('all'),[sort,setSort]=useState('day');
  const rows=(data.analytics||[]).filter(p=>(platform==='all'||p.platform===platform)&&(format==='all'||p.format===format)).sort((a,b)=>sort==='day'?b.day.localeCompare(a.day):(b.metrics?.[sort]??-1)-(a.metrics?.[sort]??-1));

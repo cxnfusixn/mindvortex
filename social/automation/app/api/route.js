@@ -1,3 +1,4 @@
+import {addEngagement,updateEngagement} from '../../lib/engagement.mjs';
 import {dashboardMetrics} from '../../lib/metrics.mjs';
 import {requireFreshVisual} from '../../lib/visuals.mjs';
 import {authorized} from '../../lib/auth.mjs';
@@ -22,7 +23,11 @@ export async function POST(req){
    await pool.query("INSERT INTO social_tiktok_jobs(id,reel_id,day,kind,content,assets) VALUES($1,$2,$3,'reel',$4,$5) ON CONFLICT(reel_id) DO NOTHING",[crypto.randomUUID(),r.id,r.day,{...r.content,mediaSha:r.sha},JSON.stringify([r.video])]);
    b.id=(await pool.query('SELECT id FROM social_tiktok_jobs WHERE reel_id=$1',[r.id])).rows[0].id;b.target='tiktok';
   }
- if(b.action==='mark-removed'){
+ if(b.action==='engagement-add'){
+  await addEngagement(b.url,b.text);
+ }else if(b.action==='engagement-update'){
+  await updateEngagement(b);
+ }else if(b.action==='mark-removed'){
   if(!['instagram','tiktok'].includes(b.platform)||typeof b.permalink!=='string')throw Error('Invalid publication');
   const sql=b.platform==='instagram'?"SELECT 1 FROM social_posts WHERE permalink=$1 AND status='verified' UNION ALL SELECT 1 FROM social_reels WHERE permalink=$1 AND status='verified' UNION ALL SELECT 1 FROM social_history WHERE permalink=$1":"SELECT 1 FROM social_tiktok_jobs WHERE permalink=$1 AND status='published' UNION ALL SELECT 1 FROM social_tiktok_history WHERE permalink=$1";
   if(!(await pool.query(sql,[b.permalink])).rowCount)throw Error('Published content not found');

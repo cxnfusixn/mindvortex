@@ -1,3 +1,6 @@
+import {growthWritingRules} from './growth.mjs';
+import {growthExperiment} from './growth-data.mjs';
+import {queueHorizons} from './reel-schedule.mjs';
 import {availableAsset,requireFreshVisual} from './visuals.mjs';
 import {syncHistory,contentHistory} from './history.mjs';
 import {requireDistinct,checkDuplicates} from './duplicates.mjs';
@@ -8,11 +11,12 @@ import {render} from './render.mjs';
 const str={type:'string'};
 const schema={type:'object',additionalProperties:false,properties:{topic:str,headline:str,points:{type:'array',items:str,minItems:2,maxItems:3},caption:str,hashtags:{type:'array',items:str,minItems:5,maxItems:5},alt:str,project:{type:'string',enum:['none','kierunek','marcin-bak','flc']}},required:['topic','headline','points','caption','hashtags','alt','project']};
 export async function generateOne(day,kind,history,feedback=''){
- const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+process.env.SOCIAL_OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.SOCIAL_OPENAI_MODEL||'gpt-4.1-mini',store:false,max_output_tokens:1800,instructions:brand+writingRules,input:`Create a ${kind} post for ${day}. Previous rejected attempt feedback: ${feedback}. Avoid repeating topics in this history: ${JSON.stringify(history.slice(0,90))}. Headline 3-6 short words, max 34 chars, fitting two lines of at most 21 chars each; 2-3 useful graphic points max 32 chars each; caption max 1800 chars, no hashtags inside caption. Exactly 5 relevant hashtags including #MindVortex. Write descriptive alt text. For portfolio posts choose one verified project and use only the facts provided. For ALL other kinds project MUST be none and the caption MUST NOT mention Kierunek, Marcin Bak, FLC or any other project or client. Match the requested kind: offer invites a project enquiry; process explains our workflow; checklist gives a practical check; detail focuses on one small design decision. For portfolio rotate projects from history. Return JSON.`,text:{format:{type:'json_schema',name:'studio_post',strict:true,schema}}}),signal:AbortSignal.timeout(90000)});
+ const experiment=await growthExperiment(day,'instagram','post');
+ const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:'Bearer '+process.env.SOCIAL_OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.SOCIAL_OPENAI_MODEL||'gpt-4.1-mini',store:false,max_output_tokens:1800,instructions:brand+writingRules+growthWritingRules+experiment.instruction,input:`Create a ${kind} post for ${day}. Previous rejected attempt feedback: ${feedback}. Avoid repeating topics in this history: ${JSON.stringify(history.slice(0,90))}. Headline 3-6 short words, max 34 chars, fitting two lines of at most 21 chars each; 2-3 useful graphic points max 32 chars each; caption max 1800 chars, no hashtags inside caption. Exactly 5 relevant hashtags including #MindVortex. Write descriptive alt text. For portfolio posts choose one verified project and use only the facts provided. For ALL other kinds project MUST be none and the caption MUST NOT mention Kierunek, Marcin Bak, FLC or any other project or client. Match the requested kind: offer invites a project enquiry; process explains our workflow; checklist gives a practical check; detail focuses on one small design decision. For portfolio rotate projects from history. Return JSON.`,text:{format:{type:'json_schema',name:'studio_post',strict:true,schema}}}),signal:AbortSignal.timeout(90000)});
  const body=await response.json();if(!response.ok)throw Error('AI request failed: HTTP '+response.status+' '+(body.error?.code||''));
  if(body.status!=='completed')throw Error('AI response incomplete');
  const raw=body.output?.flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('');
- const content=JSON.parse(raw);
+ const content={...JSON.parse(raw),growth:{version:experiment.version,hook:experiment.id}};
  content.hashtags=[...new Set((content.hashtags||[]).filter(x=>typeof x==='string'&&/^#[A-Za-z][A-Za-z0-9]{1,35}$/.test(x)&&x.toLowerCase()!=='#mindvortex'))].slice(0,4);
  for(const tag of ['#WebDesign','#UserExperience','#DigitalStudio','#WebDevelopment'])if(content.hashtags.length<4&&!content.hashtags.includes(tag))content.hashtags.push(tag);
  content.hashtags.push('#MindVortex');
@@ -30,7 +34,7 @@ export async function fillQueue(){return locked('social-generation',async()=>{
  const config=await settings();const existing=(await pool.query('SELECT day::text,content FROM social_posts ORDER BY day DESC LIMIT 90')).rows;
  const history=await contentHistory();let count=0;
  // Always prepare tomorrow onward. Missed dates are never backfilled publicly.
- for(let i=1;i<=7;i++){const day=addDays(dayKey(),i);if(existing.some(x=>x.day===day))continue;
+ for(let i=1;i<=queueHorizons.posts;i++){const day=addDays(dayKey(),i);if(existing.some(x=>x.day===day))continue;
   const kind=kindFor(day),id=randomUUID();
   const {content,image}=await freshCandidate(day,kind,history);
   await pool.query('INSERT INTO social_posts(id,day,kind,content,image,status) VALUES($1,$2,$3,$4,$5,$6)',[id,day,kind,content,image,config.autopilot?'approved':'draft']);history.unshift(content);count++;

@@ -1,6 +1,10 @@
 import pg from 'pg';
-export const pool = new pg.Pool({connectionString:process.env.SOCIAL_DATABASE_URL,max:5});
+// Three independent worker loops can hold nested advisory locks while issuing queries.
+export const pool = new pg.Pool({connectionString:process.env.SOCIAL_DATABASE_URL,max:10});
 export async function init() {
+ await pool.query(`CREATE TABLE IF NOT EXISTS social_growth_reports(day date PRIMARY KEY,data jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+ CREATE TABLE IF NOT EXISTS social_engagement(id uuid PRIMARY KEY,platform text NOT NULL,source_url text NOT NULL UNIQUE,source_text text NOT NULL,reason text NOT NULL DEFAULT '',draft text NOT NULL DEFAULT '',status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','done','dismissed')),outcome text NOT NULL DEFAULT '',created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now());`);
+ await pool.query('ALTER TABLE social_engagement ADD COLUMN IF NOT EXISTS prepared_at timestamptz');
  await pool.query(`CREATE TABLE IF NOT EXISTS social_settings (id int PRIMARY KEY CHECK(id=1), paused boolean NOT NULL DEFAULT true, autopilot boolean NOT NULL DEFAULT false, hour int NOT NULL DEFAULT 10 CHECK(hour BETWEEN 0 AND 23));
  INSERT INTO social_settings(id) VALUES(1) ON CONFLICT DO NOTHING;
  CREATE TABLE IF NOT EXISTS social_reel_settings(id int PRIMARY KEY CHECK(id=1),enabled boolean NOT NULL DEFAULT false,weekday int NOT NULL DEFAULT 5 CHECK(weekday BETWEEN 0 AND 6),hour int NOT NULL DEFAULT 18 CHECK(hour BETWEEN 0 AND 23),horizon int NOT NULL DEFAULT 3 CHECK(horizon=3));

@@ -19,5 +19,5 @@ export async function renderEducation(content,dir){
  await fs.mkdir(dir,{recursive:true});const ff=process.env.FFMPEG_PATH||'ffmpeg';
  const p=spawn(ff,['-y','-f','image2pipe','-vcodec','mjpeg','-framerate','30','-i','pipe:0','-an','-c:v','libx264','-threads','2','-preset','fast','-crf','19','-pix_fmt','yuv420p',path.join(dir,'website.mp4')],{windowsHide:true,stdio:['pipe','ignore','pipe']});let error='';p.stderr.on('data',b=>error=b.toString());const done=once(p,'close');p.on('error',()=>{});
  try{for(let i=0;i<192;i++){const frame=await sharp(educationalFrame(content,i)).jpeg({quality:94}).toBuffer();if(i===0)await fs.writeFile(path.join(dir,'hero.jpg'),frame);if(!p.stdin.write(frame))await once(p.stdin,'drain');}p.stdin.end();if((await done)[0])throw Error(error);}catch(e){p.kill();throw e;}
- return renderReel({outputDir:dir,heroImage:path.join(dir,'hero.jpg'),websiteVideo:path.join(dir,'website.mp4'),sceneKeys:content.scenes.map(s=>content.topic+':'+s.title),ffmpeg:ff});
+ return renderReel({outputDir:dir,heroImage:path.join(dir,'hero.jpg'),websiteVideo:path.join(dir,'website.mp4'),introHook:content.growth?content.scenes[0].title:undefined,sceneKeys:content.scenes.map(s=>content.topic+':'+s.title),ffmpeg:ff});
 }

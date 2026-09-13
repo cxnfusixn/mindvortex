@@ -9,3 +9,8 @@ test('TikTok uses automatic publishing, ordered photos and validates duplicates'
 test('Buffer metrics distinguish absent values and genuine zero',()=>{
  const m=normalizeBufferMetrics({metrics:[{type:'views',value:23},{type:'reactions',value:0}],metricsUpdatedAt:'2026-09-11T17:58:30Z'});assert.equal(m.views,23);assert.equal(m.likes,0);assert.equal(m.comments,null);assert.equal(m.collectedAt,'2026-09-11T17:58:30Z');
 });
+test('watch times use provider-declared units, never guess ambiguous counts',()=>{
+ const m=normalizeBufferMetrics({metrics:[{type:'averageTimeWatched',value:0,name:'Avg. Watch Time (sec)'},{type:'totalTimeWatched',value:2,name:'Watch Time (min)'}]});
+ assert.equal(m.averageWatchSeconds,0);assert.equal(m.totalWatchSeconds,120);
+ assert.equal(normalizeBufferMetrics({metrics:[{type:'averageTimeWatched',value:12,unit:'count'}]}).averageWatchSeconds,null);
+});

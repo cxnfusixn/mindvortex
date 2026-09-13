@@ -1,4 +1,7 @@
 import {dayKey,addDays} from './brand.mjs';
+export const queueHorizons=Object.freeze({posts:7,tiktokReels:21,carousels:3});
+export function carouselSlots(cfg,now=new Date()){return reelSlots({interval_days:cfg.interval_days||2,anchor_day:addDays(cfg.anchor_day||'2026-09-11',1),hour:cfg.hour,horizon:queueHorizons.carousels},now);}
+export function tiktokReelSlots(now=new Date()){return Array.from({length:queueHorizons.tiktokReels},(_,i)=>addDays(dayKey(now),i+1));}
 export function warsawHour(now=new Date()){return Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Warsaw',hour:'2-digit',hourCycle:'h23'}).format(now));}
 export function reelSlots(config,now=new Date()){
  const today=dayKey(now);let day=today;

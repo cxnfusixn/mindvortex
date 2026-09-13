@@ -6,13 +6,15 @@ export function metricValue(result){
  return typeof value==='number'&&Number.isFinite(value)&&value>=0?value:null;
 }
 export async function collectMetrics(){return locked('social-metrics',async()=>{
- const media=(await pool.query(`SELECT media_id FROM social_history UNION SELECT media_id FROM social_posts WHERE status='verified' UNION SELECT media_id FROM social_reels WHERE status='verified'`)).rows.filter(p=>p.media_id);
+ const media=(await pool.query(`SELECT media_id,bool_or(reel) AS reel FROM (SELECT media_id,media_type='VIDEO' AS reel FROM social_history UNION ALL SELECT media_id,false FROM social_posts WHERE status='verified' UNION ALL SELECT media_id,true FROM social_reels WHERE status='verified') p GROUP BY media_id`)).rows.filter(p=>p.media_id);
  for(const p of media){
   const metrics={},errors=[];
   for(const name of ['views','reach','likes','comments','saved','shares']){
    try{metrics[name]=metricValue(await graph(p.media_id+'/insights',{metric:name}));if(metrics[name]===null)errors.push(name);}catch{metrics[name]=null;errors.push(name);}
   }
   if(metrics.likes===null||metrics.comments===null){try{const counts=await graph(p.media_id,{fields:'like_count,comments_count'});if(metrics.likes===null&&Number.isFinite(counts.like_count))metrics.likes=counts.like_count;if(metrics.comments===null&&Number.isFinite(counts.comments_count))metrics.comments=counts.comments_count;}catch{}}
+  const extra=p.reel?[['ig_reels_avg_watch_time','averageWatchSeconds',1000],['ig_reels_video_view_total_time','totalWatchSeconds',1000]]:[['profile_visits','profileVisits',1]];
+  for(const [name,key,divisor] of extra){try{const value=metricValue(await graph(p.media_id+'/insights',{metric:name}));metrics[key]=value===null?null:value/divisor;}catch{metrics[key]=null;}if(metrics[key]===null)errors.push(key);}
   metrics.collectedAt=new Date().toISOString();metrics.unavailable=errors.filter(k=>metrics[k]===null);
   await pool.query(`INSERT INTO social_metrics(media_id,metrics) VALUES($1,$2) ON CONFLICT(media_id) DO UPDATE SET metrics=excluded.metrics`,[p.media_id,metrics]);
   await pool.query("INSERT INTO social_metric_samples(media_id,bucket,metrics) VALUES($1,date_trunc('hour',now()),$2) ON CONFLICT(media_id,bucket) DO UPDATE SET metrics=excluded.metrics",[p.media_id,metrics]);
