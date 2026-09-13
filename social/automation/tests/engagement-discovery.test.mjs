@@ -20,7 +20,7 @@ test('discovery runs on manual requests while disabled, resumes interruption and
     if(sql.startsWith('INSERT INTO social_events'))return {};
     throw Error('Unexpected SQL: '+sql);
   };
-  globalThis.fetch=async()=>{calls++;return {ok:true,json:async()=>({status:'completed',output:[]})};};
+  globalThis.fetch=async(url,options)=>{calls++;const request=JSON.parse(options.body);assert.match(request.input,/site:instagram.com/);assert.match(request.input,/site:tiktok.com/);assert.match(request.input,/UX design/);assert.equal(request.input.startsWith('{'),false,'Search receives a useful query instead of JSON parameters');return {ok:true,json:async()=>({status:'completed',output:[]})};};
   try{
     await runDiscovery();assert.equal(calls,0);
     await discoveryAction({action:'engagement-discover'});await discoveryAction({action:'engagement-discover'});
