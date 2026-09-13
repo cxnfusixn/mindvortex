@@ -19,3 +19,9 @@ For updates, repeat step 4 with a new committed archive. `REVISION` records the 
 Standalone packaging follows the [Next.js output documentation](https://nextjs.org/docs/app/api-reference/config/next-config-js/output).
 
 For a preview-only refresh, export and test the selected preview locally. Create an archive containing the contents of `public/previews/flc`, transfer it and `deploy/preview-release.sh`, then run `sudo bash preview-release.sh /absolute/preview.tar flc FULL_COMMIT_HASH`. This clones the active standalone application into a new release, replaces only the chosen preview, restarts and health-checks with rollback. Application `REVISION` stays unchanged; the selected preview's commit is recorded in `preview-revisions/flc`. Other unshipped application changes are not deployed. The preview must use the existing route prefix and rewrites.
+
+## Prospecting
+
+Panel: https://mindvortex.pro/prospecting. Web and worker load /etc/mindvortex-prospecting.env; a web service drop-in adds this file and StateDirectory=mindvortex-prospecting. Data lives in /var/lib/mindvortex-prospecting, outside releases. Install Chromium system dependencies once with the release's Playwright CLI (install-deps chromium). Releases install the pinned browser into /opt/mindvortex/browsers. The worker runs from the full release (current/../..), using its locked dependencies; release.sh stops an active worker before switching and restarts it after activation or rollback. Keep PROSPECTING_SEND_ENABLED=false and settings paused until intentionally activated.
+
+Actual LLM instructions: prospecting/lib/audit.mjs (initial audit and independent verification), with prospecting/ux-audit.md supplied to the initial audit. Email prose is assembled by draftMessage in that same module; HTML by prospecting/lib/email.mjs. prospecting/COMMUNICATION_RULES.md and email-template.md document the approved rules, but are not themselves sent to the LLM.

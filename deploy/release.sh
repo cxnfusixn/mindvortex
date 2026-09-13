@@ -23,14 +23,25 @@ systemd-run --wait --pipe --collect --unit="mindvortex-build-$release_id" \
   --setenv=PATH=/opt/node-mindvortex/bin:/usr/local/bin:/usr/bin:/bin \
   --setenv=npm_config_cache=/opt/mindvortex/.npm --setenv=NODE_ENV=production \
   /bin/bash -c 'set -Eeuo pipefail; npm ci --include=dev; npm run lint; npm run build'
+if [[ -f /etc/mindvortex-prospecting.env ]]; then
+  install -d -o mindvortex -g mindvortex -m 0750 "$root/browsers"
+  runuser -u mindvortex -- env PLAYWRIGHT_BROWSERS_PATH="$root/browsers" \
+    /opt/node-mindvortex/bin/node "$release/node_modules/playwright/cli.js" install chromium
+fi
 standalone="$release/.next/standalone"
 test -f "$standalone/server.js"
 cp -a "$release/public" "$standalone/"
 mkdir -p "$standalone/.next"
 cp -a "$release/.next/static" "$standalone/.next/"
+cp -a "$release/prospecting" "$standalone/"
 # Next may trace env files if present; the release must use the private systemd env only.
 test ! -f "$standalone/.env.local"
 chown -R mindvortex:mindvortex "$standalone"
+worker_active=0
+if systemctl is-active --quiet mindvortex-prospecting-worker; then
+  worker_active=1
+  systemctl stop mindvortex-prospecting-worker
+fi
 ln -sfn "$standalone" "$root/current.new"
 mv -Tf "$root/current.new" "$root/current"
 healthy=0
@@ -41,6 +52,7 @@ if systemctl restart mindvortex; then
   done
 fi
 if [[ "$healthy" == 1 ]]; then
+  if [[ "$worker_active" == 1 ]]; then systemctl start mindvortex-prospecting-worker; fi
   systemctl enable mindvortex
   echo "Deployed $revision as $release_id"
   exit 0
@@ -49,6 +61,7 @@ if [[ "$previous" == "$root"/releases/*/.next/standalone && -f "$previous/server
   ln -sfn "$previous" "$root/current.new"
   mv -Tf "$root/current.new" "$root/current"
   systemctl restart mindvortex
+  if [[ "$worker_active" == 1 ]]; then systemctl start mindvortex-prospecting-worker; fi
   echo 'Restored previous release'
 else
   systemctl stop mindvortex

@@ -16,6 +16,8 @@ przeglądałem stronę {{firma}}. Przyjrzałem się temu, jak może odbierać j�
 W MindVortex mogę zaprojektować nową stronę, która spójnie przedstawi Państwa ofertę i poprowadzi odbiorcę do kontaktu. W ramach takiej współpracy możemy też przyjrzeć się identyfikacji wizualnej — od typografii i kolorów po sposób prezentowania marki. Zakres przebudowy warto oprzeć na Państwa celach i tym, co już działa dobrze.
 
 
+Pomagam też usprawnić prowadzenie social mediów — od przygotowywania treści po planowanie i publikację postów. Z takich automatyzacji korzystamy w MindVortex. Jeśli ten obszar zabiera Państwu dużo czasu, możemy porozmawiać również o nim.
+
 Moje realizacje: https://mindvortex.pro/pl
 Instagram: https://www.instagram.com/mindvortex.pro/
 TikTok: https://www.tiktok.com/@mindvortex.pro

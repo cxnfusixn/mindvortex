@@ -331,6 +331,7 @@ export function draftMessage(lead, audit, portfolio, _report, social = {}) {
     'przeglądałem stronę ' + lead.name + '. Przyjrzałem się temu, jak może odbierać ją osoba, która po raz pierwszy poznaje Państwa ofertę.',
     observations,
     offer,
+    audit.offer === 'website' ? 'Pomagam też usprawnić prowadzenie social mediów — od przygotowywania treści po planowanie i publikację postów. Z takich automatyzacji korzystamy w MindVortex. Jeśli ten obszar zabiera Państwu dużo czasu, możemy porozmawiać również o nim.' : '',
     links,
     'Czy są Państwo otwarci na rozmowę o nowej odsłonie marki w internecie?',
     'Pozdrawiam,\nPatryk Pyrka\nMindVortex\npatryk.pyrka@mindvortex.pro',

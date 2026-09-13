@@ -7,9 +7,10 @@ Wants=network-online.target
 Type=simple
 User=mindvortex
 Group=mindvortex
-WorkingDirectory=/opt/mindvortex/current
+WorkingDirectory=/opt/mindvortex/current/../..
 Environment=NODE_ENV=production
 Environment=PROSPECTING_DATA_DIR=/var/lib/mindvortex-prospecting
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/mindvortex/browsers
 EnvironmentFile=/etc/mindvortex.env
 EnvironmentFile=/etc/mindvortex-prospecting.env
 ExecStart=/opt/node-mindvortex/bin/node prospecting/worker.mjs

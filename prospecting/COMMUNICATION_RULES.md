@@ -16,6 +16,7 @@ Zatwierdzone przez użytkownika 2026-09-13 po wspólnej pracy nad przykładem Fe
 - Nie piszemy o zrzutach, screenshotach, modelach, AI, ograniczeniach statycznej analizy ani o tym, że „nie oceniamy klikalności”. Takie informacje należą wyłącznie do audytu wewnętrznego.
 - Nie przekazujemy klientowi gotowej listy napraw. Celem jest rozmowa o współpracy: nowej stronie, spójnej warstwie wizualnej oraz potencjalnym odświeżeniu identyfikacji. Zakres opieramy na ustaleniach i celach klienta; nie twierdzimy bez dowodów, że pełna przebudowa jest konieczna.
 - Social media i dedykowany CRM proponujemy, kiedy pasują do firmy, jako temat do rozmowy — nie udajemy wiedzy o jej systemach wewnętrznych.
+- Przy propozycji nowej strony dodajemy krótki akapit o automatyzacji przygotowywania, planowania i publikacji treści social media, z odniesieniem do rozwiązań używanych w MindVortex. To dodatkowa możliwość, warunkowo odniesiona do potrzeb firmy; nie obietnica wyników ani diagnoza jej obecnego procesu. Nie powtarzamy akapitu, gdy social media są główną ofertą.
 - Jeden naturalny wstęp, konkretne punkty, dopasowana oferta i jedno pytanie końcowe. Bez nacisku, obietnic wzrostu sprzedaży i określania strony jako „kiepskiej”.
 - Nie dodajemy linku ani przycisku do raportu, w szczególności „Zobacz uwagi do strony”. Raporty i zrzuty są wewnętrzne i wymagają logowania.
 - Nie dodajemy zdania „Jeśli nie chcą Państwo kolejnych wiadomości…” ani wariantów prośby o odpowiedź „nie”. To zatwierdzona preferencja redakcyjna; nie oznacza oceny podstawy prawnej wysyłki.
