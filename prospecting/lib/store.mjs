@@ -224,6 +224,8 @@ export function openStore(directory = dataDirectory()) {
           );
       }
       const jobId = randomUUID();
+      if (kind === "audit" && payload.manual === true)
+        db.prepare("UPDATE jobs SET payload=json_set(payload,'$.manual',json('true')) WHERE kind='audit' AND lead_id=? AND status='queued'").run(id);
       const result = db
         .prepare(
           "INSERT OR IGNORE INTO jobs(id,kind,lead_id,payload,created_at) VALUES(?,?,?,?,?)",
@@ -237,11 +239,11 @@ export function openStore(directory = dataDirectory()) {
         );
       return jobId;
     },
-    claim(kinds = ["discover", "audit", "send"]) {
+    claim(kinds = ["discover", "audit", "send"], manualOnly = false) {
       return transaction(() => {
         const row = db
           .prepare(
-            `SELECT * FROM jobs WHERE status='queued' AND kind IN (${kinds.map(() => "?").join(",")}) ORDER BY created_at LIMIT 1`,
+            `SELECT * FROM jobs WHERE status='queued' AND kind IN (${kinds.map(() => "?").join(",")}) ${manualOnly ? "AND kind='audit' AND json_extract(payload,'$.manual')=1" : ""} ORDER BY created_at LIMIT 1`,
           )
           .get(...kinds);
         if (!row) return undefined;

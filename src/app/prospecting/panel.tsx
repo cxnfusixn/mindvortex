@@ -384,7 +384,7 @@ export function ProspectingPanel() {
             </form>
             {data.settings.paused && (
               <p className="p-muted">
-                Wyszukiwanie i audyty ruszą po wznowieniu automatu w zakładce
+                Wyszukiwanie i automatyczne audyty ruszą po wznowieniu automatu w zakładce
                 „Automatyzacja”.
               </p>
             )}
@@ -509,6 +509,9 @@ export function ProspectingPanel() {
                 <LeadDetail
                   key={active.id}
                   lead={active}
+                  job={data.jobs.find((job) => job.lead_id === active.id && job.kind === "audit")}
+                  workerOnline={data.workerOnline}
+                  actionError={error}
                   history={(data.auditHistory || []).filter((item) => item.lead_id === active.id)}
                   act={act}
                   busy={busy}

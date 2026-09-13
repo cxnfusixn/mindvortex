@@ -3,18 +3,26 @@ import { useState } from "react";
 import { offers, statuses, type Lead, type Act } from "./types";
 export function LeadDetail({
   lead,
+  job,
+  workerOnline,
+  actionError,
   history,
   act,
   busy,
   close,
 }: {
   lead: Lead;
+  job?: {status:string;error:string};
+  workerOnline: boolean;
+  actionError: string;
   history: {id:string;phase:string;created_at:string}[];
   act: Act;
   busy: boolean;
   close: () => void;
 }) {
   const [copied, setCopied] = useState("");
+  const [auditNotice, setAuditNotice] = useState("");
+  const pending = job?.status === "queued" || job?.status === "running";
   const blocked = [
     "suppressed",
     "replied",
@@ -62,12 +70,19 @@ export function LeadDetail({
       <button
         className="p-primary p-full"
         disabled={
-          busy || blocked || lead.status === "auditing" || !lead.canAudit
+          busy || pending || blocked || lead.status === "auditing" || !lead.canAudit
         }
-        onClick={() => void act({ action: "audit", id: lead.id })}
+        onClick={async () => {
+          setAuditNotice("");
+          const ok = await act({ action: "audit", id: lead.id });
+          setAuditNotice(ok ? "Audyt został zlecony." : "Nie udało się zlecić audytu. Szczegóły błędu są nad listą firm.");
+        }}
       >
-        {lead.audit ? "Zleć nowy audyt" : "Zleć audyt strony"} ↗
+        {pending ? (job?.status === "running" ? "Trwa audyt…" : "Audyt w kolejce…") : lead.audit ? "Zleć nowy audyt" : "Zleć audyt strony"} ↗
       </button>
+      <p role="status" className="p-muted">{pending ? (workerOnline ? "Analiza może potrwać kilka minut. Wynik pojawi się tutaj automatycznie." : "Zadanie czeka na uruchomienie procesu audytującego.") : auditNotice || "Ręczny audyt działa również przy wstrzymanej automatyzacji."}</p>
+      {job?.status === "failed" && <p role="alert" className="p-error">{job.error}</p>}
+      {actionError && <p role="alert" className="p-error">{actionError}</p>}
       {lead.website && !lead.canAudit && (
         <p className="p-muted">
           Audyt wymaga własnej strony firmy oraz poprawnego e-maila.

@@ -14,7 +14,6 @@ export async function tick(store) {
   store.runtime("heartbeat", new Date().toISOString());
   store.recover();
   const settings = store.settings();
-  if (settings.paused) return;
   const day = warsawDay(),
     hour = Number(
       new Intl.DateTimeFormat("en-GB", {
@@ -24,7 +23,7 @@ export async function tick(store) {
       }).format(new Date()),
     );
   if (
-    settings.autoDiscover &&
+    !settings.paused && settings.autoDiscover &&
     hour >= settings.dailyHour &&
     store.getRuntime("discoveryDay") !== day
   )
@@ -37,13 +36,13 @@ export async function tick(store) {
       store.runtime("discoveryDay", day);
     });
   const hasBudget = store.usage().calls < settings.dailyLimit;
-  if (process.env.PROSPECTING_OPENAI_API_KEY && hasBudget)
+  if (!settings.paused && process.env.PROSPECTING_OPENAI_API_KEY && hasBudget)
     for (const lead of store
       .leads()
       .filter((l) => l.status === "new" && l.canAudit)
       .slice(0, settings.dailyLimit))
       store.enqueue("audit", lead.id);
-  if (settings.autoSend && process.env.PROSPECTING_SEND_ENABLED === "true")
+  if (!settings.paused && settings.autoSend && process.env.PROSPECTING_SEND_ENABLED === "true")
     for (const lead of store.leads().filter(canSend))
       store.enqueue("send", lead.id);
   const kinds = [
@@ -53,7 +52,7 @@ export async function tick(store) {
       ? ["send"]
       : []),
   ];
-  const job = store.claim(kinds);
+  const job = store.claim(kinds, settings.paused);
   if (!job) return;
   try {
     if (job.kind === "discover") await discover(store, job.payload);
@@ -68,7 +67,7 @@ export async function tick(store) {
       store.setStatus(lead.id, "auditing");
       const evidence = await capture(lead, store.directory);
       if (
-        store.settings().paused ||
+        (store.settings().paused && !job.payload.manual) ||
         ["suppressed", "replied"].includes(store.lead(lead.id).status)
       )
         throw Error("Zadanie wstrzymane przed płatną analizą.");

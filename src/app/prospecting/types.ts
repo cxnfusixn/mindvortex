@@ -50,7 +50,7 @@ export type Snapshot = {
   settings: Settings;
   areas: string[];
   categories: Record<string, string>;
-  jobs: { id: string; kind: string; status: string; error: string }[];
+  jobs: { id: string; lead_id: string | null; kind: string; status: string; error: string }[];
   events: { id: number; at: string; message: string }[];
   usage: { calls: number; inputTokens: number; outputTokens: number };
   heartbeat: string | null;

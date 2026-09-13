@@ -195,3 +195,21 @@ test("CRM proposal is a question, and links use the configured portfolio", () =>
   assert.doesNotMatch(draft, /zrzut|klikalności/);
   assert.match(draft, /Odczytanie oferty wymaga więcej uwagi/);
 });
+
+test('paused automation executes only explicitly requested audits and preserves other queues', async () => {
+  const s=openStore(mkdtempSync(join(tmpdir(),'mv-manual-')));
+  const key=process.env.PROSPECTING_OPENAI_API_KEY;
+  try {
+    const a=s.addLead({name:'Manual',website:'https://manual.example.com',email:'a@example.com',area:'Białołęka',category:'beauty'});
+    const b=s.addLead({name:'Auto',website:'https://auto.example.com',email:'b@example.com',area:'Białołęka',category:'beauty'});
+    s.enqueue('audit',a.id);s.enqueue('audit',a.id,{manual:true});s.enqueue('audit',b.id);s.enqueue('discover');s.enqueue('send',b.id);
+    // Reject before capture; reaching this validation proves that the manual job was consumed.
+    s.db.prepare("UPDATE leads SET email='' WHERE id=?").run(a.id);
+    process.env.PROSPECTING_OPENAI_API_KEY='test-only';
+    await tick(s);
+    assert.equal(s.jobs().find(j=>j.lead_id===a.id).status,'failed');
+    assert.equal(s.jobs().filter(j=>j.status==='queued').length,3);
+    assert.equal(s.settings().paused,true);assert.equal(s.usage().calls,0);
+    await tick(s);assert.equal(s.jobs().filter(j=>j.status==='queued').length,3);
+  } finally {if(key===undefined)delete process.env.PROSPECTING_OPENAI_API_KEY;else process.env.PROSPECTING_OPENAI_API_KEY=key;s.close();}
+});
