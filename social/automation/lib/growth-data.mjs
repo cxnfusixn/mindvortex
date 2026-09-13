@@ -17,6 +17,7 @@ export async function growthData(){
   const reports=(await pool.query('SELECT day::text,data,created_at FROM social_growth_reports ORDER BY day DESC LIMIT 6')).rows;
   return {policy:growthPolicy,brand,writingRules,paused:postCfg.paused,reelsEnabled:cfg.enabled,slots:slots.sort((a,b)=>a.day.localeCompare(b.day)||a.hour-b.hour),
     summaries:Object.fromEntries(['instagram','tiktok'].map(p=>[p,growthSummary(rows,p,now)])),reports,
+    discoverySettings:(await pool.query('SELECT * FROM social_discovery WHERE id=1')).rows[0],
     engagement:(await pool.query('SELECT * FROM social_engagement ORDER BY created_at DESC LIMIT 100')).rows,
     discovery:(await pool.query("SELECT message,created_at FROM social_events WHERE message LIKE 'Growth:%' OR message LIKE 'Job retry scheduled: growth-discovery-%' ORDER BY id DESC LIMIT 1")).rows[0]||null};
 }

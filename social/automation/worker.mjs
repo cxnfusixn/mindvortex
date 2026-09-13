@@ -1,4 +1,5 @@
-import {discoverEngagement,prepareEngagement} from './lib/engagement.mjs';
+import {prepareEngagement} from './lib/engagement.mjs';
+import {runDiscovery} from './lib/engagement-discovery.mjs';
 import {captureGrowthReport} from './lib/growth-data.mjs';
 import {replaceRequested} from './lib/replacements.mjs';
 import {prepareTikTokReels} from './lib/tiktok-generation.mjs';
@@ -59,6 +60,6 @@ async function growthLoop(){for(;;){try{
  await once('metrics-'+new Date().toISOString().slice(0,13),collectMetrics);
  await once('buffer-'+new Date().toISOString().slice(0,13),async()=>{await syncBufferHistory();await reconcileTikTok();});
  await captureGrowthReport();
- if(!(await settings()).paused){await once('growth-discovery-'+dayKey(),discoverEngagement);await prepareEngagement();}
  }catch(e){await event('Growth: '+e.message);}await new Promise(r=>setTimeout(r,300000));}}
-await Promise.all([run(),publicationLoop(),growthLoop()]);
+async function discoveryLoop(){for(;;){try{await runDiscovery();await prepareEngagement();}catch(e){await event('Growth discovery: '+e.message);}await new Promise(r=>setTimeout(r,60000));}}
+await Promise.all([run(),publicationLoop(),growthLoop(),discoveryLoop()]);

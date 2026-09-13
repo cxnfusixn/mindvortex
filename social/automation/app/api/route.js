@@ -1,4 +1,5 @@
 import {readJson} from '../../lib/request.mjs';
+import {discoveryAction} from '../../lib/engagement-discovery.mjs';
 import {addEngagement,updateEngagement} from '../../lib/engagement.mjs';
 import {dashboardMetrics} from '../../lib/metrics.mjs';
 import {requireFreshVisual} from '../../lib/visuals.mjs';
@@ -24,7 +25,9 @@ export async function POST(req){
    await pool.query("INSERT INTO social_tiktok_jobs(id,reel_id,day,kind,content,assets) VALUES($1,$2,$3,'reel',$4,$5) ON CONFLICT(reel_id) DO NOTHING",[crypto.randomUUID(),r.id,r.day,{...r.content,mediaSha:r.sha},JSON.stringify([r.video])]);
    b.id=(await pool.query('SELECT id FROM social_tiktok_jobs WHERE reel_id=$1',[r.id])).rows[0].id;b.target='tiktok';
   }
- if(b.action==='engagement-add'){
+ if(['engagement-settings','engagement-discover'].includes(b.action)){
+  await discoveryAction(b);
+ }else if(b.action==='engagement-add'){
   await addEngagement(b.url,b.text);
  }else if(b.action==='engagement-update'){
   await updateEngagement(b);

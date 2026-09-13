@@ -2,6 +2,7 @@ import pg from 'pg';
 // Three independent worker loops can hold nested advisory locks while issuing queries.
 export const pool = new pg.Pool({connectionString:process.env.SOCIAL_DATABASE_URL,max:10});
 export async function init() {
+ await pool.query(`CREATE TABLE IF NOT EXISTS social_discovery(id int PRIMARY KEY CHECK(id=1),enabled boolean NOT NULL DEFAULT false,requested boolean NOT NULL DEFAULT false,status text NOT NULL DEFAULT 'idle',last_day text,started_at timestamptz,finished_at timestamptz,result text NOT NULL DEFAULT '',error text NOT NULL DEFAULT ''); INSERT INTO social_discovery(id) VALUES(1) ON CONFLICT DO NOTHING;`);
  await pool.query(`CREATE TABLE IF NOT EXISTS social_growth_reports(day date PRIMARY KEY,data jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
  CREATE TABLE IF NOT EXISTS social_engagement(id uuid PRIMARY KEY,platform text NOT NULL,source_url text NOT NULL UNIQUE,source_text text NOT NULL,reason text NOT NULL DEFAULT '',draft text NOT NULL DEFAULT '',status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','done','dismissed')),outcome text NOT NULL DEFAULT '',created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now());`);
  await pool.query('ALTER TABLE social_engagement ADD COLUMN IF NOT EXISTS prepared_at timestamptz');

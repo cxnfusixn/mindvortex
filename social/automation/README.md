@@ -46,7 +46,23 @@ Unavailable insights are displayed as a dash. Lead attribution and automatic
 replies are not implemented. The weekly report contains measured post metrics;
 it does not invent attribution to enquiries or sales.
 
-## Recovery
+## Industry discussions
+
+In Wzrost → Posty branżowe i komentarze, “Szukaj teraz” queues discovery for
+Instagram and TikTok. A separate daily switch is initially off and works
+independently of publication pause. The worker checks requests every minute;
+advisory locking prevents duplicate runs and interrupted runs can resume.
+Settings, status and errors live in `social_discovery`; cited post URLs,
+source context, drafts and outcomes live in `social_engagement`.
+Search and comment prompts are in `lib/engagement.mjs`. Topics include UX,
+websites, branding, AI, CRM and social automation; posts may be Polish or
+English, with comments in the source language. Only actual search citations
+are accepted. Availability depends on public indexing; zero results is a valid
+outcome. The review backlog is limited to 15, with 5 comment drafts per day.
+Comments and likes are performed manually in the original platform. Approval
+in Studio saves a draft and does not publish an interaction.
+
+## Recovery procedure
 
 Use pause first. Check the worker journal and panel events. For uncertain
 publication use “Sprawdź na Instagramie”; if no exact match is found, inspect
