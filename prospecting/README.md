@@ -69,3 +69,5 @@ Raport obejmuje do 12 udokumentowanych ustaleń wizualnych i UX, mocne strony or
 Profile platform zewnętrznych (w tym Booksy) są odrzucane przy imporcie i ręcznym dodawaniu. Istniejące wpisy bez własnej strony lub poprawnego e-maila zostały usunięte z lokalnej bazy.
 
 Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez własnej strony lub poprawnego e-maila nie są zapisywane. Telefon nie zastępuje e-maila. Sam publiczny adres nie oznacza zgody prawnej na ofertę handlową (art. 398 PKE); moduł nie weryfikuje podstawy prawnej kontaktu.
+
+Raport udostępniany klientowi oraz mail zawierają diagnozę, dowody i wpływ na odbiorcę. Konkretne zalecenia wykonawcze i pomysły do testów są dostępne w chronionym podglądzie historii audytu oraz wewnętrznym Markdown. Propozycja nowej strony i przeglądu identyfikacji dotyczy audytów z ofertą website; nie jest twierdzeniem, że każda firma wymaga pełnej przebudowy.

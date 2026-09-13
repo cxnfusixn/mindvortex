@@ -110,3 +110,11 @@ test("report escapes business and model-controlled content", () => {
   assert.ok(html.includes("&lt;script&gt;"));
   assert.ok(!html.includes("<img onerror"));
 });
+test("client diagnosis hides implementation advice while internal audit retains it", () => {
+  const lead={name:"Firma",screens:[],audit:{summary:"Diagnoza",offer:"website",findings:[{title:"Problem",evidence:"Obserwacja",impact:"Trudniejszy odbiór",recommendation:"INTERNAL_FIX_ONLY",effort:"S"}],positives:[],limitations:[],coverage:[],opportunities:["INTERNAL_IDEA_ONLY"]}};
+  const client=reportHtml(lead,()=>"","https://mindvortex.pro/pl");
+  const internal=reportHtml(lead,()=>"","https://mindvortex.pro/pl",true);
+  assert.doesNotMatch(client,/INTERNAL_FIX_ONLY|INTERNAL_IDEA_ONLY/);
+  assert.match(client,/Trudniejszy odbiór/);
+  assert.match(internal,/INTERNAL_FIX_ONLY/);
+});

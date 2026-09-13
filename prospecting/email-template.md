@@ -6,13 +6,13 @@ Temat: {{firma}} — propozycje usprawnień od MindVortex
 
 Dzień dobry,
 
-przeglądałem stronę {{firma}}. Spisałem kilka uwag, które mogą pomóc osobie odwiedzającej ją po raz pierwszy.
+przeglądałem stronę {{firma}}. Przyjrzałem się temu, jak może odbierać ją osoba, która po raz pierwszy poznaje Państwa ofertę.
 
-• {{konkretna obserwacja i propozycja zmiany}}
+• {{konkretna obserwacja i jej wpływ na odbiór marki}}
 
-• {{druga obserwacja i propozycja zmiany, jeśli jest uzasadniona}}
+• {{kolejna obserwacja i jej wpływ na doświadczenie odbiorcy, jeśli jest uzasadniona}}
 
-W MindVortex projektuję i wdrażam strony. Mogę pomóc wprowadzić te zmiany i dopasować je do Państwa oferty.
+W MindVortex mogę zaprojektować nową stronę, która spójnie przedstawi Państwa ofertę i poprowadzi odbiorcę do kontaktu. W ramach takiej współpracy możemy też przyjrzeć się identyfikacji wizualnej — od typografii i kolorów po sposób prezentowania marki. Zakres przebudowy warto oprzeć na Państwa celach i tym, co już działa dobrze.
 
 Tutaj zebrałem uwagi ze zrzutami ekranu: {{link do gotowego raportu}}
 
@@ -20,7 +20,7 @@ Moje realizacje: https://mindvortex.pro/pl
 Instagram: https://www.instagram.com/mindvortex.pro/
 TikTok: https://www.tiktok.com/@mindvortex.pro
 
-Czy mogę przesłać propozycję zakresu prac?
+Czy są Państwo otwarci na rozmowę o nowej odsłonie marki w internecie?
 
 Pozdrawiam,
 Patryk Pyrka

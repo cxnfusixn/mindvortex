@@ -176,7 +176,7 @@ test("CRM proposal is a question, and links use the configured portfolio", () =>
     { name: "Przykład" },
     {
       offer: "crm",
-      findings: [],
+      findings: [{evidence:"Jasne napisy na białym tle.",impact:"Odczytanie oferty wymaga więcej uwagi.",recommendation:"INTERNAL_IMPLEMENTATION_ONLY"}],
       summary: "",
       offerReason: "Formularz zapytania.",
     },
@@ -190,4 +190,6 @@ test("CRM proposal is a question, and links use the configured portfolio", () =>
   assert.match(draft, /TikTok: https:\/\/www.tiktok.com\/@test-profile/);
   assert.doesNotMatch(draft, /z perspektywy klienta poznającego ofertę|Propozycja:/);
   assert.doesNotMatch(draft, /tracicie klientów|nie macie CRM/);
+  assert.doesNotMatch(draft, /INTERNAL_IMPLEMENTATION_ONLY/);
+  assert.match(draft, /Odczytanie oferty wymaga więcej uwagi/);
 });

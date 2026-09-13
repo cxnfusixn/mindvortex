@@ -309,9 +309,9 @@ export function validateEvidenceClaims(audit) {
 }
 export function draftMessage(lead, audit, portfolio, report, social = {}) {
   const observations = audit.findings.slice(0, 4)
-    .map((f) => '• ' + f.evidence + ' ' + f.recommendation).join('\n\n');
+    .map((f) => '• ' + (f.title || f.evidence).replace(/[.!?]$/, '') + '. ' + f.impact).join('\n\n');
   const offer = {
-    website: 'W MindVortex projektuję i wdrażam strony. Mogę pomóc wprowadzić te zmiany i dopasować je do Państwa oferty.',
+    website: 'W MindVortex mogę zaprojektować nową stronę, która spójnie przedstawi Państwa ofertę i poprowadzi odbiorcę do kontaktu. W ramach takiej współpracy możemy też przyjrzeć się identyfikacji wizualnej — od typografii i kolorów po sposób prezentowania marki. Zakres przebudowy warto oprzeć na Państwa celach i tym, co już działa dobrze.',
     social: 'W MindVortex korzystam z automatyzacji przygotowywania i publikacji treści. Jeśli zajmuje to Państwu dużo czasu, mogę pokazać, jak podobne rozwiązanie mogłoby wyglądać u Państwa.',
     crm: 'Jeśli zapytania od klientów trafiają dziś do kilku miejsc, mogę pomóc zebrać je w jednym systemie. Tworzę też CRM-y dopasowane do sposobu pracy firmy.',
     none: 'W MindVortex zajmuję się stronami i automatyzacją. Chętnie omówię, które z tych zmian miałyby sens w Państwa przypadku.',
@@ -323,12 +323,12 @@ export function draftMessage(lead, audit, portfolio, report, social = {}) {
   ].filter(Boolean).join('\n');
   return [
     'Dzień dobry,',
-    'przeglądałem stronę ' + lead.name + '. Spisałem kilka uwag, które mogą pomóc osobie odwiedzającej ją po raz pierwszy.',
+    'przeglądałem stronę ' + lead.name + '. Przyjrzałem się temu, jak może odbierać ją osoba, która po raz pierwszy poznaje Państwa ofertę.',
     observations,
     offer,
     'Tutaj zebrałem uwagi ze zrzutami ekranu: ' + report,
     links,
-    'Czy mogę przesłać propozycję zakresu prac?',
+    'Czy są Państwo otwarci na rozmowę o nowej odsłonie marki w internecie?',
     'Pozdrawiam,\nPatryk Pyrka\nMindVortex\npatryk.pyrka@mindvortex.pro',
     'Jeśli nie chcą Państwo kolejnych wiadomości, wystarczy odpowiedź „nie”.',
   ].filter(Boolean).join('\n\n');

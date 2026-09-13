@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       try { validateAudit(record.audit, record.screens); }
       catch { return Response.json({note:"Wynik wstępny nie przeszedł kontroli jakości. Zachowano go do wglądu.",audit:record.audit}, {headers}); }
       return new Response(reportHtml({...record.lead,audit:{...record.audit,summary:(record.phase === "initial" ? "WERSJA WSTĘPNA — przed weryfikacją dowodów. " : "WERSJA ZWERYFIKOWANA. ") + record.audit.summary},screens:record.screens},
-        (screen: {file:string}) => record.screens.find((item: {file:string}) => item.file === screen.file)?.image || "",store.settings().portfolioUrl), {
+        (screen: {file:string}) => record.screens.find((item: {file:string}) => item.file === screen.file)?.image || "",store.settings().portfolioUrl,true), {
         headers:{...headers,"Content-Type":"text/html; charset=utf-8","Content-Security-Policy":"default-src 'none'; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"},
       });
     }
