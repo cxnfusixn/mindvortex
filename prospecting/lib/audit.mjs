@@ -292,18 +292,29 @@ export function validateEvidenceClaims(audit) {
       );
   }
 }
-export function draftMessage(lead, audit, portfolio, report) {
-  const observations = audit.findings
-    .slice(0, 3)
-    .map((f) => `• ${f.evidence}\n  Propozycja: ${f.recommendation}`)
-    .join("\n\n");
+export function draftMessage(lead, audit, portfolio, report, social = {}) {
+  const observations = audit.findings.slice(0, 2)
+    .map((f) => '• ' + f.evidence + ' ' + f.recommendation).join('\n\n');
   const offer = {
-    website:
-      "Mogę pomóc wdrożyć te poprawki lub przygotować stronę dopasowaną do Państwa oferty.",
-    social:
-      "Czy usprawnienie przygotowania i publikacji treści w social mediach byłoby dla Państwa przydatne? Mogę pokazać rozwiązanie używane w MindVortex.",
-    crm: "Czy przydałoby się Państwu jedno miejsce do obsługi zapytań i kolejnych etapów współpracy? Mogę przedstawić koncepcję dedykowanego CRM, na przykładzie rozwiązania Marcin Bak.",
-    none: "Jeśli te wskazówki okażą się przydatne, chętnie porozmawiam o możliwych usprawnieniach.",
+    website: 'W MindVortex projektuję i wdrażam strony. Mogę pomóc wprowadzić te zmiany i dopasować je do Państwa oferty.',
+    social: 'W MindVortex korzystam z automatyzacji przygotowywania i publikacji treści. Jeśli zajmuje to Państwu dużo czasu, mogę pokazać, jak podobne rozwiązanie mogłoby wyglądać u Państwa.',
+    crm: 'Jeśli zapytania od klientów trafiają dziś do kilku miejsc, mogę pomóc zebrać je w jednym systemie. Tworzę też CRM-y dopasowane do sposobu pracy firmy.',
+    none: 'W MindVortex zajmuję się stronami i automatyzacją. Chętnie omówię, które z tych zmian miałyby sens w Państwa przypadku.',
   }[audit.offer];
-  return `Dzień dobry,\n\nprzygotowałem krótką analizę publicznej strony firmy ${lead.name}, z perspektywy klienta poznającego ofertę i szukającego kontaktu.\n\n${observations}\n\n${offer}\n\nAnaliza ze zrzutami ekranu: ${report}\nPortfolio MindVortex: ${portfolio}\n\nCzy chcieliby Państwo porozmawiać o tych możliwościach?\n\nPatryk Pyrka\nMindVortex\npatryk.pyrka@mindvortex.pro\n\nJeżeli nie chcą Państwo dalszego kontaktu, proszę odpowiedzieć „nie”.`;
+  const links = [
+    'Moje realizacje: ' + portfolio,
+    social.instagramUrl ? 'Instagram: ' + social.instagramUrl : '',
+    social.tiktokUrl ? 'TikTok: ' + social.tiktokUrl : '',
+  ].filter(Boolean).join('\n');
+  return [
+    'Dzień dobry,',
+    'przeglądałem stronę ' + lead.name + '. Spisałem kilka uwag, które mogą pomóc osobie odwiedzającej ją po raz pierwszy.',
+    observations,
+    offer,
+    'Tutaj zebrałem uwagi ze zrzutami ekranu: ' + report,
+    links,
+    'Czy mogę przesłać propozycję zakresu prac?',
+    'Pozdrawiam,\nPatryk Pyrka\nMindVortex\npatryk.pyrka@mindvortex.pro',
+    'Jeśli nie chcą Państwo kolejnych wiadomości, wystarczy odpowiedź „nie”.',
+  ].filter(Boolean).join('\n\n');
 }

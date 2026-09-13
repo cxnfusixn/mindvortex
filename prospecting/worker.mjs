@@ -81,6 +81,7 @@ export async function tick(store) {
           audit,
           settings.portfolioUrl,
           `${publicOrigin()}/prospecting/report/${saved.share_token}`,
+          settings,
         );
         store.setDraft(lead.id, draft);
         const embedded = {};

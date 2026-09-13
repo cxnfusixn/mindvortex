@@ -107,6 +107,8 @@ export async function POST(request: Request) {
           "dailyLimit",
           "dailyHour",
           "portfolioUrl",
+          "instagramUrl",
+          "tiktokUrl",
         ];
         const value = Object.fromEntries(
           keys

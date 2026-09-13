@@ -22,6 +22,8 @@ export function SettingsForm({
             dailyLimit: Number(form.get("dailyLimit")),
             dailyHour: Number(form.get("dailyHour")),
             portfolioUrl: form.get("portfolioUrl"),
+            instagramUrl: form.get("instagramUrl"),
+            tiktokUrl: form.get("tiktokUrl"),
             paused: !form.has("enabled"),
             autoDiscover: form.has("autoDiscover"),
             autoSend: form.has("autoSend"),
@@ -85,6 +87,8 @@ export function SettingsForm({
           />
         </label>
         <div className="p-switches">
+          <label>Instagram w wiadomościach<input name="instagramUrl" type="url" defaultValue={s.instagramUrl} placeholder="https://www.instagram.com/nazwa/" /></label>
+          <label>TikTok w wiadomościach<input name="tiktokUrl" type="url" defaultValue={s.tiktokUrl} placeholder="https://www.tiktok.com/@nazwa" /></label>
           <label>
             <input name="enabled" type="checkbox" defaultChecked={!s.paused} />
             <span>

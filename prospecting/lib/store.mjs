@@ -21,6 +21,8 @@ export const defaults = {
   dailyLimit: 5,
   dailyHour: 9,
   portfolioUrl: "https://mindvortex.pro/pl",
+  instagramUrl: "https://www.instagram.com/mindvortex.pro/",
+  tiktokUrl: "https://www.tiktok.com/@mindvortex.pro",
 };
 export const dataDirectory = () =>
   resolve(
@@ -71,8 +73,8 @@ export function openStore(directory = dataDirectory()) {
     db
       .prepare("INSERT INTO events(at,message) VALUES(?,?)")
       .run(now(), message);
-  const settings = () =>
-    JSON.parse(db.prepare("SELECT value FROM settings WHERE id=1").get().value);
+  const settings = () => ({ ...defaults,
+    ...JSON.parse(db.prepare("SELECT value FROM settings WHERE id=1").get().value) });
   const lead = (id) =>
     decode(db.prepare("SELECT * FROM leads WHERE id=?").get(id));
   const transaction = (fn) => {
@@ -130,6 +132,14 @@ export function openStore(directory = dataDirectory()) {
         if (typeof next[key] !== "boolean")
           throw Error("Nieprawidłowe ustawienia.");
       next.portfolioUrl = publicUrl(next.portfolioUrl).href;
+      for (const [key, domain] of [["instagramUrl", "instagram.com"], ["tiktokUrl", "tiktok.com"]]) {
+        const value = String(next[key] || "").trim();
+        if (!value) { next[key] = ""; continue; }
+        const url = publicUrl(value);
+        if (url.hostname !== domain && url.hostname !== `www.${domain}`)
+          throw Error(`Podaj adres profilu w ${domain}.`);
+        next[key] = url.href;
+      }
       db.prepare("UPDATE settings SET value=? WHERE id=1").run(
         JSON.stringify(next),
       );

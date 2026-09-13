@@ -41,6 +41,8 @@ export type Settings = {
   dailyLimit: number;
   dailyHour: number;
   portfolioUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
 };
 export type Snapshot = {
   leads: Lead[];

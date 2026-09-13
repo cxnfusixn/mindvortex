@@ -182,8 +182,12 @@ test("CRM proposal is a question, and links use the configured portfolio", () =>
     },
     "https://mindvortex.pro/pl",
     "https://mindvortex.pro/prospecting/report/abc",
+    { instagramUrl: "https://www.instagram.com/mindvortex.pro/", tiktokUrl: "https://www.tiktok.com/@test-profile" },
   );
   assert.match(draft, /mindvortex.pro\/pl/);
   assert.match(draft, /Czy/);
+  assert.match(draft, /Instagram: https:\/\/www.instagram.com\/mindvortex.pro\//);
+  assert.match(draft, /TikTok: https:\/\/www.tiktok.com\/@test-profile/);
+  assert.doesNotMatch(draft, /z perspektywy klienta poznającego ofertę|Propozycja:/);
   assert.doesNotMatch(draft, /tracicie klientów|nie macie CRM/);
 });
