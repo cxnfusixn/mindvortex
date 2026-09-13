@@ -44,7 +44,7 @@ Wymagane Node 24, HTTPS, stały dysk i osobny proces. Aplikacja oraz worker musz
 
 Standardowy build strony: `npm run build`. Przy wydaniu standalone skopiuj `prospecting/` oraz zapewnij workerowi zależności `playwright` i `nodemailer` z lockfile. Next nie musi importować Chromium ani skilla do procesu HTTP. Zainstaluj Chromium przez `npx playwright install --with-deps chromium` w środowisku użytkownika usługi. Użyj jednostki `deploy/mindvortex-prospecting-worker.service`; dodaj `EnvironmentFile=/etc/mindvortex-prospecting.env` również do usługi strony. Nie trzeba dodawać proxy do Social Studio ani zmieniać publicznego portfolio.
 
-Backup musi obejmować SQLite (wraz z WAL albo spójną kopię wykonaną SQLite backup) oraz katalog `assets`. Link wygasa po 30 dniach, ale pliki pozostają na dysku do administracyjnego usunięcia; retencja dyskowa nie jest automatycznie egzekwowana. Monitoruj rozmiar katalogu, sygnał procesu i błędne zadania. Pełne awarie procesu są widoczne w systemd/journal, panel sygnalizuje brak heartbeat.
+Backup musi obejmować SQLite (wraz z WAL albo spójną kopię wykonaną SQLite backup) oraz katalog `assets`. Link wygasa po 30 dniach, ale pliki pozostają na dysku do administracyjnego usunięcia; zatwierdzona retencja wynosi 180 dni i może być egzekwowana przez worker po włączeniu PROSPECTING_RETENTION_ENABLED=true. Monitoruj rozmiar katalogu, sygnał procesu i błędne zadania. Pełne awarie procesu są widoczne w systemd/journal, panel sygnalizuje brak heartbeat.
 
 ## Weryfikacja
 
@@ -62,7 +62,7 @@ Testy logiki korzystają z tymczasowych baz, bez wiadomości i płatnych wywoła
 
 ## Historia i zakres oceny
 
-Każde nowe wykonanie analizy zapisuje w SQLite dwa osobne, niezmieniane rekordy `audit_history`: `initial` przed weryfikacją oraz `verified` po niej. Zapisy zawierają identyfikator wykonania, datę, model (w JSON audytu), wyniki i oryginalne screenshoty osadzone w JSON. Dzięki temu kolejne wykonanie nie nadpisuje dowodów wcześniejszego audytu. Dodatkowy przegląd może dopisać etap reviewed bez zmieniania wcześniejszych wyników. Historia dostępna jest w karcie firmy tylko po zalogowaniu. Nie ma automatycznego usuwania historii; należy uwzględnić rosnącą bazę w kopiach zapasowych. Wersje sprzed wdrożenia historii nie są rekonstruowane.
+Każde nowe wykonanie analizy zapisuje w SQLite dwa osobne, niezmieniane rekordy `audit_history`: `initial` przed weryfikacją oraz `verified` po niej. Zapisy zawierają identyfikator wykonania, datę, model (w JSON audytu), wyniki i oryginalne screenshoty osadzone w JSON. Dzięki temu kolejne wykonanie nie nadpisuje dowodów wcześniejszego audytu. Dodatkowy przegląd może dopisać etap reviewed bez zmieniania wcześniejszych wyników. Historia dostępna jest w karcie firmy tylko po zalogowaniu. Historia podlega zatwierdzonej retencji 180 dni razem z kontaktem; przed włączeniem automatycznego usuwania sprawdź podgląd i procedurę backupów. Wersje sprzed wdrożenia historii nie są rekonstruowane.
 
 Raport obejmuje do 12 udokumentowanych ustaleń wizualnych i UX, mocne strony oraz osobne odczyty techniczne DOM (tytuł, opis, H1, alt, viewport, HTTPS, poziomy overflow). Liczba ustaleń nie jest celem. Odczyty nie zastępują Lighthouse, Core Web Vitals ani pełnego audytu dostępności. E-mail pokazuje do 4 najważniejszych obserwacji; pełne wyniki są w raporcie.
 
@@ -83,3 +83,7 @@ Po przyjęciu wiadomości przez SMTP worker zapisuje identyczny MIME w folderze 
 Plik assets/<id>/sent.eml powstaje przed wysyłką; jest to dokładnie MIME przekazywany do SMTP. Stan kopii znajduje się w runtime pod kluczem sent-copy:<id>. Worker archiwizuje wyłącznie wiadomości o statusie sent, także podczas pauzy. Błąd IMAP nie zmienia statusu wysyłki i ponawia tylko kopię co 5 minut. Przed APPEND sprawdza Message-ID w folderze Wysłane, aby uniknąć duplikatu po utracie potwierdzenia. Historia pracy pokazuje zapis lub oczekiwanie kopii. Starsze wysyłki bez pliku MIME nie są automatycznie rekonstruowane.
 
 Wszystkie branże oznaczają brak filtra kategorii OSM: nazwane obiekty z website/contact:website i email/contact:email. Nie ma limitu 250 wyników zapytania; pozostają filtry własnej strony i poprawnego e-maila. Źródło może obejmować także instytucje i nie stanowi kompletnego rejestru firm.
+
+## Zabezpieczenia i retencja
+
+Instrukcje logowania przez zaufany proxy, retencji, eksportu i odtwarzania usunięć: [poprawki bezpieczeństwa](../docs/security-fixes-2026-09-13.md).

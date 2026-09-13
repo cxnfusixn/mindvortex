@@ -34,7 +34,11 @@ mkdir -p "$destination"
 tar -xf "$archive" -C "$destination" --no-same-owner
 test -s "$destination/index.html"
 test -d "$destination/_next/static"
-chown -R mindvortex:mindvortex "$release"
+chown -R root:mindvortex "$release"
+chmod -R g-w,o-rwx "$release"
+[[ ! -L "$standalone/.next/cache" ]]
+install -d -o mindvortex -g mindvortex -m 0700 "$standalone/.next/cache"
+chown -R mindvortex:mindvortex "$standalone/.next/cache"
 ln -sfn "$standalone" "$root/current.new"
 mv -Tf "$root/current.new" "$root/current"
 healthy=0

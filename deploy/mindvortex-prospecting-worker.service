@@ -9,6 +9,7 @@ User=mindvortex
 Group=mindvortex
 WorkingDirectory=/opt/mindvortex/current
 Environment=NODE_ENV=production
+Environment=PROSPECTING_RETENTION_ENABLED=true
 Environment=PROSPECTING_DATA_DIR=/var/lib/mindvortex-prospecting
 Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/mindvortex/browsers
 EnvironmentFile=/etc/mindvortex.env
@@ -21,7 +22,11 @@ KillSignal=SIGTERM
 StateDirectory=mindvortex-prospecting
 NoNewPrivileges=true
 PrivateTmp=true
-ProtectSystem=full
+ProtectSystem=strict
+ProtectHome=true
+UMask=0077
+MemoryMax=2G
+TasksMax=256
 
 [Install]
 WantedBy=multi-user.target

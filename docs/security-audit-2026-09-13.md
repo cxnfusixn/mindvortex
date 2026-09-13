@@ -1,5 +1,7 @@
 # Audyt bezpieczeństwa MindVortex — 2026-09-13
 
+Stan historyczny przed poprawkami. Implementacja napraw i kroki aktywacji: [security-fixes-2026-09-13.md](security-fixes-2026-09-13.md).
+
 Przegląd obejmuje repozytorium główne, prospecting, aplikację `social/automation`, narzędzia `social/instagram/tools`, skrypty budowania podglądów i wdrożenia oraz publiczne artefakty tekstowe. Wykryto **4 problemy P2 (średni priorytet)**, potwierdzone testami lokalnymi. Nie potwierdzono podatności krytycznej ani przejęcia konta.
 
 Kod aplikacji nie został zmieniony. Nie wykonywano wdrożenia, testów obciążeniowych produkcji, wysyłki wiadomości ani wywołań płatnych modeli. Repozytorium zmieniało się podczas przeglądu wskutek pracy poza tym audytem; lokalizacje ustaleń sprawdzono ponownie przy HEAD `be5960c708935e5e18857d669141b2bc50acec07`. Katalogi `graphify-out` zawierają częściowe artefakty, bez gotowego `graph.json`; wnioski oparto na kodzie.

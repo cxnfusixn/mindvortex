@@ -4,15 +4,24 @@ exec 9>/run/lock/mindvortex-social-deploy.lock
 flock -n 9
 release="/opt/mindvortex-social/releases/$(date -u +%Y%m%d%H%M%S)"
 previous="$(readlink -f /opt/mindvortex-social/current)"
-install -d -o mv-social -g mv-social "$release"
+id mv-social-build >/dev/null 2>&1 || useradd --system --user-group --home-dir /var/cache/mv-social-build --create-home --shell /usr/sbin/nologin mv-social-build
+install -d -o mv-social-build -g mv-social-build -m 0750 "$release"
 tar -xzf /home/ubuntu/.social-deploy.tar.gz -C "$release"
-chown -R mv-social:mv-social "$release"
+chown -R mv-social-build:mv-social-build "$release"
 cd "$release"
 test -f 'app/media/[file]/route.js'
 python3 prune-releases.py
-sudo -u mv-social env PATH="/opt/node-mindvortex/bin:$PATH" npm ci --no-audit --no-fund
-sudo -u mv-social env PATH="/opt/node-mindvortex/bin:$PATH" npm test
-sudo -u mv-social env PATH="/opt/node-mindvortex/bin:$PATH" npm run build
+systemd-run --wait --pipe --collect --unit="mv-social-build-$(date +%s)" \
+  --property=User=mv-social-build --property=Group=mv-social-build \
+  --property="WorkingDirectory=$release" --property=ProtectSystem=strict --property=ProtectHome=true \
+  --property=NoNewPrivileges=true --property=PrivateTmp=true \
+  --property="ReadWritePaths=$release /var/cache/mv-social-build" \
+  --property="InaccessiblePaths=-/etc/mindvortex.env -/etc/mindvortex-prospecting.env -/etc/mindvortex-social.env -/var/lib/mindvortex-social -/var/lib/mindvortex-prospecting" \
+  --setenv=PATH=/opt/node-mindvortex/bin:/usr/local/bin:/usr/bin:/bin \
+  --setenv=HOME=/var/cache/mv-social-build --setenv=npm_config_cache=/var/cache/mv-social-build/npm --setenv=NODE_ENV=production \
+  /bin/bash -c 'set -Eeuo pipefail; npm ci --ignore-scripts; npm audit --audit-level=high; npm test; npm run build'
+chown -R root:mv-social "$release"
+chmod -R g-w,o-rwx "$release"
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env --input-type=module -e 'const {init,pool}=await import("./lib/db.mjs");await init();await pool.end();'
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env tests/growth.integration.mjs
 sudo -u mv-social /opt/node-mindvortex/bin/node --env-file=/etc/mindvortex-social.env seed-metric-history.mjs
