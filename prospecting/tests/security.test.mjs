@@ -68,10 +68,9 @@ test("daily budget, atomic recovery and share revocation", () => {
     const saved = store.lead(lead.id);
     assert.equal(store.share(saved.share_token).id, lead.id);
     assert.equal(canSend(saved), false);
-    store.saveConsent(
+    store.saveContact(
       lead.id,
       "test@example.com",
-      "Zgoda e-mail na ofertę 2026-09-13, formularz.",
     );
     assert.equal(canSend(store.lead(lead.id)), true);
     store.enqueue("send", lead.id);

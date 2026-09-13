@@ -116,11 +116,10 @@ export async function POST(request: Request) {
         store.saveSettings(value);
         break;
       }
-      case "consent":
-        store.saveConsent(
+      case "contact":
+        store.saveContact(
           String(data.id),
           String(data.email || ""),
-          String(data.evidence || ""),
         );
         break;
       case "suppress":

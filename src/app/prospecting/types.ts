@@ -31,8 +31,6 @@ export type Lead = {
   draft: string;
   share_token: string | null;
   share_expires: string | null;
-  consent: string;
-  consent_at: string | null;
 };
 export type Settings = {
   paused: boolean;

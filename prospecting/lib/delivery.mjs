@@ -3,10 +3,9 @@ export function canSend(lead) {
   return Boolean(
     lead &&
     lead.status === "ready" &&
-    lead.consent.length >= 12 &&
-    lead.consent_at &&
-    lead.email === lead.consent_email &&
-    lead.email &&
+    lead.canAudit &&
+    /^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(lead.email || "") &&
+    lead.email.length <= 254 &&
     lead.draft &&
     lead.audit?.confidence === "high" &&
     lead.audit.verifiedAt &&
@@ -29,7 +28,7 @@ export async function deliver(store, id) {
     const row = store.lead(id);
     if (!canSend(row))
       throw Error(
-        "Kontakt nie spełnia warunków wysyłki (zgoda, raport, pewność lub status).",
+        "Kontakt nie spełnia warunków wysyłki (własna strona, e-mail, raport, pewność lub status).",
       );
     store.setStatus(id, "sending");
     return row;

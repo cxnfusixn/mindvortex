@@ -117,7 +117,7 @@ export function SettingsForm({
             <span>
               <strong>Wysyłaj gotowe propozycje</strong>
               <small>
-                Tylko zapisana zgoda, wysoka pewność audytu i aktywna integracja
+                Poprawny e-mail, wysoka pewność audytu i aktywna integracja
                 pocztowa. Jedna wiadomość na firmę.
               </small>
             </span>

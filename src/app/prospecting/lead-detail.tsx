@@ -162,21 +162,13 @@ export function LeadDetail({
       )}
       {!blocked && (
         <section>
-          <h3>Zgoda na kontakt handlowy</h3>
-          <p>Samo udostępnienie adresu na stronie nie potwierdza zgody.</p>
-          {lead.consent_at && (
-            <p className="p-positive">
-              ✓ Zgoda zapisana{" "}
-              {new Date(lead.consent_at).toLocaleDateString("pl-PL")}
-            </p>
-          )}
+          <h3>Kontakt e-mail</h3>
           <form
             action={async (form) => {
               await act({
-                action: "consent",
+                action: "contact",
                 id: lead.id,
                 email: form.get("email"),
-                evidence: form.get("evidence"),
               });
             }}
           >
@@ -191,18 +183,7 @@ export function LeadDetail({
                 maxLength={254}
               />
             </label>
-            <label>
-              Źródło, data i zakres zgody
-              <textarea
-                name="evidence"
-                defaultValue={lead.consent}
-                required
-                minLength={12}
-                maxLength={2000}
-                placeholder="Gdzie i kiedy odbiorca zgodził się na e-mail z ofertą MindVortex?"
-              />
-            </label>
-            <button disabled={busy}>Zapisz zgodę</button>
+            <button disabled={busy}>Zapisz kontakt</button>
           </form>
         </section>
       )}

@@ -1,6 +1,6 @@
 # MindVortex / Prospecting
 
-Osobny moduł głównej aplikacji pod `/prospecting`, niezależny od Social Studio. Next.js obsługuje panel i chronione API, a proces Node 24 wykonuje wyszukiwanie, zbieranie zrzutów i analizę. SQLite w trybie WAL przechowuje firmy, zadania, zgody i historię. Wymagany jeden serwer ze wspólnym dyskiem lokalnym; nie uruchamiać bazy na NFS ani w wielu replikach.
+Osobny moduł głównej aplikacji pod `/prospecting`, niezależny od Social Studio. Next.js obsługuje panel i chronione API, a proces Node 24 wykonuje wyszukiwanie, zbieranie zrzutów i analizę. SQLite w trybie WAL przechowuje firmy, zadania, kontakty i historię. Wymagany jeden serwer ze wspólnym dyskiem lokalnym; nie uruchamiać bazy na NFS ani w wielu replikach.
 
 ## Lokalnie
 
@@ -34,7 +34,7 @@ Panel startuje z pauzą. W zakładce Automatyzacja włącz proces. Do wyszukiwan
 
 ## Komunikacja
 
-Wysyłka wymaga łącznie `PROSPECTING_SEND_ENABLED=true`, ustawienia autoSend, aktywnego procesu, poprawnej konfiguracji SMTP, zgody na konkretny adres i cel, gotowego raportu o wysokiej pewności oraz co najmniej jednego problemu ważności 2+. Bez zgody powstaje wyłącznie szkic. SMTP używa `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`; worker musi otrzymać te zmienne osobno, nie odczytuje automatycznie `.env.local`.
+Wysyłka wymaga łącznie `PROSPECTING_SEND_ENABLED=true`, ustawienia autoSend, aktywnego procesu, poprawnej konfiguracji SMTP, poprawnego e-maila i własnej strony, gotowego raportu o wysokiej pewności oraz co najmniej jednego problemu ważności 2+. Rejestrowanie zgody nie jest warunkiem technicznym wysyłki. SMTP używa `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`; worker musi otrzymać te zmienne osobno, nie odczytuje automatycznie `.env.local`.
 
 Jedna wiadomość na firmę, bez follow-upów. Stan `sending` zapisywany jest przed SMTP; niepewny wynik blokuje ponowienie. Status `sent` oznacza przyjęcie przez serwer SMTP, nie dowód dostarczenia do skrzynki. Odpowiedzi oznacza się w panelu; automatyczne odczytywanie skrzynki nie jest zaimplementowane. Nie wysyłamy dodatkowych wiadomości po pierwszej, więc odpowiedź nie uruchamia sekwencji. Zatrzymanie zadania już przekazanego do SMTP może nie cofnąć wysyłki.
 
@@ -60,4 +60,4 @@ Testy logiki korzystają z tymczasowych baz, bez wiadomości i płatnych wywoła
 Źródła implementacji: lokalna dokumentacja Next.js w `node_modules/next/dist/docs`, https://developers.openai.com/api/docs/guides/images-vision, https://developers.openai.com/api/docs/guides/structured-outputs, https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide, https://nodejs.org/api/sqlite.html.
 # Kwalifikacja do audytu
 
-Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila lub numeru telefonu w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez kompletu danych pozostają w bazie, ale nie są audytowane. Kontakt nie oznacza zgody na wysyłkę.
+Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila lub numeru telefonu w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez kompletu danych pozostają w bazie, ale nie są audytowane. Sam publiczny adres nie oznacza zgody prawnej na ofertę handlową (art. 398 PKE); moduł nie weryfikuje podstawy prawnej kontaktu.

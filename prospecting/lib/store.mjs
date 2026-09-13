@@ -274,23 +274,20 @@ export function openStore(directory = dataDirectory()) {
       db
         .prepare("UPDATE leads SET draft=?,updated_at=? WHERE id=?")
         .run(draft, now(), id),
-    saveConsent(id, email, evidence) {
+    saveContact(id, email) {
       if (
         !/^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(email) ||
-        email.length > 254 ||
-        typeof evidence !== "string" ||
-        evidence.trim().length < 12 ||
-        evidence.length > 2000
+        email.length > 254
       )
         throw Error(
-          "Podaj jeden e-mail oraz źródło, datę i zakres zgody na kontakt handlowy.",
+          "Podaj jeden poprawny adres e-mail.",
         );
-      if (!lead(id) || ["suppressed", "replied"].includes(lead(id).status))
+      if (!lead(id) || ["suppressed", "replied", "sending", "sent", "uncertain"].includes(lead(id).status))
         throw Error("Kontakt wyłączony.");
       db.prepare(
-        "UPDATE leads SET email=?,consent_email=?,consent=?,consent_at=?,updated_at=? WHERE id=?",
-      ).run(email, email, evidence.trim(), now(), now(), id);
-      event("Zapisano dowód zgody na kontakt e-mail.");
+        "UPDATE leads SET email=?,updated_at=? WHERE id=?",
+      ).run(email, now(), id);
+      event("Zapisano adres e-mail kontaktu.");
     },
     suppress(id, status = "suppressed") {
       if (!["suppressed", "replied"].includes(status))

@@ -35,6 +35,10 @@ try {
   await page.getByLabel("E-mail kontaktowy").fill("qa@example.com");
   await page.getByRole("button", { name: "Zapisz firmę", exact: true }).click();
   await page.getByRole("button", { name: /QA — test prospectingu/ }).click();
+  await page.getByLabel("E-mail odbiorcy").fill("contact@example.com");
+  await page.getByRole("button", { name: "Zapisz kontakt", exact: true }).click();
+  await page.getByText("Zapisano.", { exact: true }).waitFor();
+  assert.equal(await page.getByText("Zgoda na kontakt handlowy", { exact: true }).count(), 0);
   await page.getByRole("button", { name: "Zleć audyt strony" }).click();
   await page.getByText("Zapisano.", { exact: true }).waitFor();
   await page.getByRole("button", { name: "Zamknij szczegóły" }).click();
