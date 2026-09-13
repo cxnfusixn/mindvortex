@@ -1,3 +1,5 @@
+import {after} from 'next/server';
+import {startDiscovery,executeDiscovery,latestDiscovery} from '../../../../prospecting/lib/discovery-run.mjs';
 import {
   openStore,
   areas,
@@ -55,6 +57,7 @@ export async function GET(request: Request) {
         leads: store.leads().map((lead) => ({...lead, canSend: canSend(lead)})),
         auditHistory: store.auditHistory(),
         jobs: store.jobs(),
+        discovery: latestDiscovery(store),
         events: store.events(),
         settings: store.settings(),
         usage: store.usage(),
@@ -102,12 +105,9 @@ export async function POST(request: Request) {
           !Object.hasOwn(categories, data.category)
         )
           throw Error("Wybierz obszar i branżę.");
-        store.enqueue("discover", null, {
-          manual: true,
-          area: data.area,
-          category: data.category,
-        });
-        break;
+        const result=startDiscovery(store,{area:data.area,category:data.category});
+        if(result.started){const directory=store.directory;after(()=>executeDiscovery(directory,result.job));}
+        return Response.json({ok:true,...result},{status:202,headers});
       }
       case "add":
         store.addLead({

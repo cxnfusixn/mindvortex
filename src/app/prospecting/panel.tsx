@@ -18,7 +18,9 @@ export function ProspectingPanel() {
     [filter, setFilter] = useState("all"),
     [showAdd, setShowAdd] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
+  const [now,setNow] = useState(0);
   const refresh = useCallback(async () => {
+    setNow(Date.now());
     try {
       const response = await fetch("/prospecting/api", { cache: "no-store" });
       const body = await response.json();
@@ -39,12 +41,12 @@ export function ProspectingPanel() {
     const initial = setTimeout(() => void refresh(), 0);
     const timer = setInterval(() => {
       if (!document.hidden) void refresh();
-    }, 10000);
+    }, data?.discovery?.status === 'running' || busy ? 2000 : 10000);
     return () => {
       clearTimeout(initial);
       clearInterval(timer);
     };
-  }, [refresh]);
+  }, [refresh, data?.discovery?.status, busy]);
   const act: Act = async (payload) => {
     setBusy(true);
     setError("");
@@ -58,7 +60,7 @@ export function ProspectingPanel() {
       const body = await response.json();
       if (!response.ok) throw Error(body.error || "Operacja nie powiodła się.");
       await refresh();
-      setNotice(payload.action === "discover" ? "Zlecono wyszukiwanie firm w obszarze: " + payload.area + ". Postęp znajdziesz w Historii pracy." : "Zapisano.");
+      setNotice(payload.action === "discover" ? (body.started ? "Uruchomiono wyszukiwanie: " : "Trwa już wyszukiwanie: ") + body.job.payload.area + ". Postęp widoczny poniżej." : "Zapisano.");
       return true;
     } catch (e) {
       await refresh();
@@ -381,8 +383,15 @@ export function ProspectingPanel() {
                   ))}
                 </select>
               </label>
-              <button disabled={busy}>Wyszukaj firmy ↗</button>
+              <button disabled={busy || Boolean(data.discovery?.status==='running' && data.discovery.started_at && now-Date.parse(data.discovery.started_at)<120000)}>Wyszukaj teraz ↗</button>
             </form>
+            {data.discovery && <section className="p-discovery" style={{gridTemplateColumns:'1fr'}} aria-label="Postęp wyszukiwania" role="status" aria-live="polite">
+              <div>
+                <h3>{data.discovery.payload.area} · {data.categories[data.discovery.payload.category]}</h3>
+                <p>{data.discovery.status==='failed' ? data.discovery.error : data.discovery.status==='running' && data.discovery.started_at && now-Date.parse(data.discovery.started_at)>=120000 ? 'Brak zakończenia procesu. Możesz uruchomić wyszukiwanie ponownie.' : data.discovery.payload.progress?.message || (data.discovery.status==='queued' ? 'Stare zlecenie oczekuje w kolejce. Kliknij „Wyszukaj teraz”, aby rozpocząć od razu.' : data.discovery.status==='done' ? 'Wyszukiwanie zakończone.' : 'Pobieranie firm ze źródła…')}</p>
+                {data.discovery.status==='running' && data.discovery.started_at && <p>Czas od uruchomienia: {Math.max(0,Math.floor((now-Date.parse(data.discovery.started_at))/1000))} s. Odpowiedź źródła może potrwać do 55 sekund.</p>}
+              </div>
+            </section>}
             {data.settings.paused && (
               <p className="p-muted">
                 Ręczne wyszukiwanie działa również przy wstrzymanej automatyzacji.

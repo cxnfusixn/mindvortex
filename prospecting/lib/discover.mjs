@@ -15,7 +15,8 @@ export function discoveryQuery(area, category) {
   const region = area === "Warszawa" ? 'area["name"="Warszawa"]["boundary"="administrative"]["admin_level"="8"]->.region;' : `area["name"="Warszawa"]["boundary"="administrative"]["admin_level"="8"]->.city;rel(area.city)["boundary"="administrative"]["admin_level"="9"]["name"="${area}"];map_to_area->.region;`;
   return `[out:json][timeout:40];${region}(${query});out center tags;`;
 }
-export async function discover(store, { area, category }) {
+export async function discover(store, { area, category }, progress = () => {}) {
+  progress({stage:'fetching',message:'Pobieranie firm z OpenStreetMap. Oczekiwanie na odpowiedź źródła…'});
   const response = await fetch("https://overpass-api.de/api/interpreter", {
     method: "POST",
     headers: {
@@ -33,6 +34,7 @@ export async function discover(store, { area, category }) {
   if (data.remark || !Array.isArray(data.elements))
     throw Error("Źródło zwróciło niepełne wyniki. Spróbuj później.");
   const before = store.leads().length;
+  progress({stage:'filtering',message:`Sprawdzanie ${data.elements.length} wyników: własna strona, e-mail i duplikaty.`,total:data.elements.length});
   for (const item of data.elements) {
     const t = item.tags || {};
     let website = t.website || t["contact:website"] || "";
@@ -62,4 +64,5 @@ export async function discover(store, { area, category }) {
   store.event(
     `OpenStreetMap: dodano ${store.leads().length - before} firm (${area}). Wyniki mogą być niepełne; dane © OpenStreetMap contributors, ODbL.`,
   );
+  return store.leads().length - before;
 }

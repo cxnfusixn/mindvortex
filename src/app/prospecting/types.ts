@@ -46,6 +46,7 @@ export type Settings = {
   tiktokUrl: string;
 };
 export type Snapshot = {
+  discovery: null | {id:string;status:string;error:string;started_at:string|null;payload:{area:string;category:string;progress?:{stage:string;message:string;added?:number;total?:number}}};
   auditHistory: {id:string;run_id:string;lead_id:string;phase:string;created_at:string}[];
   leads: Lead[];
   settings: Settings;
