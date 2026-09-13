@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
 import { emailHtml } from "./email.mjs";
+import MailComposer from "nodemailer/lib/mail-composer/index.js";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 export function canSend(lead) {
   return Boolean(
     lead &&
@@ -47,7 +50,7 @@ export async function deliver(store, id, manual = null) {
       auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
     });
     try {
-      const result = await transport.sendMail({
+      const message = {
         from: process.env.SMTP_FROM,
         to: lead.email,
         subject: `${lead.name} — propozycje usprawnień od MindVortex`,
@@ -55,7 +58,16 @@ export async function deliver(store, id, manual = null) {
         html: emailHtml(lead),
         messageId: `<prospecting-${id}@mindvortex.pro>`,
         headers: { "Auto-Submitted": "auto-generated" },
-      });
+        date: new Date(),
+        disableFileAccess: true,
+        disableUrlAccess: true,
+      };
+      const raw = await new MailComposer(message).compile().build();
+      const folder = join(store.directory,"assets",id);
+      await mkdir(folder,{recursive:true,mode:0o700});
+      await writeFile(join(folder,"sent.eml"),raw,{mode:0o600});
+      store.runtime("sent-copy:"+id,JSON.stringify({status:"pending",messageId:message.messageId,date:message.date.toISOString(),nextAttempt:0}));
+      const result = await transport.sendMail({...message,raw});
       if (!result.accepted?.length)
         throw Error("Brak potwierdzenia przyjęcia wiadomości.");
       store.setStatus(id, "sent");

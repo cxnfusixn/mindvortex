@@ -10,7 +10,9 @@ const filters = {
 export function discoveryQuery(area, category) {
   if (!areas.includes(area) || !Object.hasOwn(categories, category))
     throw Error("Nieprawidłowy obszar lub branża.");
-  return `[out:json][timeout:40];area["name"="${area}"]["boundary"="administrative"]->.region;nwr(area.region)${filters[category]}["name"];out center tags 250;`;
+  const selectors = category === "all" ? [""] : [filters[category]];
+  const query = selectors.flatMap(filter => ["website","contact:website"].flatMap(site => ["email","contact:email"].map(email => `nwr(area.region)${filter}["name"]["${site}"]["${email}"];`))).join("");
+  return `[out:json][timeout:40];area["name"="${area}"]["boundary"="administrative"]->.region;(${query});out center tags;`;
 }
 export async function discover(store, { area, category }) {
   const response = await fetch("https://overpass-api.de/api/interpreter", {
@@ -30,7 +32,7 @@ export async function discover(store, { area, category }) {
   if (data.remark || !Array.isArray(data.elements))
     throw Error("Źródło zwróciło niepełne wyniki. Spróbuj później.");
   const before = store.leads().length;
-  for (const item of data.elements.slice(0, 250)) {
+  for (const item of data.elements) {
     const t = item.tags || {};
     let website = t.website || t["contact:website"] || "";
     if (website && !/^https?:\/\//i.test(website))

@@ -5,6 +5,7 @@ import { randomUUID, randomBytes } from "node:crypto";
 import { publicUrl, isProfileUrl } from "./network.mjs";
 
 export const categories = {
+  all: "Wszystkie branże",
   beauty: "Uroda i fryzjerstwo",
   health: "Zdrowie i fizjoterapia",
   food: "Restauracje i kawiarnie",

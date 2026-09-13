@@ -75,3 +75,11 @@ Mail zawiera diagnozę i wpływ na odbiorcę; nie linkuje raportu. Raport jest w
 Ręczne zlecenie audytu działa także przy wstrzymanej automatyzacji. Oznaczamy takie zadanie payload.manual=true; pauza przepuszcza wyłącznie ręczne audyty, nadal blokuje automatyczne wyszukiwanie, analizę i wysyłkę. Obowiązują limit dzienny, klucz modelu i kwalifikacja firmy. Karta pokazuje kolejkę, postęp lub błąd. Wyłączenie firmy zatrzymuje ją także przed płatnym etapem ręcznej analizy.
 
 Ręczne audyty omijają dzienny limit automatu, ale nadal zapisują zużycie modelu. Ręczna wysyłka w karcie firmy działa niezależnie od pauzy i autoSend; wymaga świadomego kliknięcia przy adresie odbiorcy, aktualnego szkicu i kwalifikacji canSend. Porównujemy adres i treść z podglądu z bazą przed rezerwacją wysyłki. Blokada duplikatów i niepewnego wyniku SMTP obowiązuje również ręcznie.
+
+## Kopie w Zimbrze i wszystkie branże
+
+Po przyjęciu wiadomości przez SMTP worker zapisuje identyczny MIME w folderze IMAP oznaczonym \\Sent. `IMAP_HOST`, `IMAP_PORT` (domyślnie 993/TLS), opcjonalne `IMAP_USER`, `IMAP_PASSWORD` i `IMAP_SENT_FOLDER`. Dla SMTP smtp.mail.ovh.net domyślny IMAP to imap.mail.ovh.net; dane logowania domyślnie takie jak SMTP. Potwierdzono odczyt folderu Sent na koncie MindVortex. Brak folderu nie powoduje tworzenia nowego na ślepo.
+
+Plik assets/<id>/sent.eml powstaje przed wysyłką; jest to dokładnie MIME przekazywany do SMTP. Stan kopii znajduje się w runtime pod kluczem sent-copy:<id>. Worker archiwizuje wyłącznie wiadomości o statusie sent, także podczas pauzy. Błąd IMAP nie zmienia statusu wysyłki i ponawia tylko kopię co 5 minut. Przed APPEND sprawdza Message-ID w folderze Wysłane, aby uniknąć duplikatu po utracie potwierdzenia. Historia pracy pokazuje zapis lub oczekiwanie kopii. Starsze wysyłki bez pliku MIME nie są automatycznie rekonstruowane.
+
+Wszystkie branże oznaczają brak filtra kategorii OSM: nazwane obiekty z website/contact:website i email/contact:email. Nie ma limitu 250 wyników zapytania; pozostają filtry własnej strony i poprawnego e-maila. Źródło może obejmować także instytucje i nie stanowi kompletnego rejestru firm.

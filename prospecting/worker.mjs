@@ -9,10 +9,12 @@ import { auditScreens, draftMessage } from "./lib/audit.mjs";
 import { reportHtml, reportMarkdown } from "./lib/report.mjs";
 import { canSend, deliver } from "./lib/delivery.mjs";
 import { publicOrigin } from "./lib/auth.mjs";
+import { syncSentCopies } from "./lib/sent-copy.mjs";
 
 export async function tick(store) {
   store.runtime("heartbeat", new Date().toISOString());
   store.recover();
+  await syncSentCopies(store);
   const settings = store.settings();
   const day = warsawDay(),
     hour = Number(
