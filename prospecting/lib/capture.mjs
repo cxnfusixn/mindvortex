@@ -3,15 +3,18 @@ import { join } from "node:path";
 import { chromium } from "playwright";
 import { browserProxy, publicUrl, isProfileUrl } from "./network.mjs";
 
-export async function capture(lead, directory) {
+export async function capture(lead, directory, { timeoutMs = 180000 } = {}) {
   if (isProfileUrl(lead.website))
     throw Error("Profil platformy zewnętrznej nie jest własną stroną firmy.");
   const proxy = await browserProxy();
-  let browser;
+  let browser, server, timer;
+  let expired = false;
   const screens = [];
   const errors = [];
   try {
-    browser = await chromium.launch({
+    server = await chromium.launchServer({
+      host: "127.0.0.1",
+      timeout: 30000,
       headless: true,
       chromiumSandbox: process.env.PROSPECTING_CHROMIUM_SANDBOX !== "false",
       proxy: { server: proxy.url, bypass: "<-loopback>" },
@@ -20,6 +23,11 @@ export async function capture(lead, directory) {
         "--disable-quic",
       ],
     });
+    browser = await chromium.connect(server.wsEndpoint(), { timeout: 10000 });
+    timer = setTimeout(() => {
+      expired = true;
+      void server.kill().catch(() => {});
+    }, timeoutMs);
     const folder = join(directory, "assets", lead.id);
     await mkdir(folder, { recursive: true });
     const urls = [
@@ -72,7 +80,7 @@ export async function capture(lead, directory) {
             await declineCookies.click();
             await page.waitForTimeout(600);
           }
-          await page.evaluate(() => document.fonts.ready);
+          await waitForFonts(page);
           if (isProfileUrl(page.url()))
             throw Error("Przekierowanie do platformy zewnętrznej — pominięto audyt profilu.");
           if (screens.some((screen) => screen.width === viewport.width && screen.url === page.url()))
@@ -143,6 +151,7 @@ export async function capture(lead, directory) {
             capturedAt: new Date().toISOString(),
           });
         } catch (error) {
+          if (expired) throw Error("Przekroczono limit czasu zbierania materiału.");
           errors.push(
             `${target.label} (${viewport.width}px): ${error instanceof Error ? error.message.split("\n")[0].slice(0, 160) : "nie udało się zebrać materiału."}`,
           );
@@ -160,7 +169,13 @@ export async function capture(lead, directory) {
       );
     return { screens, errors };
   } finally {
-    await browser?.close();
-    await proxy.close();
+    clearTimeout(timer);
+    try { await server?.kill(); }
+    finally { await proxy.close(); }
   }
+}
+
+// Playwright enforces this timeout outside the page-controlled Promise.
+export async function waitForFonts(page, timeout = 5000) {
+  await page.waitForFunction(() => document.fonts.status === "loaded", undefined, { timeout });
 }

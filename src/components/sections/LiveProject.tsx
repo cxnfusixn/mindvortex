@@ -125,7 +125,7 @@ export function LiveProject({
         )}
         {mounted && (
           <iframe
-            src={url}
+            src={`${process.env.NEXT_PUBLIC_PREVIEW_ORIGIN || ""}${url}`}
             title={`${project.title} — ${copy.live}`}
             onLoad={(event) => {
               setLoaded(true);

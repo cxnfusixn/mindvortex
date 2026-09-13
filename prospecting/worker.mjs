@@ -9,12 +9,12 @@ import { auditScreens, draftMessage } from "./lib/audit.mjs";
 import { reportHtml, reportMarkdown } from "./lib/report.mjs";
 import { canSend, deliver } from "./lib/delivery.mjs";
 import { publicOrigin } from "./lib/auth.mjs";
+import { expiredLeads, eraseLead } from "./lib/retention.mjs";
 import { syncSentCopies } from "./lib/sent-copy.mjs";
 
 export async function tick(store) {
   store.runtime("heartbeat", new Date().toISOString());
   store.recover();
-  await syncSentCopies(store);
   const settings = store.settings();
   const day = warsawDay(),
     hour = Number(
@@ -37,6 +37,12 @@ export async function tick(store) {
       });
       store.runtime("discoveryDay", day);
     });
+  if (process.env.PROSPECTING_RETENTION_ENABLED === "true" && store.getRuntime("retentionDay") !== day) {
+    for (const lead of expiredLeads(store)) eraseLead(store, lead.id);
+    store.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
+    store.runtime("retentionDay", day);
+  }
+  await syncSentCopies(store);
   const hasBudget = store.usage().calls < settings.dailyLimit;
   if (!settings.paused && process.env.PROSPECTING_OPENAI_API_KEY && hasBudget)
     for (const lead of store
@@ -56,6 +62,8 @@ export async function tick(store) {
   ];
   const job = store.claim(kinds, settings.paused, hasBudget);
   if (!job) return;
+  store.runtime("activeJobSince", new Date().toISOString());
+  store.runtime("activeJobSince", new Date().toISOString());
   try {
     if (job.kind === "discover") await discover(store, job.payload);
     else if (job.kind === "send") await deliver(store, job.lead_id);
@@ -125,6 +133,9 @@ export async function tick(store) {
         ? "Błąd konfiguracji integracji."
         : message.slice(0, 400),
     );
+  } finally {
+    store.runtime("activeJobSince", "");
+    store.runtime("lastJobFinished", new Date().toISOString());
   }
 }
 if (

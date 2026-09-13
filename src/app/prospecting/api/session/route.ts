@@ -1,6 +1,7 @@
 import { openStore } from "../../../../../prospecting/lib/store.mjs";
 import {
   login,
+  loginSource,
   readBody,
   sameOrigin,
   sessionCookie,
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
   const store = openStore();
   try {
     const data = await readBody(request);
-    const token = await login(store, data.password);
+    const token = await login(store, data.password, loginSource(request));
     return Response.json(
       { ok: true },
       {

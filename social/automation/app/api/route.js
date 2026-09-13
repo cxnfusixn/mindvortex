@@ -1,3 +1,4 @@
+import {readJson} from '../../lib/request.mjs';
 import {addEngagement,updateEngagement} from '../../lib/engagement.mjs';
 import {dashboardMetrics} from '../../lib/metrics.mjs';
 import {requireFreshVisual} from '../../lib/visuals.mjs';
@@ -16,7 +17,7 @@ export async function POST(req){
  if(!await authorized(req))return new Response(null,{status:401});
  if(req.headers.get('origin')!==new URL(process.env.SOCIAL_PUBLIC_URL).origin)return Response.json({error:'Origin rejected'},{status:403});
  if(Number(req.headers.get('content-length')||0)>20000)return new Response(null,{status:413});
- try{await init();const body=await req.text();if(body.length>20000)throw Error('Request too large');const b=JSON.parse(body);
+ try{const b=await readJson(req);await init();
   if(['publish-now','replace-content'].includes(b.action)&&b.target==='tiktok-reel'){
    if(!/^[0-9a-f-]{36}$/.test(b.id||''))throw Error('Invalid Reel');
    const r=(await pool.query("SELECT * FROM social_reels WHERE id=$1 AND status IN ('approved','verified')",[b.id])).rows[0];if(!r)throw Error('Rolka nie jest gotowa.');
@@ -65,5 +66,5 @@ export async function POST(req){
   });if(result===null)throw Error('Publication is running; try again shortly');
  }else throw Error('Unknown action');
  return Response.json({ok:true});
- }catch(e){return Response.json({error:e.message},{status:400});}
+ }catch(e){return Response.json({error:e.message},{status:e.status||400});}
 }

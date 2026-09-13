@@ -62,6 +62,7 @@ export async function GET(request: Request) {
         categories,
         heartbeat: store.getRuntime("heartbeat") || null,
         workerOnline: Boolean(
+          (!store.getRuntime("activeJobSince") || Date.now() - new Date(String(store.getRuntime("activeJobSince"))).getTime() < 10 * 60_000) &&
           store.getRuntime("heartbeat") &&
           Date.now() -
             new Date(String(store.getRuntime("heartbeat"))).getTime() <

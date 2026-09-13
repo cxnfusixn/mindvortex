@@ -1,6 +1,8 @@
 import { createHash, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
+import { isIP } from "node:net";
 const derive = promisify(scrypt);
+let activeLogins = 0;
 export const cookieName = "mv-prospecting-session";
 export const digest = (value) =>
   createHash("sha256").update(value).digest("hex");
@@ -36,7 +38,18 @@ export async function hashPassword(password) {
   const salt = randomBytes(16).toString("hex");
   return `${salt}:${(await derive(password, salt, 64)).toString("hex")}`;
 }
-export async function login(store, password) {
+export function loginSource(request) {
+  if (process.env.PROSPECTING_TRUST_PROXY !== "true") {
+    if (process.env.NODE_ENV === "production")
+      throw Error("Skonfiguruj zaufany reverse proxy dla logowania.");
+    return "local";
+  }
+  // The loopback-only service requires nginx to overwrite this header.
+  const ip = request.headers.get("x-real-ip") || "";
+  if (!isIP(ip)) throw Error("Brak adresu klienta od zaufanego proxy.");
+  return ip;
+}
+export async function login(store, password, source = "local") {
   const configured = process.env.PROSPECTING_PASSWORD_HASH || "";
   if (!/^[a-f0-9]{32}:[a-f0-9]{128}$/.test(configured))
     throw Error("Logowanie nie jest jeszcze skonfigurowane.");
@@ -50,15 +63,20 @@ export async function login(store, password) {
     const cutoff = new Date(Date.now() - 15 * 60_000).toISOString();
     store.db.prepare("DELETE FROM login_attempts WHERE at<?").run(cutoff);
     if (
-      store.db.prepare("SELECT count(*) AS n FROM login_attempts").get().n >= 10
+      store.db.prepare("SELECT count(*) AS n FROM login_attempts WHERE source=?").get(digest(source)).n >= 10
     )
       throw Error("Zbyt wiele prób. Odczekaj 15 minut.");
     store.db
-      .prepare("INSERT INTO login_attempts VALUES(?)")
-      .run(new Date().toISOString());
+      .prepare("INSERT INTO login_attempts(at,source) VALUES(?,?)")
+      .run(new Date().toISOString(), digest(source));
   });
   const [salt, expected] = configured.split(":");
-  const actual = await derive(password, salt, 64);
+  // Bound expensive hashes across sources without a shared lockout window.
+  if (activeLogins >= 4) throw Error("Logowanie zajęte. Spróbuj za chwilę.");
+  let actual;
+  activeLogins++;
+  try { actual = await derive(password, salt, 64); }
+  finally { activeLogins--; }
   if (!timingSafeEqual(actual, Buffer.from(expected, "hex")))
     throw Error("Nieprawidłowe hasło.");
   const token = randomBytes(32).toString("hex");

@@ -44,6 +44,7 @@ export async function discover(store, { area, category }) {
     }
     const email = String(t.email || t["contact:email"] || "").trim();
     if (!t.name || !website || isProfileUrl(website) || !validEmail(email)) continue;
+    if (store.isExcluded(website)) continue;
     store.addLead({
       name: t.name,
       website,

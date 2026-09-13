@@ -1,7 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { resolve, join } from "node:path";
-import { randomUUID, randomBytes } from "node:crypto";
+import { randomUUID, randomBytes, createHash } from "node:crypto";
 import { publicUrl, isProfileUrl } from "./network.mjs";
 
 export const categories = {
@@ -54,7 +54,7 @@ export function openStore(directory = dataDirectory()) {
   const db = new DatabaseSync(join(directory, "prospecting.sqlite"), {
     timeout: 5000,
   });
-  db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;
+  db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA secure_delete=ON;
     CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK(id=1), value TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS leads (id TEXT PRIMARY KEY,dedupe TEXT UNIQUE NOT NULL,name TEXT NOT NULL,website TEXT NOT NULL,category TEXT NOT NULL,area TEXT NOT NULL,source TEXT NOT NULL,address TEXT NOT NULL DEFAULT '',email TEXT NOT NULL DEFAULT '',status TEXT NOT NULL DEFAULT 'new',screens TEXT NOT NULL DEFAULT '[]',audit TEXT,draft TEXT NOT NULL DEFAULT '',share_token TEXT,share_expires TEXT,consent TEXT NOT NULL DEFAULT '',consent_email TEXT NOT NULL DEFAULT '',consent_at TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY,kind TEXT NOT NULL,lead_id TEXT REFERENCES leads(id),payload TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'queued',created_at TEXT NOT NULL,started_at TEXT,finished_at TEXT,error TEXT NOT NULL DEFAULT '');
@@ -68,6 +68,12 @@ export function openStore(directory = dataDirectory()) {
   `);
   if (!db.prepare("PRAGMA table_info(leads)").all().some((column) => column.name === "phone"))
     db.exec("ALTER TABLE leads ADD COLUMN phone TEXT NOT NULL DEFAULT ''");
+  if (!db.prepare("PRAGMA table_info(login_attempts)").all().some((column) => column.name === "source"))
+    db.exec("ALTER TABLE login_attempts ADD COLUMN source TEXT NOT NULL DEFAULT 'legacy'");
+  db.exec("CREATE INDEX IF NOT EXISTS login_attempts_source ON login_attempts(source,at)");
+  db.exec("CREATE TABLE IF NOT EXISTS excluded_domains(hash TEXT PRIMARY KEY, erased_at TEXT NOT NULL)");
+  const excluded = (website) => db.prepare("SELECT 1 FROM excluded_domains WHERE hash=?").get(
+    createHash("sha256").update(new URL(website).hostname.replace(/^www\./, "").replace(/\.$/, "")).digest("hex"));
   db.prepare("INSERT OR IGNORE INTO settings VALUES(1,?)").run(
     JSON.stringify(defaults),
   );
@@ -95,6 +101,7 @@ export function openStore(directory = dataDirectory()) {
     directory,
     close: () => db.close(),
     settings,
+    isExcluded: excluded,
     event,
     lead,
     transaction,
@@ -169,11 +176,12 @@ export function openStore(directory = dataDirectory()) {
       )
         throw Error("Podaj nazwę, obszar i branżę firmy.");
       const website = input.website ? publicUrl(input.website).href : "";
+      if (website && excluded(website)) throw Error("Firma została usunięta i jest wyłączona z ponownego importu.");
       const email = String(input.email || "").trim();
       if (!website || isProfileUrl(website) || !validEmail(email))
         throw Error("Firma musi mieć własną stronę internetową i poprawny e-mail.");
       const dedupe = website
-        ? new URL(website).hostname.replace(/^www\./, "") +
+        ? new URL(website).hostname.replace(/^www\./, "").replace(/\.$/, "") +
           (isProfileUrl(website)
             ? new URL(website).pathname.replace(/\/$/, "") +
               new URL(website).search
@@ -232,6 +240,8 @@ export function openStore(directory = dataDirectory()) {
           "INSERT OR IGNORE INTO jobs(id,kind,lead_id,payload,created_at) VALUES(?,?,?,?,?)",
         )
         .run(jobId, kind, id, JSON.stringify(payload), now());
+      if (id && (result.changes || payload.manual === true))
+        db.prepare("UPDATE leads SET updated_at=? WHERE id=?").run(now(), id);
       if (result.changes)
         event(
           kind === "discover"
