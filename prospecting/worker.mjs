@@ -47,12 +47,12 @@ export async function tick(store) {
       store.enqueue("send", lead.id);
   const kinds = [
     "discover",
-    ...(hasBudget && process.env.PROSPECTING_OPENAI_API_KEY ? ["audit"] : []),
+    ...(process.env.PROSPECTING_OPENAI_API_KEY ? ["audit"] : []),
     ...(settings.autoSend && process.env.PROSPECTING_SEND_ENABLED === "true"
       ? ["send"]
       : []),
   ];
-  const job = store.claim(kinds, settings.paused);
+  const job = store.claim(kinds, settings.paused, hasBudget);
   if (!job) return;
   try {
     if (job.kind === "discover") await discover(store, job.payload);

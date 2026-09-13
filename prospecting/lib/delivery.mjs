@@ -16,17 +16,19 @@ export function canSend(lead) {
     new Date(lead.share_expires) > new Date(),
   );
 }
-export async function deliver(store, id) {
+export async function deliver(store, id, manual = null) {
   if (
-    process.env.PROSPECTING_SEND_ENABLED !== "true" ||
+    !manual && (process.env.PROSPECTING_SEND_ENABLED !== "true" ||
     !store.settings().autoSend ||
-    store.settings().paused
+    store.settings().paused)
   )
     throw Error("Wysyłka automatyczna jest wyłączona.");
   if (!process.env.SMTP_HOST || !process.env.SMTP_FROM)
     throw Error("Brak konfiguracji poczty.");
   const lead = store.transaction(() => {
     const row = store.lead(id);
+    if (manual && (row?.email !== manual.email || row?.draft !== manual.draft))
+      throw Error("Adres lub treść wiadomości zmieniły się. Odśwież podgląd przed wysyłką.");
     if (!canSend(row))
       throw Error(
         "Kontakt nie spełnia warunków wysyłki (własna strona, e-mail, raport, pewność lub status).",

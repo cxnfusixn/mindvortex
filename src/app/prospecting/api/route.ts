@@ -4,6 +4,7 @@ import {
   categories,
 } from "../../../../prospecting/lib/store.mjs";
 import { emailHtml } from "../../../../prospecting/lib/email.mjs";
+import { canSend, deliver } from "../../../../prospecting/lib/delivery.mjs";
 import { reportHtml } from "../../../../prospecting/lib/report.mjs";
 import { validateAudit } from "../../../../prospecting/lib/audit.mjs";
 import {
@@ -51,7 +52,7 @@ export async function GET(request: Request) {
     }
     return Response.json(
       {
-        leads: store.leads(),
+        leads: store.leads().map((lead) => ({...lead, canSend: canSend(lead)})),
         auditHistory: store.auditHistory(),
         jobs: store.jobs(),
         events: store.events(),
@@ -120,8 +121,11 @@ export async function POST(request: Request) {
       case "audit":
         if (typeof data.id !== "string") throw Error("Brak firmy.");
         if (!process.env.PROSPECTING_OPENAI_API_KEY) throw Error("Audyt wymaga skonfigurowanego klucza modelu.");
-        if (Number(store.usage()?.calls ?? 0) >= store.settings().dailyLimit) throw Error("Wykorzystano dzisiejszy limit audytów. Spróbuj jutro lub zmień limit w Automatyzacji.");
         store.enqueue("audit", data.id, { manual: true });
+        break;
+      case "send":
+        if (typeof data.id !== "string" || typeof data.email !== "string" || typeof data.draft !== "string") throw Error("Brak adresu lub treści wiadomości.");
+        await deliver(store, data.id, { email: data.email, draft: data.draft });
         break;
       case "settings": {
         const keys = [

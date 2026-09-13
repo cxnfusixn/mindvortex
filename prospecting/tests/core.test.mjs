@@ -213,3 +213,14 @@ test('paused automation executes only explicitly requested audits and preserves 
     await tick(s);assert.equal(s.jobs().filter(j=>j.status==='queued').length,3);
   } finally {if(key===undefined)delete process.env.PROSPECTING_OPENAI_API_KEY;else process.env.PROSPECTING_OPENAI_API_KEY=key;s.close();}
 });
+
+test('manual audits bypass daily budget while automatic jobs remain queued', () => {
+ const s=openStore(mkdtempSync(join(tmpdir(),'mv-manual-budget-')));
+ try{ s.saveSettings({dailyLimit:1});s.reserveUsage('used');
+ const a=s.addLead({name:'A',email:'a@example.com',website:'https://a.example.com',area:'Białołęka',category:'beauty'});
+ const b=s.addLead({name:'B',email:'b@example.com',website:'https://b.example.com',area:'Białołęka',category:'beauty'});
+ const auto=s.enqueue('audit',a.id);const manual=s.enqueue('audit',b.id,{manual:true});
+ assert.equal(s.claim(['audit'],false,false).id,manual);s.reserveUsage(manual);assert.equal(s.usage().calls,2);
+ assert.throws(()=>s.reserveUsage(auto),/limit/);assert.equal(s.claim(['audit'],false,false),undefined);
+ }finally{s.close();}
+});

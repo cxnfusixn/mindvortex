@@ -60,3 +60,17 @@ test("email without consent qualifies, but ambiguous SMTP is never repeated", as
     s.close();
   }
 });
+
+test('manual delivery works while paused, rejects stale drafts and prevents duplicate sends', async () => {
+ const s=openStore(mkdtempSync(join(tmpdir(),'mv-manual-mail-'))),original=nodemailer.createTransport;
+ const saved={...process.env};let calls=0;
+ process.env.PROSPECTING_SEND_ENABLED='false';process.env.SMTP_HOST='unused.invalid';process.env.SMTP_FROM='test@example.com';
+ nodemailer.createTransport=()=>({sendMail:async m=>{calls++;assert.equal(m.to,'test@example.com');assert.equal(m.text,'reviewed draft');return {accepted:[m.to]};},close(){}});
+ try {const l=s.addLead({name:'Test',email:'test@example.com',website:'https://example.com',area:'Białołęka',category:'beauty'});
+ s.saveAudit(l.id,[],{confidence:'high',offer:'website',verifiedAt:new Date().toISOString(),findings:[{severity:2}]},'reviewed draft');
+ await assert.rejects(deliver(s,l.id));
+ await assert.rejects(deliver(s,l.id,{email:l.email,draft:'stale'}));assert.equal(calls,0);
+ const results=await Promise.allSettled([deliver(s,l.id,{email:l.email,draft:'reviewed draft'}),deliver(s,l.id,{email:l.email,draft:'reviewed draft'})]);
+ assert.equal(results.filter(r=>r.status==='fulfilled').length,1);assert.equal(calls,1);assert.equal(s.lead(l.id).status,'sent');assert.equal(s.settings().paused,true);
+ }finally{nodemailer.createTransport=original;for(const k of ['PROSPECTING_SEND_ENABLED','SMTP_HOST','SMTP_FROM']){if(saved[k]===undefined)delete process.env[k];else process.env[k]=saved[k];}s.close();}
+});

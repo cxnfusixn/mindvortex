@@ -239,11 +239,11 @@ export function openStore(directory = dataDirectory()) {
         );
       return jobId;
     },
-    claim(kinds = ["discover", "audit", "send"], manualOnly = false) {
+    claim(kinds = ["discover", "audit", "send"], manualOnly = false, auditBudget = true) {
       return transaction(() => {
         const row = db
           .prepare(
-            `SELECT * FROM jobs WHERE status='queued' AND kind IN (${kinds.map(() => "?").join(",")}) ${manualOnly ? "AND kind='audit' AND json_extract(payload,'$.manual')=1" : ""} ORDER BY created_at LIMIT 1`,
+            `SELECT * FROM jobs WHERE status='queued' AND kind IN (${kinds.map(() => "?").join(",")}) ${manualOnly ? "AND kind='audit' AND json_extract(payload,'$.manual')=1" : ""} ${auditBudget ? "" : "AND (kind!='audit' OR json_extract(payload,'$.manual')=1)"} ORDER BY created_at LIMIT 1`,
           )
           .get(...kinds);
         if (!row) return undefined;
@@ -345,7 +345,9 @@ export function openStore(directory = dataDirectory()) {
         const count = db
           .prepare("SELECT count(*) AS n FROM usage WHERE day=?")
           .get(warsawDay()).n;
-        if (count >= settings().dailyLimit)
+        const job = db.prepare("SELECT payload FROM jobs WHERE id=? AND kind='audit'").get(id);
+        const manual = job && JSON.parse(job.payload).manual === true;
+        if (!manual && count >= settings().dailyLimit)
           throw Error("Osiągnięto dzienny limit audytów.");
         db.prepare("INSERT INTO usage(id,day) VALUES(?,?)").run(
           id,

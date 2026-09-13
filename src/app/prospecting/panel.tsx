@@ -61,6 +61,7 @@ export function ProspectingPanel() {
       setNotice("Zapisano.");
       return true;
     } catch (e) {
+      await refresh();
       setError(e instanceof Error ? e.message : "Operacja nie powiodła się.");
       return false;
     } finally {
@@ -512,6 +513,7 @@ export function ProspectingPanel() {
                   job={data.jobs.find((job) => job.lead_id === active.id && job.kind === "audit")}
                   workerOnline={data.workerOnline}
                   actionError={error}
+                  visionAvailable={data.integrations.vision}
                   history={(data.auditHistory || []).filter((item) => item.lead_id === active.id)}
                   act={act}
                   busy={busy}

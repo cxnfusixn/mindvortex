@@ -12,6 +12,7 @@ export type Lead = {
   name: string;
   website: string;
   canAudit: boolean;
+  canSend: boolean;
   category: string;
   area: string;
   address: string;
