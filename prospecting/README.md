@@ -58,3 +58,6 @@ npm run build
 Testy logiki korzystają z tymczasowych baz, bez wiadomości i płatnych wywołań. Test przeglądarki `prospecting/tests/browser.mjs` wymaga `PROSPECTING_TEST_ORIGIN` i `PROSPECTING_TEST_PASSWORD`; uruchamiać wyłącznie z testowym katalogiem danych. Rzeczywisty pilotaż modelu jest osobnym sprawdzeniem po konfiguracji klucza.
 
 Źródła implementacji: lokalna dokumentacja Next.js w `node_modules/next/dist/docs`, https://developers.openai.com/api/docs/guides/images-vision, https://developers.openai.com/api/docs/guides/structured-outputs, https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide, https://nodejs.org/api/sqlite.html.
+# Kwalifikacja do audytu
+
+Audyt ręczny i automatyczny wymaga własnej strony internetowej oraz poprawnego e-maila lub numeru telefonu w karcie firmy. Sam adres lokalu i profil na platformie zewnętrznej nie wystarczą. Import OSM pobiera oba rodzaje kontaktu i uzupełnia brakujące pola przy ponownym wyszukaniu. Firmy bez kompletu danych pozostają w bazie, ale nie są audytowane. Kontakt nie oznacza zgody na wysyłkę.

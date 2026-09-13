@@ -30,6 +30,42 @@ test("social profiles remain separate companies and are not audited as websites"
   }
 });
 import { openStore } from "../lib/store.mjs";
+import { tick } from "../worker.mjs";
+test("worker rejects legacy queued audits without contact before capture or paid analysis", async () => {
+  const s = openStore(mkdtempSync(join(tmpdir(), "mv-legacy-contact-")));
+  const previousKey = process.env.PROSPECTING_OPENAI_API_KEY;
+  try {
+    const lead = s.addLead({ name: "Firma", website: "https://example.com", email: "office@example.com", area: "Białołęka", category: "beauty" });
+    s.enqueue("audit", lead.id);
+    s.db.prepare("UPDATE leads SET email='' WHERE id=?").run(lead.id);
+    s.saveSettings({ paused: false });
+    process.env.PROSPECTING_OPENAI_API_KEY = "test-only";
+    await tick(s);
+    assert.equal(s.jobs()[0].status, "failed");
+    assert.equal(s.usage().calls, 0);
+  } finally {
+    if (previousKey === undefined) delete process.env.PROSPECTING_OPENAI_API_KEY;
+    else process.env.PROSPECTING_OPENAI_API_KEY = previousKey;
+    s.close();
+  }
+});
+test("audits require an own website and valid email or phone", () => {
+  const s = openStore(mkdtempSync(join(tmpdir(), "mv-contact-")));
+  try {
+    for (const [i, contact, expected] of [
+      [0, {}, false],
+      [1, { email: "invalid" }, false],
+      [2, { email: "office@example.com" }, true],
+      [3, { phone: "+48 500 600 700" }, true],
+      [4, { phone: "123" }, false],
+    ]) {
+      const lead = s.addLead({ name: "Firma", website: `https://firm${i}.example.com`, category: "beauty", area: "Białołęka", ...contact });
+      assert.equal(lead.canAudit, expected);
+      if (expected) assert.doesNotThrow(() => s.enqueue("audit", lead.id));
+      else assert.throws(() => s.enqueue("audit", lead.id));
+    }
+  } finally { s.close(); }
+});
 import { validateAudit, draftMessage } from "../lib/audit.mjs";
 import { validateEvidenceClaims } from "../lib/audit.mjs";
 
@@ -87,6 +123,7 @@ test("deduplicates domains, claims jobs once and persists suppression", () => {
   const s = openStore(dir);
   const one = s.addLead({
     name: "Firma",
+    email: "office@example.com",
     website: "https://www.example.com/",
     category: "beauty",
     area: "Białołęka",

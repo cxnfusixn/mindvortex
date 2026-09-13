@@ -17,6 +17,7 @@ export type Lead = {
   address: string;
   source: string;
   email: string;
+  phone: string;
   status: string;
   screens: { file: string; label: string; width: number }[];
   audit: null | {

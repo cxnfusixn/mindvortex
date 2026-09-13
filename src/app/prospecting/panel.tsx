@@ -293,6 +293,8 @@ export function ProspectingPanel() {
                       action: "add",
                       name: form.get("name"),
                       website: form.get("website"),
+                      email: form.get("email"),
+                      phone: form.get("phone"),
                       area: form.get("area"),
                       category: form.get("category"),
                     })
@@ -314,6 +316,8 @@ export function ProspectingPanel() {
                       placeholder="https://firma.pl"
                     />
                   </label>
+                  <label>E-mail kontaktowy<input name="email" type="email" maxLength={254} /></label>
+                  <label>Telefon kontaktowy<input name="phone" type="tel" maxLength={80} /></label>
                   <label>
                     Obszar
                     <select name="area" defaultValue={data.settings.area}>

@@ -30,6 +30,8 @@ export function LeadDetail({
       </div>
       <h2>{lead.name}</h2>
       <p>{lead.address || lead.area}</p>
+      {lead.email && <p>E-mail: {lead.email}</p>}
+      {lead.phone && <p>Telefon: {lead.phone}</p>}
       {lead.website ? (
         <a
           className="p-site-link"
@@ -65,8 +67,7 @@ export function LeadDetail({
       </button>
       {lead.website && !lead.canAudit && (
         <p className="p-muted">
-          Profil platformy zewnętrznej. Do audytu potrzebny jest adres własnej
-          strony firmy lub osobny materiał wizualny.
+          Audyt wymaga własnej strony firmy oraz poprawnego e-maila lub telefonu.
         </p>
       )}
       {lead.audit ? (

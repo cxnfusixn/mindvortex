@@ -28,6 +28,10 @@ export const dataDirectory = () =>
       ".prospecting-data",
   );
 const now = () => new Date().toISOString();
+const hasContact = (row) =>
+  /^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(row.email || "") ||
+  /^\+?[\d\s().-]+$/.test(row.phone || "") &&
+    /^\d{7,15}$/.test((row.phone || "").replace(/\D/g, ""));
 export const warsawDay = (date = new Date()) =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Warsaw",
@@ -39,7 +43,7 @@ const decode = (row) =>
   row
     ? {
         ...row,
-        canAudit: Boolean(row.website && !isProfileUrl(row.website)),
+        canAudit: Boolean(row.website && !isProfileUrl(row.website) && hasContact(row)),
         screens: JSON.parse(row.screens),
         audit: row.audit ? JSON.parse(row.audit) : null,
       }
@@ -60,6 +64,8 @@ export function openStore(directory = dataDirectory()) {
     CREATE TABLE IF NOT EXISTS sessions (hash TEXT PRIMARY KEY,expires TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS login_attempts (at TEXT NOT NULL);
   `);
+  if (!db.prepare("PRAGMA table_info(leads)").all().some((column) => column.name === "phone"))
+    db.exec("ALTER TABLE leads ADD COLUMN phone TEXT NOT NULL DEFAULT ''");
   db.prepare("INSERT OR IGNORE INTO settings VALUES(1,?)").run(
     JSON.stringify(defaults),
   );
@@ -151,10 +157,14 @@ export function openStore(directory = dataDirectory()) {
       const existing = db
         .prepare("SELECT id FROM leads WHERE dedupe=?")
         .get(dedupe);
-      if (existing) return lead(existing.id);
+      if (existing) {
+        db.prepare("UPDATE leads SET email=CASE WHEN email='' THEN ? ELSE email END,phone=CASE WHEN phone='' THEN ? ELSE phone END WHERE id=?")
+          .run(String(input.email || "").trim().slice(0, 254), String(input.phone || "").trim().slice(0, 80), existing.id);
+        return lead(existing.id);
+      }
       const id = randomUUID();
       db.prepare(
-        "INSERT INTO leads(id,dedupe,name,website,category,area,source,address,email,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO leads(id,dedupe,name,website,category,area,source,address,email,phone,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
       ).run(
         id,
         dedupe,
@@ -164,7 +174,8 @@ export function openStore(directory = dataDirectory()) {
         input.area,
         String(input.source || "manual").slice(0, 400),
         String(input.address || "").slice(0, 300),
-        String(input.email || "").slice(0, 254),
+        String(input.email || "").trim().slice(0, 254),
+        String(input.phone || "").trim().slice(0, 80),
         now(),
         now(),
       );
@@ -185,7 +196,7 @@ export function openStore(directory = dataDirectory()) {
           throw Error("Ta firma jest wyłączona z automatyzacji.");
         if (kind === "audit" && !row.canAudit)
           throw Error(
-            "Audyt wymaga własnej strony firmy. Profil platformy zewnętrznej wymaga osobnego materiału.",
+            "Audyt wymaga własnej strony firmy oraz poprawnego e-maila lub telefonu.",
           );
       }
       const jobId = randomUUID();

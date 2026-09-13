@@ -61,7 +61,7 @@ export async function tick(store) {
     else {
       const lead = store.lead(job.lead_id);
       if (
-        !lead ||
+        !lead || !lead.canAudit ||
         ["suppressed", "replied", "sent", "uncertain"].includes(lead.status)
       )
         throw Error("Firma wyłączona z analizy.");

@@ -51,6 +51,7 @@ export async function discover(store, { area, category }) {
         .filter(Boolean)
         .join(" "),
       email: t.email || t["contact:email"] || "",
+      phone: t.phone || t["contact:phone"] || t.mobile || t["contact:mobile"] || "",
     });
   }
   store.event(

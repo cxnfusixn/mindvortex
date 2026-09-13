@@ -89,6 +89,8 @@ export async function POST(request: Request) {
           area: data.area,
           category: data.category,
           source: "manual",
+          email: data.email,
+          phone: data.phone,
         });
         break;
       case "audit":

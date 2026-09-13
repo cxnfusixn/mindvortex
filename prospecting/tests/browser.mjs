@@ -32,6 +32,7 @@ try {
   await page
     .getByLabel("Adres strony", { exact: true })
     .fill("https://qa-prospecting.example.com");
+  await page.getByLabel("E-mail kontaktowy").fill("qa@example.com");
   await page.getByRole("button", { name: "Zapisz firmę", exact: true }).click();
   await page.getByRole("button", { name: /QA — test prospectingu/ }).click();
   await page.getByRole("button", { name: "Zleć audyt strony" }).click();
