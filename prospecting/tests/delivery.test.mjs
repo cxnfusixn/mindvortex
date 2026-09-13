@@ -74,3 +74,10 @@ test('manual delivery works while paused, rejects stale drafts and prevents dupl
  assert.equal(results.filter(r=>r.status==='fulfilled').length,1);assert.equal(calls,1);assert.equal(s.lead(l.id).status,'sent');assert.equal(s.settings().paused,true);
  }finally{nodemailer.createTransport=original;for(const k of ['PROSPECTING_SEND_ENABLED','SMTP_HOST','SMTP_FROM']){if(saved[k]===undefined)delete process.env[k];else process.env[k]=saved[k];}s.close();}
 });
+
+test('interrupted manual delivery becomes uncertain without allowing another send', () => {
+ const s=openStore(mkdtempSync(join(tmpdir(),'mv-mail-recovery-')));
+ try {const l=s.addLead({name:'Test',email:'test@example.com',website:'https://example.com',area:'Białołęka',category:'beauty'});
+ s.db.prepare("UPDATE leads SET status='sending',updated_at=? WHERE id=?").run(new Date(Date.now()-16*60000).toISOString(),l.id);s.recover();assert.equal(s.lead(l.id).status,'uncertain');assert.equal(canSend(s.lead(l.id)),false);
+ }finally{s.close();}
+});

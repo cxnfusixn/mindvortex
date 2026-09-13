@@ -261,6 +261,8 @@ export function openStore(directory = dataDirectory()) {
     },
     recover() {
       const cutoff = new Date(Date.now() - 15 * 60_000).toISOString();
+      // Manual HTTP delivery has no worker job; a crashed request must never be retried blindly.
+      db.prepare("UPDATE leads SET status='uncertain',updated_at=? WHERE status='sending' AND updated_at<?").run(now(), cutoff);
       for (const job of db
         .prepare("SELECT * FROM jobs WHERE status='running' AND started_at<?")
         .all(cutoff)) {
