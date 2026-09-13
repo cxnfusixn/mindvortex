@@ -58,7 +58,7 @@ export function ProspectingPanel() {
       const body = await response.json();
       if (!response.ok) throw Error(body.error || "Operacja nie powiodła się.");
       await refresh();
-      setNotice("Zapisano.");
+      setNotice(payload.action === "discover" ? "Zlecono wyszukiwanie firm w obszarze: " + payload.area + ". Postęp znajdziesz w Historii pracy." : "Zapisano.");
       return true;
     } catch (e) {
       await refresh();
@@ -364,7 +364,7 @@ export function ProspectingPanel() {
                 </p>
               </div>
               <label>
-                <span>Obszar</span>
+                <span>Dzielnica lub cała Warszawa</span>
                 <select name="area" defaultValue={data.settings.area}>
                   {data.areas.map((a) => (
                     <option key={a}>{a}</option>
@@ -385,8 +385,7 @@ export function ProspectingPanel() {
             </form>
             {data.settings.paused && (
               <p className="p-muted">
-                Wyszukiwanie i automatyczne audyty ruszą po wznowieniu automatu w zakładce
-                „Automatyzacja”.
+                Ręczne wyszukiwanie działa również przy wstrzymanej automatyzacji.
               </p>
             )}
             <section className={`p-workspace ${active ? "has-detail" : ""}`}>

@@ -103,6 +103,7 @@ export async function POST(request: Request) {
         )
           throw Error("Wybierz obszar i branżę.");
         store.enqueue("discover", null, {
+          manual: true,
           area: data.area,
           category: data.category,
         });

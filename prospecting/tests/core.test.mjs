@@ -6,6 +6,17 @@ import { join } from "node:path";
 import { isPublicIP, publicUrl } from "../lib/network.mjs";
 import { isProfileUrl } from "../lib/network.mjs";
 import { discover } from "../lib/discover.mjs";
+test('manual discovery runs while paused and a different area cannot silently reuse its job',()=>{
+  const store=openStore(mkdtempSync(join(tmpdir(),'mv-district-')));
+  try{
+    const payload={area:'Wola',category:'all'};
+    const id=store.enqueue('discover',null,payload);
+    assert.equal(store.enqueue('discover',null,{...payload,manual:true}),id);
+    assert.throws(()=>store.enqueue('discover',null,{area:'Mokotów',category:'all',manual:true}),/już trwa/);
+    const job=store.claim(['discover'],true);
+    assert.equal(job.id,id);assert.equal(job.payload.area,'Wola');
+  }finally{store.close();}
+});
 test("existing platform profiles disappear from the list and discovery skips new profiles", async () => {
   const s = openStore(mkdtempSync(join(tmpdir(), "mv-profile-list-")));
   const originalFetch = globalThis.fetch;

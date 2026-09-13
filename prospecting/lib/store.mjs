@@ -12,7 +12,7 @@ export const categories = {
   services: "Usługi lokalne",
   shops: "Sklepy",
 };
-export const areas = ["Białołęka", "Targówek", "Bielany", "Warszawa"];
+export const areas = ["Bemowo", "Białołęka", "Bielany", "Mokotów", "Ochota", "Praga-Południe", "Praga-Północ", "Rembertów", "Śródmieście", "Targówek", "Ursus", "Ursynów", "Wawer", "Wesoła", "Wilanów", "Włochy", "Wola", "Żoliborz", "Warszawa"];
 export const defaults = {
   paused: true,
   autoDiscover: false,
@@ -232,6 +232,16 @@ export function openStore(directory = dataDirectory()) {
             "Audyt wymaga własnej strony firmy oraz poprawnego e-maila.",
           );
       }
+      if (kind === "discover") {
+        const pending = db.prepare("SELECT id,payload,status FROM jobs WHERE kind='discover' AND status IN ('queued','running')").get();
+        if (pending) {
+          const previous = JSON.parse(pending.payload);
+          if (payload.manual && (previous.area !== payload.area || previous.category !== payload.category))
+            throw Error("Wyszukiwanie firm już trwa lub czeka w kolejce. Poczekaj na jego zakończenie przed wybraniem kolejnego obszaru.");
+          if (payload.manual && pending.status === "queued") db.prepare("UPDATE jobs SET payload=? WHERE id=?").run(JSON.stringify(payload),pending.id);
+          return pending.id;
+        }
+      }
       const jobId = randomUUID();
       if (kind === "audit" && payload.manual === true)
         db.prepare("UPDATE jobs SET payload=json_set(payload,'$.manual',json('true')) WHERE kind='audit' AND lead_id=? AND status='queued'").run(id);
@@ -254,7 +264,7 @@ export function openStore(directory = dataDirectory()) {
       return transaction(() => {
         const row = db
           .prepare(
-            `SELECT * FROM jobs WHERE status='queued' AND kind IN (${kinds.map(() => "?").join(",")}) ${manualOnly ? "AND kind='audit' AND json_extract(payload,'$.manual')=1" : ""} ${auditBudget ? "" : "AND (kind!='audit' OR json_extract(payload,'$.manual')=1)"} ORDER BY created_at LIMIT 1`,
+            `SELECT * FROM jobs WHERE status='queued' AND kind IN (${kinds.map(() => "?").join(",")}) ${manualOnly ? "AND kind IN ('audit','discover') AND json_extract(payload,'$.manual')=1" : ""} ${auditBudget ? "" : "AND (kind!='audit' OR json_extract(payload,'$.manual')=1)"} ORDER BY created_at LIMIT 1`,
           )
           .get(...kinds);
         if (!row) return undefined;

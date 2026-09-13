@@ -12,7 +12,8 @@ export function discoveryQuery(area, category) {
     throw Error("Nieprawidłowy obszar lub branża.");
   const selectors = category === "all" ? [""] : [filters[category]];
   const query = selectors.flatMap(filter => ["website","contact:website"].flatMap(site => ["email","contact:email"].map(email => `nwr(area.region)${filter}["name"]["${site}"]["${email}"];`))).join("");
-  return `[out:json][timeout:40];area["name"="${area}"]["boundary"="administrative"]->.region;(${query});out center tags;`;
+  const region = area === "Warszawa" ? 'area["name"="Warszawa"]["boundary"="administrative"]["admin_level"="8"]->.region;' : `area["name"="Warszawa"]["boundary"="administrative"]["admin_level"="8"]->.city;rel(area.city)["boundary"="administrative"]["admin_level"="9"]["name"="${area}"];map_to_area->.region;`;
+  return `[out:json][timeout:40];${region}(${query});out center tags;`;
 }
 export async function discover(store, { area, category }) {
   const response = await fetch("https://overpass-api.de/api/interpreter", {
