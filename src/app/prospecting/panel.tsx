@@ -472,7 +472,8 @@ export function ProspectingPanel() {
                               <small>
                                 {l.area} · {data.categories[l.category]}
                               </small>
-                              {l.previously_contacted && <small>{l.sent_at ? `Wysłano: ${new Date(l.sent_at).toLocaleString("pl-PL")}` : l.status === "sent" ? "Wysłano wcześniej · brak daty" : "Już kontaktowano / próba wysyłki — nie ponawiaj"}</small>}
+                              <small>Dodano: <time dateTime={l.created_at}>{new Date(l.created_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"})}</time></small>
+                              <small>{l.sent_at ? `Wysłano: ${new Date(l.sent_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"})}` : l.status === "sent" ? "Wysłano wcześniej · brak daty" : l.status === "sending" ? "Wysyłanie w toku" : l.status === "uncertain" ? "Wynik wysyłki wymaga sprawdzenia" : l.previously_contacted ? "Wcześniejszy kontakt / próba wysyłki — nie ponawiaj" : "Jeszcze nie wysłano"}</small>
                               {l.audit && (
                                 <small className="p-offer">
                                   {offers[l.audit.offer]}

@@ -42,6 +42,7 @@ export function LeadDetail({
         </button>
       </div>
       <h2>{lead.name}</h2>
+      <p className="p-muted">Dodano do bazy: <time dateTime={lead.created_at}>{new Date(lead.created_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"})}</time></p>
       {history.length > 0 && <section><h3>Historia audytów</h3><p className="p-muted">Wersja wstępna może zawierać ustalenia odrzucone przy weryfikacji.</p>{history.map((item) => <p key={item.id}><a className="p-site-link" href={`/prospecting/api?audit=${encodeURIComponent(item.id)}`} target="_blank" rel="noreferrer">{new Date(item.created_at).toLocaleString("pl-PL")} · {item.phase === "reviewed" ? "Po przeglądzie" : item.phase === "verified" ? "Po weryfikacji" : "Wstępny"} ↗</a></p>)}</section>}
       <p>{lead.address || lead.area}</p>
       {lead.email && <p>E-mail: {lead.email}</p>}

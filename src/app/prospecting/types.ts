@@ -20,6 +20,7 @@ export type Lead = {
   approvalBlock: string;
   sendBlock: string;
   updated_at: string;
+  created_at: string;
   category: string;
   area: string;
   address: string;
