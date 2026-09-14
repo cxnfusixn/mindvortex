@@ -141,7 +141,7 @@ export function ProspectingPanel() {
   const active = data.leads.find((l) => l.id === selected);
   const leads = data.leads.filter(
     (l) =>
-      (filter === "all" || l.status === filter || l.audit?.offer === filter) &&
+      (filter === "all" || (filter === "contacted" && l.previously_contacted) || (filter === "sent" && Boolean(l.sent_at)) || l.status === filter || l.audit?.offer === filter) &&
       `${l.name} ${l.area} ${l.website}`
         .toLocaleLowerCase("pl")
         .includes(query.toLocaleLowerCase("pl")),
@@ -422,6 +422,10 @@ export function ProspectingPanel() {
                       }}
                     >
                       <option value="all">Wszystkie firmy</option>
+                      <option value="contacted">Już kontaktowane / próby wysyłki</option>
+                      <option value="sent">Wysłane wiadomości</option>
+                      <option value="uncertain">Niepewny wynik wysyłki</option>
+                      <option value="replied">Otrzymane odpowiedzi</option>
                       <option value="ready">Gotowe propozycje</option>
                       <option value="new">Nowe firmy</option>
                       <option value="error">Wymaga sprawdzenia</option>
@@ -468,6 +472,7 @@ export function ProspectingPanel() {
                               <small>
                                 {l.area} · {data.categories[l.category]}
                               </small>
+                              {l.previously_contacted && <small>{l.sent_at ? `Wysłano: ${new Date(l.sent_at).toLocaleString("pl-PL")}` : l.status === "sent" ? "Wysłano wcześniej · brak daty" : "Już kontaktowano / próba wysyłki — nie ponawiaj"}</small>}
                               {l.audit && (
                                 <small className="p-offer">
                                   {offers[l.audit.offer]}

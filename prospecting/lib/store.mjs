@@ -72,6 +72,13 @@ export function openStore(directory = dataDirectory()) {
     db.exec("ALTER TABLE login_attempts ADD COLUMN source TEXT NOT NULL DEFAULT 'legacy'");
   db.exec("CREATE INDEX IF NOT EXISTS login_attempts_source ON login_attempts(source,at)");
   db.exec("CREATE TABLE IF NOT EXISTS excluded_domains(hash TEXT PRIMARY KEY, erased_at TEXT NOT NULL)");
+  for (const column of ["send_attempt_at", "sent_at", "send_email"]) {
+    if (!db.prepare("PRAGMA table_info(leads)").all().some(c => c.name === column))
+      db.exec(`ALTER TABLE leads ADD COLUMN ${column} TEXT`);
+  }
+  db.exec("UPDATE leads SET send_email=email WHERE send_email IS NULL AND status IN ('sent','sending','uncertain','replied')");
+  db.exec("CREATE INDEX IF NOT EXISTS leads_send_email ON leads(send_email COLLATE NOCASE)");
+  const contacted = row => row ? {...row, previously_contacted: Boolean(row.send_email || db.prepare("SELECT 1 FROM leads WHERE send_email=? COLLATE NOCASE LIMIT 1").get(row.email))} : row;
   const excluded = (website) => db.prepare("SELECT 1 FROM excluded_domains WHERE hash=?").get(
     createHash("sha256").update(new URL(website).hostname.replace(/^www\./, "").replace(/\.$/, "")).digest("hex"));
   db.prepare("INSERT OR IGNORE INTO settings VALUES(1,?)").run(
@@ -84,7 +91,7 @@ export function openStore(directory = dataDirectory()) {
   const settings = () => ({ ...defaults,
     ...JSON.parse(db.prepare("SELECT value FROM settings WHERE id=1").get().value) });
   const lead = (id) =>
-    decode(db.prepare("SELECT * FROM leads WHERE id=?").get(id));
+    decode(contacted(db.prepare("SELECT * FROM leads WHERE id=?").get(id)));
   const transaction = (fn) => {
     db.exec("BEGIN IMMEDIATE");
     try {
@@ -121,7 +128,7 @@ export function openStore(directory = dataDirectory()) {
         .all()
         .filter((row) => row.website && !isProfileUrl(row.website) && validEmail(row.email))
         .slice(0, 1000)
-        .map(decode),
+        .map(row => decode(contacted(row))),
     jobs: () =>
       db.prepare("SELECT * FROM jobs ORDER BY created_at DESC LIMIT 30").all(),
     events: () =>
@@ -301,6 +308,8 @@ export function openStore(directory = dataDirectory()) {
       }
     },
     setStatus(id, status) {
+      if (status === "sending") db.prepare("UPDATE leads SET send_attempt_at=?,send_email=email WHERE id=? AND status='ready'").run(now(),id);
+      if (status === "sent") db.prepare("UPDATE leads SET sent_at=COALESCE(sent_at,?),send_email=COALESCE(send_email,email) WHERE id=?").run(now(),id);
       db.prepare(
         "UPDATE leads SET status=?,updated_at=? WHERE id=? AND status NOT IN ('suppressed','replied')",
       ).run(status, now(), id);

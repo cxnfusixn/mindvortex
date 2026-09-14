@@ -70,6 +70,12 @@ export function LeadDetail({
           </a>
         )}
       </div>
+      {lead.previously_contacted && <section aria-label="Historia kontaktu">
+        <h3>Historia kontaktu</h3>
+        <p>{lead.sent_at ? `Wysłano: ${new Date(lead.sent_at).toLocaleString("pl-PL")}` : lead.status === "sent" ? "Wiadomość wysłana wcześniej. Brak dokładnej daty w starszym zapisie." : lead.send_attempt_at ? `Próba wysyłki: ${new Date(lead.send_attempt_at).toLocaleString("pl-PL")}` : "Odnotowano wcześniejszy kontakt z firmą lub próbę wysyłki na ten adres."}</p>
+        <p>Adres: {lead.send_email || lead.email}</p>
+        <p className="p-muted">Ponowna wysyłka jest zablokowana. Przyjęcie przez serwer pocztowy nie oznacza potwierdzenia dostarczenia odbiorcy.</p>
+      </section>}
       <button
         className="p-primary p-full"
         disabled={

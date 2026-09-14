@@ -3,6 +3,7 @@ import { validateAudit } from "./audit.mjs";
 
 export function approvalBlock(lead) {
   if (!lead || lead.status !== "ready") return "Firma musi mieć zakończony audyt i aktywny kontakt.";
+  if (lead.previously_contacted) return "Do tej firmy lub na ten adres już wysyłano wiadomość. Ponowna wysyłka jest zablokowana.";
   if (!lead.canAudit) return "Uzupełnij własną stronę firmy i poprawny e-mail.";
   if (!lead.audit?.verifiedAt) return "Brak zakończonej weryfikacji audytu. Zleć nowy audyt.";
   if (!lead.draft) return "Brak przygotowanej wiadomości.";

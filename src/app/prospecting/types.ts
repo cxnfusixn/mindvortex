@@ -13,6 +13,10 @@ export type Lead = {
   website: string;
   canAudit: boolean;
   canSend: boolean;
+  previously_contacted: boolean;
+  send_attempt_at: string | null;
+  sent_at: string | null;
+  send_email: string | null;
   approvalBlock: string;
   sendBlock: string;
   updated_at: string;

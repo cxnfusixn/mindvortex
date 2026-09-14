@@ -7,6 +7,7 @@ export function canSend(lead, manual = false) {
   return Boolean(
     lead &&
     lead.status === "ready" &&
+    !lead.previously_contacted &&
     lead.canAudit &&
     /^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(lead.email || "") &&
     lead.email.length <= 254 &&

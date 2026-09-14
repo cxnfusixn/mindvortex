@@ -81,3 +81,24 @@ test('interrupted manual delivery becomes uncertain without allowing another sen
  s.db.prepare("UPDATE leads SET status='sending',updated_at=? WHERE id=?").run(new Date(Date.now()-16*60000).toISOString(),l.id);s.recover();assert.equal(s.lead(l.id).status,'uncertain');assert.equal(canSend(s.lead(l.id)),false);
  }finally{s.close();}
 });
+
+test('contact history persists across status changes and blocks the same email on another domain', () => {
+ const dir=mkdtempSync(join(tmpdir(),'mv-contact-history-')),s=openStore(dir);
+ try {
+  const input={name:'QA',email:'shared@example.com',website:'https://one.example.com',area:'Białołęka',category:'beauty'};
+  const first=s.addLead(input),second=s.addLead({...input,email:'SHARED@example.com',website:'https://two.example.com'});
+  const audit={confidence:'high',offer:'website',verifiedAt:new Date().toISOString(),findings:[{severity:2}]};
+  s.saveAudit(first.id,[],audit,'mail');s.saveAudit(second.id,[],audit,'mail');
+  assert.equal(canSend(s.lead(second.id),true),true);
+  s.setStatus(first.id,'sending');
+  assert.ok(s.lead(first.id).send_attempt_at);
+  assert.equal(s.lead(first.id).send_email,input.email);
+  assert.equal(canSend(s.lead(second.id),true),false);
+  s.setStatus(first.id,'sent');const sentAt=s.lead(first.id).sent_at;assert.ok(sentAt);
+  s.suppress(first.id,'replied');
+  assert.equal(s.lead(first.id).sent_at,sentAt);
+  s.saveAudit(second.id,[],audit,'new mail');assert.equal(canSend(s.lead(second.id),true),false);
+  assert.equal(s.leads().find(l=>l.id===second.id).previously_contacted,true);
+ }finally{s.close();}
+ const reopened=openStore(dir);try {assert.equal(reopened.leads().every(l=>l.previously_contacted),true);}finally{reopened.close();}
+});
