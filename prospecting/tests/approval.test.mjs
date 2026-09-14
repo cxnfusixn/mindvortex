@@ -29,6 +29,11 @@ test('manual review preserves model confidence, records history and binds approv
     assert.equal(canSend(s.lead(id),true),false);
     s.saveAudit(id,[{file:'home.jpg'}],audit,'Nowy audyt');
     assert.equal(canSend(s.lead(id),true),false);
+    s.saveAudit(id,[{file:'home.jpg'}],{...audit,offer:'none',findings:[]},'');
+    approveAudit(s,id,s.lead(id).updated_at);
+    assert.ok(s.lead(id).audit.manualApprovedAt);
+    assert.equal(canSend(s.lead(id),true),false);
+    assert.match(sendBlock(s.lead(id)),/Bez propozycji/);
     s.enqueue('audit',id);
     assert.throws(()=>approveAudit(s,id,s.lead(id).updated_at),/zakończenie/);
     s.suppress(id);

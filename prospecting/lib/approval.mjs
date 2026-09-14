@@ -6,14 +6,17 @@ export function approvalBlock(lead) {
   if (lead.previously_contacted) return "Do tej firmy lub na ten adres już wysyłano wiadomość. Ponowna wysyłka jest zablokowana.";
   if (!lead.canAudit) return "Uzupełnij własną stronę firmy i poprawny e-mail.";
   if (!lead.audit?.verifiedAt) return "Brak zakończonej weryfikacji audytu. Zleć nowy audyt.";
-  if (!lead.draft) return "Brak przygotowanej wiadomości.";
-  if (lead.audit.offer === "none" || !lead.audit.findings?.some(f => f.severity >= 2)) return "Audyt nie wskazał wystarczających podstaw do propozycji współpracy.";
   if (!lead.share_token || !(new Date(lead.share_expires) > new Date())) return "Raport wygasł. Zleć nowy audyt.";
   return "";
 }
 
 export function sendBlock(lead) {
-  return approvalBlock(lead) || (lead.audit.confidence !== "high" && !(lead.audit.manualApprovedAt && lead.audit.manualApprovedDraft === lead.draft && lead.audit.manualApprovedEmail === lead.email)
+  const blocked = approvalBlock(lead);
+  if (blocked) return blocked;
+  if (lead.audit.offer === "none") return "Audyt ma wynik „Bez propozycji”. Zatwierdzenie audytu nie tworzy oferty ani nie odblokowuje wysyłki.";
+  if (!lead.draft) return "Brak przygotowanej wiadomości.";
+  if (!lead.audit.findings?.some(f => f.severity >= 2)) return "Brak istotnych ustaleń uzasadniających wysyłkę propozycji.";
+  return (lead.audit.confidence !== "high" && !(lead.audit.manualApprovedAt && lead.audit.manualApprovedDraft === lead.draft && lead.audit.manualApprovedEmail === lead.email)
     ? "Pewność modelu jest niższa niż wysoka. Przejrzyj raport i zatwierdź audyt ręcznie." : "");
 }
 

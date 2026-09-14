@@ -156,8 +156,8 @@ export function LeadDetail({
           <section>
             <h3>Zatwierdzenie audytu</h3>
             {lead.audit.manualApprovedAt && lead.audit.manualApprovedDraft === lead.draft && lead.audit.manualApprovedEmail === lead.email ? <p role="status">Zatwierdzono ręcznie: {new Date(lead.audit.manualApprovedAt).toLocaleString("pl-PL")}</p> : <>
-              <p>Przejrzyj raport i podgląd maila. Zatwierdzenie pozwala na ręczną wysyłkę również przy średniej lub niskiej pewności modelu. Ocena modelu pozostanie zapisana bez zmian.</p>
-              <button className="p-primary p-full" disabled={busy || pending || Boolean(lead.approvalBlock)} onClick={() => void act({action:"approveAudit",id:lead.id,updatedAt:lead.updated_at})}>Zatwierdź audyt i treść wiadomości</button>
+              <p>Przejrzyj raport i, jeśli przygotowano wiadomość, jej podgląd. Zatwierdzenie zapisuje Twój przegląd bez zmiany oceny modelu. Wynik „Bez propozycji” można zatwierdzić, ale wysyłka nadal wymaga gotowej oferty.</p>
+              <button className="p-primary p-full" disabled={busy || pending || Boolean(lead.approvalBlock)} onClick={() => void act({action:"approveAudit",id:lead.id,updatedAt:lead.updated_at})}>Zatwierdź audyt</button>
               {lead.approvalBlock && <p className="p-muted">{lead.approvalBlock}</p>}
               <p className="p-muted">Zatwierdzenie nie wysyła wiadomości.</p>
             </>}
