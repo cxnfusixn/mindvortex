@@ -3,7 +3,7 @@ import { emailHtml } from "./email.mjs";
 import MailComposer from "nodemailer/lib/mail-composer/index.js";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-export function canSend(lead) {
+export function canSend(lead, manual = false) {
   return Boolean(
     lead &&
     lead.status === "ready" &&
@@ -11,7 +11,7 @@ export function canSend(lead) {
     /^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(lead.email || "") &&
     lead.email.length <= 254 &&
     lead.draft &&
-    lead.audit?.confidence === "high" &&
+    (lead.audit?.confidence === "high" || (manual && lead.audit?.manualApprovedAt && lead.audit.manualApprovedDraft === lead.draft && lead.audit.manualApprovedEmail === lead.email)) &&
     lead.audit.verifiedAt &&
     lead.audit.offer !== "none" &&
     lead.audit.findings.some((f) => f.severity >= 2) &&
@@ -36,7 +36,7 @@ export async function deliver(store, id, manual = null) {
     const row = store.lead(id);
     if (manual && (row?.email !== manual.email || row?.draft !== manual.draft))
       throw Error("Adres lub treść wiadomości zmieniły się. Odśwież podgląd przed wysyłką.");
-    if (!canSend(row))
+    if (!canSend(row, Boolean(manual)))
       throw Error(
         "Kontakt nie spełnia warunków wysyłki (własna strona, e-mail, raport, pewność lub status).",
       );

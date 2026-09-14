@@ -13,6 +13,9 @@ export type Lead = {
   website: string;
   canAudit: boolean;
   canSend: boolean;
+  approvalBlock: string;
+  sendBlock: string;
+  updated_at: string;
   category: string;
   area: string;
   address: string;
@@ -22,6 +25,9 @@ export type Lead = {
   status: string;
   screens: { file: string; label: string; width: number }[];
   audit: null | {
+    manualApprovedAt?: string;
+    manualApprovedDraft?: string;
+    manualApprovedEmail?: string;
     summary: string;
     confidence: string;
     offer: string;

@@ -146,6 +146,15 @@ export function LeadDetail({
             </div>
           )}
           <section>
+            <h3>Zatwierdzenie audytu</h3>
+            {lead.audit.manualApprovedAt && lead.audit.manualApprovedDraft === lead.draft && lead.audit.manualApprovedEmail === lead.email ? <p role="status">Zatwierdzono ręcznie: {new Date(lead.audit.manualApprovedAt).toLocaleString("pl-PL")}</p> : <>
+              <p>Przejrzyj raport i podgląd maila. Zatwierdzenie pozwala na ręczną wysyłkę również przy średniej lub niskiej pewności modelu. Ocena modelu pozostanie zapisana bez zmian.</p>
+              <button className="p-primary p-full" disabled={busy || pending || Boolean(lead.approvalBlock)} onClick={() => void act({action:"approveAudit",id:lead.id,updatedAt:lead.updated_at})}>Zatwierdź audyt i treść wiadomości</button>
+              {lead.approvalBlock && <p className="p-muted">{lead.approvalBlock}</p>}
+              <p className="p-muted">Zatwierdzenie nie wysyła wiadomości.</p>
+            </>}
+          </section>
+          <section>
             <h3>Wiadomość do firmy</h3>
             <label className="p-sr-only" htmlFor="draft">
               Przygotowana wiadomość
@@ -177,7 +186,7 @@ export function LeadDetail({
               setSendNotice(ok ? "Serwer pocztowy przyjął wiadomość." : "Nie potwierdzono wysyłki. Sprawdź komunikat poniżej.");
             }}>Wyślij wiadomość do {lead.email}</button>
             <p className="p-muted">Przycisk wysyła wiadomość z podglądu HTML. Ręczna wysyłka nie włącza automatycznych wiadomości.</p>
-            {!lead.canSend && <p className="p-muted">{lead.status === "sent" ? "Wiadomość została już przekazana do poczty." : lead.status === "uncertain" ? "Wynik poprzedniej wysyłki wymaga sprawdzenia w poczcie. Ponowienie jest zablokowane." : "Wysyłka wymaga gotowego, zweryfikowanego audytu o wysokiej pewności i aktywnego kontaktu."}</p>}
+            {!lead.canSend && <p className="p-muted">{lead.status === "sent" ? "Wiadomość została już przekazana do poczty." : lead.status === "uncertain" ? "Wynik poprzedniej wysyłki wymaga sprawdzenia w poczcie. Ponowienie jest zablokowane." : lead.sendBlock}</p>}
             <p role="status">{sendNotice}</p>
             {actionError && <p role="alert" className="p-error">{actionError}</p>}
           </section>

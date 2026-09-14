@@ -1,3 +1,4 @@
+import { approveAudit, approvalBlock, sendBlock } from "../../../../prospecting/lib/approval.mjs";
 import {after} from 'next/server';
 import {startDiscovery,executeDiscovery,latestDiscovery} from '../../../../prospecting/lib/discovery-run.mjs';
 import {
@@ -54,7 +55,7 @@ export async function GET(request: Request) {
     }
     return Response.json(
       {
-        leads: store.leads().map((lead) => ({...lead, canSend: canSend(lead)})),
+        leads: store.leads().map((lead) => ({...lead, canSend: canSend(lead, true), approvalBlock: approvalBlock(lead), sendBlock: sendBlock(lead)})),
         auditHistory: store.auditHistory(),
         jobs: store.jobs(),
         discovery: latestDiscovery(store),
@@ -125,6 +126,9 @@ export async function POST(request: Request) {
         if (typeof data.id !== "string") throw Error("Brak firmy.");
         if (!process.env.PROSPECTING_OPENAI_API_KEY) throw Error("Audyt wymaga skonfigurowanego klucza modelu.");
         store.enqueue("audit", data.id, { manual: true });
+        break;
+      case "approveAudit":
+        approveAudit(store, data.id, data.updatedAt);
         break;
       case "send":
         if (typeof data.id !== "string" || typeof data.email !== "string" || typeof data.draft !== "string") throw Error("Brak adresu lub treści wiadomości.");
