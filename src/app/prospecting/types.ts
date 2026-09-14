@@ -72,6 +72,7 @@ export type Snapshot = {
 };
 export type Act = (data: Record<string, unknown>) => Promise<boolean>;
 export const statuses: Record<string, string> = {
+  rejected: "Odrzucona — strona OK",
   new: "Nowa firma",
   auditing: "Trwa audyt",
   ready: "Gotowa propozycja",

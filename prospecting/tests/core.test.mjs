@@ -235,3 +235,16 @@ test('manual audits bypass daily budget while automatic jobs remain queued', () 
  assert.throws(()=>s.reserveUsage(auto),/limit/);assert.equal(s.claim(['audit'],false,false),undefined);
  }finally{s.close();}
 });
+
+test('rejected website cancels queued work and cannot be revived by a finishing audit or reimport', () => {
+ const dir=mkdtempSync(join(tmpdir(),'mv-reject-')),s=openStore(dir);
+ try {
+  const input={name:'Dobra strona',email:'office@example.com',website:'https://example.com',category:'beauty',area:'Białołęka'};
+  const l=s.addLead(input);s.enqueue('audit',l.id);s.suppress(l.id,'rejected');
+  assert.equal(s.lead(l.id).status,'rejected');assert.equal(s.jobs()[0].status,'cancelled');
+  assert.throws(()=>s.enqueue('audit',l.id));assert.throws(()=>s.enqueue('send',l.id));
+  s.saveAudit(l.id,[],{},'draft');s.setStatus(l.id,'error');
+  assert.equal(s.lead(l.id).status,'rejected');assert.equal(s.addLead(input).status,'rejected');
+  assert.match(s.events()[0].message,/strona jest OK/);
+ }finally{s.close();}
+});

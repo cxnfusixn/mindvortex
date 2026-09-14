@@ -71,14 +71,14 @@ export async function tick(store) {
       const lead = store.lead(job.lead_id);
       if (
         !lead || !lead.canAudit ||
-        ["suppressed", "replied", "sent", "uncertain"].includes(lead.status)
+        ["rejected", "suppressed", "replied", "sent", "uncertain"].includes(lead.status)
       )
         throw Error("Firma wyłączona z analizy.");
       store.setStatus(lead.id, "auditing");
       const evidence = await capture(lead, store.directory);
       if (
         (store.settings().paused && !job.payload.manual) ||
-        ["suppressed", "replied"].includes(store.lead(lead.id).status)
+        ["rejected", "suppressed", "replied"].includes(store.lead(lead.id).status)
       )
         throw Error("Zadanie wstrzymane przed płatną analizą.");
       const audit = await auditScreens(store, job, lead, evidence);

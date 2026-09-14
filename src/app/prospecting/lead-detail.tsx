@@ -27,6 +27,7 @@ export function LeadDetail({
   const [sendNotice, setSendNotice] = useState("");
   const pending = job?.status === "queued" || job?.status === "running";
   const blocked = [
+    "rejected",
     "suppressed",
     "replied",
     "sent",
@@ -235,9 +236,11 @@ export function LeadDetail({
         </section>
       )}
       <div className="p-detail-actions">
+        <button disabled={busy || blocked} onClick={() => void act({action:"reject",id:lead.id})}>Odrzuć — strona jest OK</button>
+        {lead.status === "rejected" && <p className="p-muted">Odrzucono po przeglądzie: strona jest OK. Audyty i wysyłka są zablokowane.</p>}
         <button
           disabled={
-            busy || lead.status === "suppressed" || lead.status === "replied"
+            busy || lead.status === "rejected" || lead.status === "suppressed" || lead.status === "replied"
           }
           onClick={() => void act({ action: "replied", id: lead.id })}
         >

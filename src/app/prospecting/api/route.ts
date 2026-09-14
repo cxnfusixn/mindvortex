@@ -161,6 +161,9 @@ export async function POST(request: Request) {
           String(data.email || ""),
         );
         break;
+      case "reject":
+        store.suppress(String(data.id), "rejected");
+        break;
       case "suppress":
         store.suppress(String(data.id));
         break;

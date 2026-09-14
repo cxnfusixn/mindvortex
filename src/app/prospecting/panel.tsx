@@ -427,6 +427,7 @@ export function ProspectingPanel() {
                       <option value="uncertain">Niepewny wynik wysyłki</option>
                       <option value="replied">Otrzymane odpowiedzi</option>
                       <option value="ready">Gotowe propozycje</option>
+                      <option value="rejected">Odrzucone — strona OK</option>
                       <option value="new">Nowe firmy</option>
                       <option value="error">Wymaga sprawdzenia</option>
                       {Object.entries(offers).map(([k, v]) => (

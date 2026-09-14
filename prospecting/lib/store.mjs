@@ -229,7 +229,7 @@ export function openStore(directory = dataDirectory()) {
         const row = lead(id);
         if (
           !row ||
-          ["suppressed", "sent", "sending", "uncertain", "replied"].includes(
+          ["rejected", "suppressed", "sent", "sending", "uncertain", "replied"].includes(
             row.status,
           )
         )
@@ -300,7 +300,7 @@ export function openStore(directory = dataDirectory()) {
           ).run(job.lead_id);
         else if (job.lead_id)
           db.prepare(
-            "UPDATE leads SET status='error' WHERE id=? AND status NOT IN ('suppressed','replied')",
+            "UPDATE leads SET status='error' WHERE id=? AND status NOT IN ('rejected','suppressed','replied')",
           ).run(job.lead_id);
         db.prepare(
           "UPDATE jobs SET status='failed',finished_at=?,error='Przerwane zadanie. Wymaga sprawdzenia przed ponowieniem.' WHERE id=?",
@@ -311,13 +311,13 @@ export function openStore(directory = dataDirectory()) {
       if (status === "sending") db.prepare("UPDATE leads SET send_attempt_at=?,send_email=email WHERE id=? AND status='ready'").run(now(),id);
       if (status === "sent") db.prepare("UPDATE leads SET sent_at=COALESCE(sent_at,?),send_email=COALESCE(send_email,email) WHERE id=?").run(now(),id);
       db.prepare(
-        "UPDATE leads SET status=?,updated_at=? WHERE id=? AND status NOT IN ('suppressed','replied')",
+        "UPDATE leads SET status=?,updated_at=? WHERE id=? AND status NOT IN ('rejected','suppressed','replied')",
       ).run(status, now(), id);
     },
     saveAudit(id, screens, audit, draft) {
       const token = randomBytes(24).toString("hex");
       db.prepare(
-        "UPDATE leads SET screens=?,audit=?,draft=?,status='ready',share_token=?,share_expires=?,updated_at=? WHERE id=? AND status NOT IN ('suppressed','replied')",
+        "UPDATE leads SET screens=?,audit=?,draft=?,status='ready',share_token=?,share_expires=?,updated_at=? WHERE id=? AND status NOT IN ('rejected','suppressed','replied')",
       ).run(
         JSON.stringify(screens),
         JSON.stringify(audit),
@@ -340,7 +340,7 @@ export function openStore(directory = dataDirectory()) {
         throw Error(
           "Podaj jeden poprawny adres e-mail.",
         );
-      if (!lead(id) || ["suppressed", "replied", "sending", "sent", "uncertain"].includes(lead(id).status))
+      if (!lead(id) || ["rejected", "suppressed", "replied", "sending", "sent", "uncertain"].includes(lead(id).status))
         throw Error("Kontakt wyłączony.");
       db.prepare(
         "UPDATE leads SET email=?,updated_at=? WHERE id=?",
@@ -348,7 +348,7 @@ export function openStore(directory = dataDirectory()) {
       event("Zapisano adres e-mail kontaktu.");
     },
     suppress(id, status = "suppressed") {
-      if (!["suppressed", "replied"].includes(status))
+      if (!["rejected", "suppressed", "replied"].includes(status))
         throw Error("Nieprawidłowy status.");
       transaction(() => {
         db.prepare(
@@ -359,7 +359,7 @@ export function openStore(directory = dataDirectory()) {
         ).run(id);
       });
       event(
-        status === "replied"
+        status === "rejected" ? "Odrzucono firmę: strona jest OK; automatyzacja zatrzymana." : status === "replied"
           ? "Zapisano odpowiedź; automatyzacja kontaktu zatrzymana."
           : "Wyłączono firmę i unieważniono link do raportu.",
       );
